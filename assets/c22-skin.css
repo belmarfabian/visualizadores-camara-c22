@@ -1,0 +1,743 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Piel C22 — replica la cabecera y el pie de c22cepchile.cl sobre el Monitor
+   Legislativo, para que al entrar desde el sitio del C22 no se sienta un
+   cambio de pagina. Medidas tomadas del tema en produccion (18-ago-2026):
+   cabecera fija de 76px, DM Sans 14/500 en versalitas, color #657D81,
+   boton pildora #657D81 radio 50px, pie #303030 sobre texto #F3F5F5.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --c22s-tinta: #657D81;
+  --c22s-oscuro: #303030;
+  --c22s-claro: #F3F5F5;
+  --c22s-borde: rgba(101, 125, 129, 0.2);
+  --c22s-alto: 76px;
+  --c22s-sub: 46px;
+}
+
+/* Este archivo solo se carga en las paginas que llevan la piel, asi que las
+   reglas no necesitan una clase de contexto. */
+body { padding-top: calc(var(--c22s-alto) + var(--c22s-sub)); }
+
+/* Lo que aporta el Monitor y aqui sobra: su cinta, su cabecera y su pie. */
+.c22skin-fuera { display: none !important; }
+
+/* ── Cabecera ───────────────────────────────────────────────────────────── */
+.c22skin-head {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: #fff; border-bottom: 1px solid var(--c22s-borde);
+  height: var(--c22s-alto); padding: 10px 5%;
+  display: flex; align-items: center; gap: 26px;
+  font-family: 'DM Sans', sans-serif;
+}
+.c22skin-head .c22skin-logo img { height: 50px; width: auto; display: block; }
+.c22skin-head .c22skin-cep img { height: 35px; width: auto; display: block; }
+.c22skin-nav { display: flex; align-items: center; gap: 18px; flex: 1; min-width: 0; }
+@media (max-width: 1700px) { .c22skin-buscar { display: none; } }
+@media (max-width: 1560px) { .c22skin-nav { gap: 13px; }
+  .c22skin-nav a { font-size: 13px; } }
+.c22skin-nav a {
+  font-size: 14px; font-weight: 500; text-transform: uppercase;
+  color: var(--c22s-tinta); text-decoration: none; white-space: nowrap;
+  border-bottom: 2px solid transparent; padding-bottom: 3px; transition: color .18s;
+}
+.c22skin-nav a:hover { color: var(--c22s-oscuro); }
+.c22skin-nav a.c22skin-aqui { color: var(--c22s-oscuro); border-bottom-color: #4CCAA5; }
+.c22skin-contacto {
+  background: var(--c22s-tinta); color: #fff; border-radius: 50px;
+  padding: 10px 26px; font-size: 14px; font-weight: 700; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap;
+}
+.c22skin-contacto:hover { background: #566C70; }
+.c22skin-buscar {
+  border: 1px solid var(--c22s-borde); border-radius: 50px; background: #fff;
+  padding: 10px 30px; font-size: 14px; font-weight: 500; text-transform: uppercase;
+  color: var(--c22s-tinta); text-decoration: none; white-space: nowrap;
+}
+.c22skin-buscar::after { content: ' \2315'; }
+.c22skin-buscar:hover { border-color: var(--c22s-tinta); color: var(--c22s-oscuro); }
+
+/* ── Sub-barra: las secciones del propio Monitor ────────────────────────── */
+.c22skin-sub {
+  position: fixed; top: var(--c22s-alto); left: 0; right: 0; z-index: 199;
+  height: var(--c22s-sub); background: var(--c22s-claro);
+  border-bottom: 1px solid var(--c22s-borde);
+  padding: 0 5%; display: flex; align-items: center; gap: 24px;
+  font-family: 'Montserrat', sans-serif; overflow-x: auto; scrollbar-width: none;
+}
+.c22skin-sub::-webkit-scrollbar { display: none; }
+.c22skin-sub .c22skin-rotulo {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px;
+  color: #0E7A5F; white-space: nowrap; padding-right: 6px;
+}
+.c22skin-sub a {
+  font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--c22s-tinta); text-decoration: none; white-space: nowrap;
+  border-bottom: 2px solid transparent; padding: 4px 0;
+}
+.c22skin-sub a:hover { color: var(--c22s-oscuro); }
+.c22skin-sub a.c22skin-aqui { color: var(--c22s-oscuro); border-bottom-color: #0E7A5F; }
+
+/* ── Pie ────────────────────────────────────────────────────────────────── */
+.c22skin-foot {
+  background: var(--c22s-oscuro); color: var(--c22s-claro);
+  padding: 50px 5%; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.7;
+}
+.c22skin-foot a { color: var(--c22s-claro); text-decoration: none; }
+.c22skin-foot a:hover { text-decoration: underline; }
+.c22skin-foot .c22skin-grid {
+  display: grid; grid-template-columns: 180px 1.1fr 1.4fr 1fr; gap: 40px; align-items: start;
+  max-width: 1500px;
+}
+.c22skin-foot h3 {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px;
+  color: rgba(243, 245, 245, 0.55); margin: 0 0 14px;
+}
+.c22skin-foot ul { list-style: none; margin: 0; padding: 0; }
+.c22skin-foot li { margin-bottom: 7px; }
+.c22skin-foot .c22skin-menu a { text-transform: uppercase; font-size: 12px; letter-spacing: 0.6px; }
+.c22skin-foot .c22skin-marcas img { display: block; }
+.c22skin-foot .c22skin-marcas img.c22 { height: 96px; margin-bottom: 22px; }
+.c22skin-foot .c22skin-marcas img.cep { height: 46px; }
+.c22skin-foot .c22skin-dir { text-transform: uppercase; font-size: 12px; letter-spacing: 0.4px; }
+.c22skin-foot .c22skin-redes { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.c22skin-foot .c22skin-redes a { text-transform: uppercase; font-size: 12px; letter-spacing: 0.6px; }
+.c22skin-foot .c22skin-legal {
+  margin-top: 40px; padding-top: 22px; border-top: 1px solid rgba(243, 245, 245, 0.15);
+  font-size: 11px; color: rgba(243, 245, 245, 0.5);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+
+@media (max-width: 1280px) {
+  .c22skin-nav { display: none; }
+  .c22skin-foot .c22skin-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .c22skin-head { gap: 14px; padding: 10px 5%; }
+  .c22skin-head .c22skin-logo img { height: 40px; }
+  .c22skin-head .c22skin-cep img { height: 28px; }
+  .c22skin-contacto { padding: 9px 18px; font-size: 12px; }
+  .c22skin-foot .c22skin-grid { grid-template-columns: 1fr; gap: 30px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   INTERIOR — el sistema grafico del C22 aplicado al contenido del Monitor.
+
+   Medido sobre c22cepchile.cl en portada, Publicaciones, Personas y una ficha
+   de Analisis Online (20-ago-2026). El sistema es consistente entre pestañas:
+
+     cuerpo    Montserrat 16px / 400 / interlineado 22,4px (1,4) / #303030
+     titulos   DM Sans 700, interlineado 1,0, sin tracking negativo
+     radios    50px pildoras · 30px y 15px tarjetas
+     sombra    rgba(0,0,0,.2) 0 3px 5px
+     acento    #4CCAA5 verde · #A10856 morado (subrayado inset)
+
+   El Monitor tenia el reparto tipografico invertido: DM Sans de cuerpo y
+   Montserrat de rotulos. Basta cambiar la familia heredada del body: las
+   reglas que fijan var(--dm) son todas titulares, numeros y nombres, que en
+   el C22 tambien van en DM Sans.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #303030;
+}
+
+/* Los titulares respiran como en el C22: mas apretados de alto y sin el
+   tracking negativo que traia el Monitor. */
+.hero h1,
+.section-title-block h2,
+.sec-title,
+.rarezas h2,
+section.about h3,
+.mapa-nom-title {
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+/* Texto de apoyo: el gris del C22, un punto mas oscuro para que pase el
+   minimo de contraste (5,08:1 en vez de 4,37:1). */
+.hero p.lead,
+.sub,
+.section-title-block p,
+.card p.desc,
+section.about p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #566C70;
+}
+
+/* El C22 alinea el cuerpo a la izquierda. El Monitor lo justificaba sin
+   particion de palabras, que en columnas de 240px abre rios de tres y cuatro
+   espacios. */
+.hero p.lead,
+.sub,
+.section-title-block p,
+.card p.desc,
+section.about p,
+.rar .proyecto,
+#histNota { text-align: left; }
+
+/* Formas: el C22 no usa esquinas de 4 y 5px. Pildoras o 15px. */
+.pbadge,
+.rp-chip,
+.chip,
+.rank-var,
+.periodo-tab,
+.car-tick,
+.hist-maps a { border-radius: 50px; }
+
+.fact,
+.card,
+.rar .quien,
+.rank-barras,
+.panel,
+.vivo,
+.preview { border-radius: 15px; }
+
+/* Correccion medida en el sitio: las tarjetas del C22 llevan borde de
+   1px rgba(101,125,129,.2) y NINGUNA sombra. La sombra que habia medido antes
+   pertenecia a otros elementos. */
+.fact,
+.card,
+.rar .quien,
+.panel {
+  box-shadow: none;
+  border: 1px solid var(--c22s-borde);
+  background: #fff;
+}
+
+/* Los graficos heredan la tipografia: ejes, leyendas y rotulos dentro de los
+   SVG y de las capas de Plotly, que traian su propia familia por defecto. */
+svg text,
+.js-plotly-plot text,
+.legend text,
+.rank-scale,
+.rp-row,
+.c22-eje { font-family: 'Montserrat', sans-serif; }
+
+/* ── Convivencia con el modo incrustado ──────────────────────────────────────
+   Cuando el Monitor va dentro de un iframe del sitio del C22, la cabecera y el
+   pie los pone la pagina anfitriona: la piel se calla para no duplicarlos.
+   La cabecera propia del Monitor sigue apagada, asi que queda solo contenido. */
+/* La sub-barra del Monitor NO se oculta: ver el bloque de modo incrustado
+   mas abajo. Sin ella no hay forma de moverse entre las secciones. */
+html.c22-embed .c22skin-head,
+html.c22-embed .c22skin-foot { display: none !important; }
+html.c22-embed body { padding-top: 0; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COMPONENTES — la gramatica de piezas del C22, medida en Analisis Online.
+
+     tarjeta        blanca, radio 15px, borde 1px rgba(101,125,129,.2), sin sombra
+     foto           radio asimetrico 10px 10px 15px 0, overflow hidden, cover
+     cuerpo         padding 20px
+     titulo         DM Sans 18/700 #1B1C1E, interlineado 1,4, margen inferior 15
+     fecha/meta     Montserrat 14/500 #657D81
+     «ver mas»      DM Sans 15/700 junto a un circulo de 40px con fondo
+                    rgba(101,125,129,.2) y radio 50px
+     bloque grande  radio 25px, overflow hidden
+     titulo de seccion  subrayado de 6,67px en #4CCAA5
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Las tarjetas de producto del Monitor adoptan la anatomia de las del C22. */
+.cards .card { overflow: visible; }
+.cards .card .preview {
+  border-radius: 10px 10px 15px 0;
+  overflow: hidden;
+}
+.cards .card .preview-img { object-fit: cover; }
+.cards .card h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1B1C1E;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+.cards .card p.desc { font-size: 14px; }
+.cards .card .autor,
+.cards .card .fecha {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c22s-tinta);
+}
+/* El «ver mas» del C22: rotulo en DM Sans 15/700 y disco gris de 40px. */
+.cards .card .cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.cards .card .cta::after {
+  content: '\2192';
+  width: 40px; height: 40px; border-radius: 50px;
+  background: rgba(101, 125, 129, 0.2);
+  color: var(--c22s-tinta);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* Los bloques grandes usan el radio de 25px de las cabeceras de seccion. */
+.panel,
+.hist-mapa,
+.rank-barras,
+.pulso .inner > div { border-radius: 25px; overflow: hidden; }
+
+/* Titulo de seccion con el subrayado verde del sitio. */
+.sec-title,
+.section-title-block h2,
+.rarezas h2 {
+  display: inline-block;
+  border-bottom: 6.67px solid #4CCAA5;
+  padding-bottom: 2px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PORTADA DE SECCION — el rectangulo con el que abren todas las paginas del
+   C22, calcado de Analisis Online (medido sobre 1905x473):
+
+     contenedor   radio 25px, overflow hidden, fotografia en cover
+     velo         circulo de 1012px (53% del ancho) en rgba(27,28,30,.5),
+                  desplazado -10,6% a la izquierda y -21% arriba
+     titulo       DM Sans 700 blanco, subrayado de 6,67px en #4CCAA5
+     bajada       blanca
+
+   Todo lo que ya vivia en el hero del Monitor -incluida la tarjeta de la
+   ultima votacion y el carrusel- queda dentro del rectangulo.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  border-radius: 25px;
+  overflow: hidden;
+  margin: 26px 5% 0;
+  background: #F3F5F5 url('hero-congreso.jpg') center 62%/cover no-repeat;
+}
+/* El mapa de nodos y el lavado del hero original ceden ante la fotografia. */
+.hero .hemi-bg { display: none !important; }
+.hero::after { display: none !important; }
+
+/* El velo circular oscuro: da contraste al texto sin apagar toda la foto. */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 53%;
+  aspect-ratio: 1 / 1;
+  left: -10.6%;
+  top: -21%;
+  border-radius: 50%;
+  background: rgba(27, 28, 30, 0.5);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero .inner { position: relative; z-index: 3; padding: 60px 5%; }
+.hero .eyebrow { color: #fff; }
+.hero h1 {
+  color: #fff;
+  display: inline-block;
+  border-bottom: 6.67px solid #4CCAA5;
+  padding-bottom: 2px;
+}
+.hero p.lead { color: rgba(255, 255, 255, 0.92); }
+.hero #buildStatus { color: rgba(255, 255, 255, 0.85) !important; }
+
+@media (max-width: 900px) {
+  .hero { margin: 18px 5% 0; }
+  .hero .inner { padding: 40px 6%; }
+  .hero::before { width: 160%; left: -30%; top: -34%; }
+}
+
+
+/* Sobre la fotografia, los rotulos que eran grises quedan ilegibles. */
+/* Sobre la foto del hero, con 0,28 de fondo las capsulas se perdian contra
+   los cerros. Con 0,62 y un desenfoque detras se leen sin taparlo todo. */
+.hero .car-tick {
+  color: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(27, 28, 30, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.hero .car-tick.activo,
+.hero .car-tick[aria-current] { background: #1B1C1E; color: #fff; border-color: #1B1C1E; }
+.hero .car-nav button {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(27, 28, 30, 0.28);
+}
+.hero #buildStatus,
+.hero #buildStatus * { color: rgba(255, 255, 255, 0.9) !important; }
+
+/* El velo llega mas abajo para que la bajada tambien apoye en el. */
+.hero::before { width: 62%; left: -14%; top: -18%; }
+
+/* ── Ancho y divisiones, como el resto del sitio ──────────────────────────
+   El C22 no fija un ancho maximo: usa el 90% de la ventana con margenes de
+   5%. El Monitor limitaba el contenido a 1180px, asi que en pantallas anchas
+   quedaba bastante mas angosto que las demas pestañas. */
+:root { --ancho: none; }
+.pulso, .rarezas, .products, section#analiza, .stats, .destacados,
+.ranking-dip, .rankings-sec, .historico, section.about {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+.inner { max-width: none; }
+
+
+/* Las flechas del carrusel de tarjetas: al pasar el contenido al 90% del
+   ancho, las cuatro tarjetas caben desde los 1440px y las flechas quedaban
+   prometiendo un desplazamiento que ya no existe. */
+@media (min-width: 1440px) {
+  .cards-arrow { display: none; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CORRECCIONES DE LA AUDITORIA DEL 20-AGO-2026
+
+   El sistema se habia aplicado solo en la portada; los cuatro visualizadores
+   quedaron a medio camino. Aqui se emparejan.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* G1 · Ancho unico. Los visualizadores limitaban el contenido a 1056px sobre
+   una ventana de 1440 (contenedor de 1200 con 72px de relleno) y Legisladores
+   a 1267. El sitio del C22 usa el 90% de la ventana con margenes del 5%. */
+body > div:not([class]),
+body > main {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 5% !important;
+  padding-right: 5% !important;
+}
+/* Legisladores anidaba dos margenes del 5%: el del contenedor exterior y el
+   de la seccion, que dejaban la grilla en 1166 de 1440. */
+section.grilla { padding-left: 0 !important; padding-right: 0 !important; }
+section.grilla > .inner,
+#grilla,
+#grilla.inner,
+.inner { max-width: none !important; width: auto !important; }
+
+/* G2 · La justificacion sobrevivia en Hemiciclo, Votaciones y Discurso. En
+   columnas angostas abre rios de espacios; el C22 alinea a la izquierda. */
+p, .prose, .sub, .lead, .desc, .nota, li, td,
+main p, .card p, section p { text-align: left !important; }
+
+/* G4 · El gris de cuerpo del C22 rinde 3,99:1 sobre el fondo y 4,37:1 sobre
+   blanco, bajo el minimo de 4,5:1 de la WCAG 2.1 (SC 1.4.3). Este tono es
+   indistinguible a ojo y rinde 5,08:1. */
+:root { --text-2: #566C70; }
+
+/* G5 · Discurso mostraba 91 elementos en Times New Roman: la fuente del
+   sistema colandose donde nadie declaro familia. La guia del proyecto la
+   prohibe expresamente. */
+.speaker-party,
+.name,
+.party,
+.val,
+.lab { font-family: 'Montserrat', sans-serif; }
+.section-title,
+h3.section-title { font-family: 'DM Sans', sans-serif; }
+
+/* G6 · Las sombras sobrevivian solo en la portada, con tres recetas distintas.
+   El C22 no usa ninguna: sus tarjetas se separan con borde. */
+.fact, .card, .rar .quien, .panel, .preview,
+.cards-arrow, .fact-foto, .rank-barras { box-shadow: none !important; }
+
+/* G7 · Radios fuera del sistema. El C22 usa 50px, 30px, 25px y 15px. */
+.rar .quien, .rank-barras, .fact { border-radius: 15px; }
+
+/* M2 · Desborde horizontal en el telefono: los grupos de pestañas de
+   Votaciones median hasta 447px dentro de una ventana de 390, y un buscador
+   de Discurso se salia 6px. */
+.tab-group, .tabs, .pill-group {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+input, select, textarea { max-width: 100%; box-sizing: border-box; }
+
+/* M2b · El buscador de la red de Discurso vive en una fila flex sin envoltura
+   y el campo no encogia: en 390px la fila median 343 dentro de 285. */
+@media (max-width: 640px) {
+  #tab-red div[style*="display:flex"] { flex-wrap: wrap; }
+  #networkSearch { flex: 1 1 140px; min-width: 0; width: 100%; }
+}
+
+/* M2c · Las pastillas de la leyenda del mapa llevaban ancho fijo de 62px, asi
+   que cualquier nombre largo se salia: "Republicanos 31" escapaba del borde
+   redondeado. Con el ancho como minimo, las cortas siguen alineadas. */
+.coal-chip { width: auto !important; min-width: 62px; }
+
+/* Credito institucional: el apoyo de SODAS vive en el pie, bajo los logos.
+   Estaba solo en el pie antiguo, que esta piel oculta, y se habia perdido. */
+.c22skin-foot .c22skin-apoyo { margin-top: 22px; }
+.c22skin-foot .c22skin-apoyo .rot {
+  display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 1.6px;
+  text-transform: uppercase; color: rgba(255,255,255,.42); margin-bottom: 9px;
+}
+.c22skin-foot .c22skin-apoyo img {
+  height: 30px; width: auto; display: block; opacity: .92; transition: opacity .2s;
+}
+.c22skin-foot .c22skin-apoyo a:hover img { opacity: 1; }
+
+/* ── Modo incrustado ──────────────────────────────────────────────────────
+   Dentro del iframe del sitio del C22 la barra de arriba SI se duplica con la
+   del anfitrion, asi que se oculta. La sub-barra del Monitor no se duplica con
+   nada: es la unica forma de moverse entre las secciones, y sin ella el
+   visitante queda encerrado en la portada. Se conserva, pero deja de ser fija:
+   el iframe se expande a su alto completo y no tiene scroll propio, asi que
+   'fixed' la clavaria arriba de todo el documento en vez de a la ventana. */
+html.c22-embed .c22skin-head { display: none !important; }
+html.c22-embed .c22skin-sub {
+  position: static; top: auto; margin: 0 0 4px; border-top: none;
+}
+html.c22-embed body { padding-top: 0 !important; }
+
+/* E1 · Dentro de la pagina del C22 el iframe ya vive en un contenedor con
+   margenes del 5% (.wrap-s), asi que nuestro propio 5% se sumaba al suyo: el
+   contenido quedaba al 81% de la ventana, visiblemente mas angosto que las
+   demas pestañas. En modo incrustado los margenes laterales los pone el
+   anfitrion y aqui se anulan. */
+html.c22-embed body > div:not([class]),
+html.c22-embed body > main {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+html.c22-embed .pulso,
+html.c22-embed .rarezas,
+html.c22-embed .products,
+html.c22-embed section#analiza,
+html.c22-embed .stats,
+html.c22-embed .destacados,
+html.c22-embed .ranking-dip,
+html.c22-embed .rankings-sec,
+html.c22-embed .historico,
+html.c22-embed section.about {
+  padding-left: 0;
+  padding-right: 0;
+}
+html.c22-embed .hero { margin-left: 0; margin-right: 0; }
+
+/* La barra del Monitor pesaba como una segunda cabecera. Sin relleno propio ni
+   borde inferior, y mas baja, se lee como una linea de seccion y no como otro
+   nivel de chrome encima del anfitrion. */
+html.c22-embed .c22skin-sub {
+  background: transparent; border-bottom: none; height: auto;
+  padding-top: 14px; padding-bottom: 6px;
+}
+
+
+/* ── Las secciones del Monitor, como en Publicaciones del C22 ──────────────
+   En vez de una huincha de ancho completo que se apila bajo la cabecera del
+   anfitrion, una pildora blanca centrada que flota sobre el hero. Pesa menos
+   y deja de leerse como un segundo nivel de chrome. */
+.c22skin-sub {
+  /* Sigue al lector: se despega y queda bajo la cabecera fija al bajar. Antes
+     era 'relative' y solo el modo incrustado la dejaba pegada, asi que en el
+     sitio suelto la unica forma de cambiar de seccion se perdia de vista. */
+  position: sticky; top: calc(var(--c22s-alto) + 8px); left: auto; right: auto;
+  height: auto; background: transparent; border: none; padding: 0;
+  display: flex; justify-content: center; overflow: visible;
+  z-index: 40; margin: 0 5% -30px;
+  pointer-events: none;   /* la franja no tapa los clics; la pastilla si recibe */
+}
+/* El sticky se rompe si un antepasado recorta en vertical. 'clip' en la
+   horizontal evita el desborde lateral sin crear un contenedor de scroll. */
+html, body { overflow-x: clip; }
+/* Medida contra el selector de Publicaciones del C22 (ul.header-anchor): tres
+   esquinas redondas de 50 px y la de abajo a la izquierda cuadrada, relleno de
+   15 por 25, y una sombra corta que solo cae hacia abajo. Antes era un
+   rectangulo de 14 px con una sombra difusa: se veia de otra casa. */
+.c22skin-sub > .c22skin-pastilla {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 26px; flex-wrap: wrap;
+  justify-content: center; background: #fff;
+  border-radius: 50px 50px 50px 0;
+  padding: 15px 25px;
+  box-shadow: 0 10px 10px -10px rgba(27, 28, 30, .4);
+}
+.c22skin-sub .c22skin-rotulo { display: none; }
+/* Tipografia del selector del C22: DM Sans, 14 px, 700, versalitas, sin
+   espaciado extra y en el mismo gris casi negro. La mia iba en Montserrat de
+   13,5 y en un gris verdoso mas claro. */
+.c22skin-sub a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: normal; text-transform: uppercase;
+  color: rgb(48, 48, 48); position: relative;
+  /* Anula el relleno y el borde que traia de cuando la barra era una huincha
+     de ancho completo: sumaban 10 px al alto del enlace y la pastilla
+     terminaba en 65 en vez de los 55 que mide la de Publicaciones cuando sus
+     rotulos caben en una linea. */
+  padding: 0; border-bottom: 0;
+}
+.c22skin-sub a:hover { color: #000; }
+.c22skin-sub a.c22skin-aqui { color: #000; }
+/* El subrayado de la seccion activa va colgado por fuera de la caja. Como
+   borde sumaba cinco pixeles al alto del enlace y la barra terminaba en 64 en
+   vez de los 55 que mide la de Publicaciones cuando sus rotulos caben en una
+   linea. */
+.c22skin-sub a.c22skin-aqui::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -5px;
+  height: 2px; background: #4CCAA5;
+}
+/* La pildora se monta sobre el hero: este sube para recibirla */
+.hero { padding-top: 58px; }
+@media (max-width: 720px) {
+  .c22skin-sub { margin: 0 4% -22px; }
+  /* Los seis nombres se envolvian en tres filas y la pastilla quedaba de 155 px
+     clavada arriba: casi un quinto de la pantalla de un telefono, tapando el
+     contenido mientras se baja. En una sola fila que se desliza al costado
+     ocupa lo que debe y se llega igual a todas las secciones. */
+  .c22skin-sub > .c22skin-pastilla {
+    gap: 18px; padding: 10px 16px; flex-wrap: nowrap;
+    justify-content: flex-start; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .c22skin-sub > .c22skin-pastilla::-webkit-scrollbar { display: none; }
+  /* Un velo en el borde derecho avisa que la fila sigue: sin el, la seccion
+     cortada a la mitad se lee como un error de diagramacion. */
+  .c22skin-sub > .c22skin-pastilla {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+  }
+  /* Cada seccion era un blanco de 24 px de alto; un dedo necesita unos 44. */
+  .c22skin-sub a { font-size: 11.5px; letter-spacing: .2px; flex: 0 0 auto;
+    padding: 9px 0 7px; }
+  .c22skin-ico { height: 21px; width: auto; }
+}
+
+/* Cada seccion con su icono. Los tamanos salen de medir el selector de
+   Publicaciones del C22: icono de 19x25 y texto de 14 px en negrita, sin
+   espaciado de letras. Antes iban en 17 y 12, y se veian encogidos al lado. */
+.c22skin-sub a { display: inline-flex; align-items: center; gap: 8px; }
+/* Lo constante es el alto -25 px, como los del C22- y el grosor del trazo.
+   El ancho lo pone cada figura: forzarlas todas a 19 px las dejaba estiradas,
+   porque una casa o un hemiciclo no son verticales como un documento. */
+.c22skin-ico { height: 25px; width: auto; flex-shrink: 0; opacity: 1; }
+.c22skin-sub a.c22skin-aqui .c22skin-ico { color: #0E7A5F; }
+@media (max-width: 720px) { .c22skin-ico { height: 21px; width: auto; } }
+
+/* ── Animaciones, copiadas del landing del C22 ─────────────────────────────
+   Ese sitio usa AOS con tres entradas -fade-right, zoom-in y zoom-in-left-,
+   retardos escalonados de 100 a 500 ms y curva ease, mas un zoom lento tipo
+   Ken Burns en las fotos (31 s, de 1 a 1,15 y vuelta). Aca se reproduce con
+   IntersectionObserver: mismo resultado, sin cargar la libreria ni su hoja.
+   Nada se mueve si el sistema pide menos animacion. */
+.c22anim { opacity: 0; transition: opacity .4s ease, transform .4s ease; will-change: opacity, transform; }
+.c22anim-der  { transform: translateX(-26px); }   /* fade-right */
+.c22anim-zoom { transform: scale(.94); }          /* zoom-in */
+.c22anim-zizq { transform: scale(.94) translateX(26px); }  /* zoom-in-left */
+.c22anim.c22anim-ok { opacity: 1; transform: none; }
+
+/* El zoom lento sobre la foto del hero (el Ken Burns del C22) se probo y se
+   descarto: en una foto con tanto detalle urbano mareaba en vez de acompanar.
+   La foto queda quieta. */
+.hero { overflow: hidden; }
+
+/* Hover base del sitio: 0,25 s ease-in-out, como sus 232 elementos */
+.card, .rar, .fact, .panel, .p-card { transition: all .25s ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .c22anim, .c22anim.c22anim-ok { opacity: 1; transform: none; transition: none; }
+  .hero::before { animation: none; }
+  .card, .rar, .fact, .panel, .p-card { transition: none; }
+}
+
+/* ── Cartel de obras ──────────────────────────────────────────────────────
+   Vela la plataforma entera mientras se termina. Es un aviso, no un cierre:
+   el contenido sigue siendo publico para quien sepa mirar el codigo. El
+   interruptor esta en inject_skin.py (EN_OBRAS); esto solo lo viste. */
+html.c22-en-obras body > *:not(.c22-obras) { pointer-events: none; }
+html.c22-en-obras body { user-select: none; -webkit-user-select: none; }
+
+.c22-obras {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 5%;
+  background: rgba(27, 28, 30, 0.62);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+}
+.c22-obras .caja {
+  max-width: 560px; width: 100%;
+  background: #fff; border: 1.11px solid rgba(101, 125, 129, 0.2);
+  border-radius: 25px; padding: 44px 44px 40px;
+  text-align: left;
+}
+.c22-obras .ceja {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 12px;
+  letter-spacing: 1.4px; text-transform: uppercase; color: #0E7A5F;
+  margin-bottom: 18px;
+}
+.c22-obras .ceja::before {
+  content: ''; width: 28px; height: 3px; background: #4CCAA5; flex: 0 0 28px;
+}
+.c22-obras h2 {
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 32px;
+  line-height: 1.02; letter-spacing: 0; color: #1B1C1E; margin: 0 0 14px;
+}
+.c22-obras p {
+  font-family: 'Montserrat', sans-serif; font-size: 16px; line-height: 1.4;
+  color: #566C70; margin: 0 0 12px; text-align: left;
+}
+.c22-obras .volver {
+  display: inline-block; margin-top: 14px;
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: #1B1C1E; border-bottom: 3px solid #4CCAA5; padding-bottom: 2px;
+  text-decoration: none; pointer-events: auto;
+}
+@media (max-width: 640px) {
+  .c22-obras .caja { padding: 32px 26px 28px; border-radius: 15px; }
+  .c22-obras h2 { font-size: 26px; }
+}
+
+/* ── Ajustes de la cabecera del Monitor ───────────────────────────────────
+   1. La pastilla se queda a la vista al bajar. Dentro del iframe del C22 no
+      hay scroll propio -la pagina madre lo lleva- asi que ahi 'sticky' no se
+      dispara; funciona en el sitio suelto y no estorba en el incrustado.
+   2. Se monta sobre el hero en vez de flotar encima con aire: sobraba espacio
+      arriba y la cabecera arrancaba muy abajo. */
+/* El marco se estira al alto del contenido para que haya un solo scroll, con
+   lo cual deja de tener ventana propia y la barra no puede quedarse fija: no
+   hay borde contra el que anclarla. Va montada sobre el hero, como estaba. */
+html.c22-embed .c22skin-sub {
+  position: sticky; top: 8px;
+  margin: 0 5% -34px;
+  pointer-events: none;
+}
+html.c22-embed .c22skin-sub > .c22skin-pastilla { pointer-events: auto; }
+html.c22-embed .hero { margin-top: 0; }
+
+/* Las miniaturas eran recortes de esquina de capturas completas y se veian
+   como un tajo sin sentido. Encuadradas arriba al centro se reconoce el
+   grafico de cada herramienta. */
+.hero-fila .ct-mini { object-position: 50% 12% !important; }
+
+/* Los enlaces del pie median entre 16 y 20 px de alto: con el dedo se acierta
+   uno de cada tres. Solo en pantalla angosta; con puntero no hacen falta. */
+@media (max-width: 760px) {
+  .c22skin-foot a { display: inline-block; padding: 7px 0; min-height: 30px; }
+  .c22skin-foot .c22skin-foot-redes a { padding: 9px 0; }
+}
+
+/* La barra se probo recogiendose en una columna a la izquierda al bajar, para
+   devolverle 55 px de alto al contenido. Se descarto: dentro del marco el
+   contenido va de borde a borde, asi que la columna solo cabia corriendo todo
+   92 px, y ese desplazamiento en pleno scroll molestaba mas de lo que rendia.
+   Ademas el marco real mide 824 px de 900 -no los 675 que suponia-, con lo
+   cual los 55 px de la barra son un 6,7% y no valen el enredo. */

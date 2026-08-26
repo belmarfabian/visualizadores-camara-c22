@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- c22skin:inicio alto -->
+  <script>
+  /* El Monitor dentro del iframe del C22.
+
+     Le avisa al anfitrion cuanto mide para que estire el marco al alto real
+     del contenido. Asi queda una sola barra de scroll -la de la pagina- y no
+     dos anidadas: con el marco a su alto por defecto, la rueda movia el
+     Monitor solo con el puntero encima, y sobre los margenes del anfitrion
+     movia la pagina. Dos deslizadores conviviendo confunden mas de lo que
+     aportan.
+
+     El precio conocido: estirado, el marco deja de tener ventana propia -mide
+     lo mismo que su documento- y ahi dentro ni 'sticky' ni 'fixed' tienen
+     contra que anclarse, asi que la barra de secciones no puede seguir al
+     lector. Se probo al reves y no compenso. */
+  (function () {
+    var raiz = document.documentElement;
+    var forzado = /[?&]embed=1/.test(location.search);
+    var enMarco = false;
+    try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
+    /* La marca de modo incrustado vivia copiada dentro de cada pagina, y
+       rankings -que se creo despues- nunca la recibio. Va aqui, en la piel,
+       que es lo unico que todas comparten. */
+    if (forzado || enMarco) raiz.classList.add('c22-embed');
+    if (!enMarco) return;
+
+    var ultimo = 0;
+    function avisar() {
+      var h = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      if (Math.abs(h - ultimo) < 3) return;
+      ultimo = h;
+      try { parent.postMessage({ c22monitor: 'alto', alto: h }, '*'); } catch (e) {}
+    }
+    window.addEventListener('load', avisar);
+    window.addEventListener('resize', avisar);
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(avisar).observe(raiz); } catch (e) {}
+    }
+    setInterval(avisar, 1200);
+    /* El tema del C22 le da al marco un alto por defecto, asi que hasta el
+       primer aviso el contenido sobra por abajo y el iframe saca su propia
+       barra. Se avisa cuanto antes y varias veces, que es cuando el contenido
+       va creciendo. */
+    [0, 60, 160, 320, 700, 1500, 3000].forEach(function (ms) { setTimeout(avisar, ms); });
+    if (window.requestAnimationFrame) requestAnimationFrame(avisar);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', avisar);
+    } else { avisar(); }
+
+    /* Mientras el anfitrion no haya ajustado el marco, se esconde la barra de
+       scroll de aca para que no se vean las dos. Se repone sola si a los tres
+       segundos el anfitrion no dio senales de estar escuchando, para que el
+       contenido nunca quede inalcanzable. */
+    var altoInicial = window.innerHeight;
+    var desde = Date.now();
+    raiz.style.overflowY = 'hidden';
+    function barra() {
+      var cont = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      var respondio = window.innerHeight !== altoInicial;
+      var calza = Math.abs(window.innerHeight - cont) < 40;
+      var margen = Date.now() - desde < 3000;
+      raiz.style.overflowY = (calza || respondio || margen) ? 'hidden' : '';
+    }
+    setInterval(barra, 400);
+    window.addEventListener('resize', barra);
+  })();
+  </script>
+  <!-- c22skin:fin alto -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de estilo · Monitor Legislativo C22-CEP</title>
+<meta name="description" content="Decisiones estéticas y de lenguaje que rigen todas las páginas del Monitor Legislativo C22-CEP.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/c22.css">
+<style>
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 5%; }
+  h1 { font-size:clamp(30px,4.4vw,46px); line-height:1.1; letter-spacing:-.5px; margin:14px 0 12px; }
+  h2 { font-size:26px; letter-spacing:-.3px; margin:0 0 6px; }
+  h3 { font-size:16px; margin:26px 0 10px; }
+  p, li { font-family:var(--mont); font-size:15px; line-height:1.75; color:var(--text); }
+  p.lead { font-size:17px; color:var(--text-2); max-width:70ch; }
+  section.blk { padding:44px 0; border-top:1px solid var(--border-light); }
+  .sec-num { font-family:var(--mont); font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-2); }
+  .nota { font-family:var(--mont); font-size:13px; color:var(--text-2); line-height:1.7; }
+  code { font-family:'IBM Plex Mono',monospace; font-size:13px; background:rgba(101,125,129,.1); padding:1px 6px; border-radius:4px; }
+  pre { background:var(--dark); color:#e8eced; padding:16px 18px; border-radius:10px; overflow-x:auto; font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.6; }
+  table { width:100%; border-collapse:collapse; font-family:var(--mont); font-size:13.5px; }
+  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--border-light); vertical-align:top; }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-2); font-weight:700; }
+  .scroll-x { overflow-x:auto; }
+  /* muestras */
+  .swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin:18px 0; }
+  .sw .chip { height:64px; border-radius:10px; border:1px solid var(--border-light); }
+  .sw .nom { font-family:var(--mont); font-size:12.5px; font-weight:700; margin-top:8px; }
+  .sw .val { font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-2); }
+  .demo { background:var(--bg-white); border:1px solid var(--border-light); border-radius:14px; padding:22px; margin:14px 0; }
+  .demo-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .ok-mal { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0; }
+  .ok-mal > div { background:var(--bg-white); border:1px solid var(--border-light); border-radius:12px; padding:16px 18px; }
+  .ok-mal .tit { font-family:var(--mont); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.4px; margin-bottom:8px; }
+  .ok .tit { color:var(--green); } .mal .tit { color:var(--red); }
+  .ok-mal p { font-size:14px; margin:0; }
+  .toc { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 4px; }
+  .toc a { font-family:var(--mont); font-size:12px; font-weight:600; text-decoration:none; color:var(--text-2);
+           border:1px solid var(--border); border-radius:50px; padding:6px 14px; transition:all .2s; }
+  .toc a:hover { border-color:var(--text-2); color:var(--dark); }
+  @media (max-width:700px){ .ok-mal { grid-template-columns:1fr; } }
+</style>
+  <!-- c22skin:css -->
+  <link rel="stylesheet" href="../assets/c22-skin.css">
+  <script src="../assets/c22-anim.js" defer></script>
+</head>
+<body>
+<!-- c22skin:inicio cabecera -->
+    <header class="c22skin-head">
+      <a class="c22skin-logo" href="https://c22cepchile.cl"><img src="../assets/logo-color.svg" alt="C22"></a>
+      <nav class="c22skin-nav" aria-label="Secciones de C22">
+        <a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a>
+        <a href="https://c22cepchile.cl/personas/">Personas</a>
+        <a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a>
+        <a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a>
+        <a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a>
+        <a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a>
+        <a href="../" class="c22skin-aqui" aria-current="page">Monitor</a>
+      </nav>
+      <a class="c22skin-contacto" href="https://c22cepchile.cl/contacto/">Contacto</a>
+      <a class="c22skin-buscar" href="https://c22cepchile.cl/?s=" aria-label="Buscar en el sitio de C22">Buscar</a>
+      <a class="c22skin-cep" href="https://www.cepchile.cl" target="_blank" rel="noopener"><img src="../assets/logo-cep-color.svg" alt="Centro de Estudios Públicos"></a>
+    </header>
+    <nav class="c22skin-sub" aria-label="Secciones del Monitor Legislativo">
+      <div class="c22skin-pastilla">
+        <a href="../" class="" data-rotulo="Portada"><svg class="c22skin-ico" viewBox="0 0 112 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 47 56 10l49 37"/><path d="M17.5 39v54h77V39"/><path d="M43 93V63.5h26V93"/></svg><span>Portada</span></a>
+        <a href="../hemiciclo/" class="" data-rotulo="Hemiciclo"><svg class="c22skin-ico" viewBox="0 0 126 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 93.5h117"/><circle cx="18" cy="77" r="7.5"/><circle cx="35.5" cy="54" r="7.5"/><circle cx="63" cy="45" r="7.5"/><circle cx="90.5" cy="54" r="7.5"/><circle cx="108" cy="77" r="7.5"/><path d="M52 93.5v-9h22v9"/></svg><span>Hemiciclo</span></a>
+        <a href="../votaciones/" class="" data-rotulo="Votaciones"><svg class="c22skin-ico" viewBox="0 0 106 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 93.5h96"/><rect x="15" y="56" width="22" height="37.5"/><rect x="42" y="22" width="22" height="71.5"/><rect x="69" y="42" width="22" height="51.5"/></svg><span>Votaciones</span></a>
+        <a href="../discurso/" class="" data-rotulo="Discurso"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26a9 9 0 0 1 9-9h86a9 9 0 0 1 9 9v42a9 9 0 0 1-9 9H43L23 93.5V77h-8a9 9 0 0 1-9-9z"/><path d="M25 38h66"/><path d="M25 57h40"/></svg><span>Discurso</span></a>
+        <a href="../legisladores/" class="" data-rotulo="Legisladores"><svg class="c22skin-ico" viewBox="0 0 122 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="44" cy="31" r="18"/><path d="M8 90a36 36 0 0 1 72 0"/><circle cx="95" cy="42" r="13"/><path d="M89 76a23 23 0 0 1 26 14"/></svg><span>Legisladores</span></a>
+        <a href="../rankings/" class="" data-rotulo="Rankings"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="14" width="100" height="21"/><rect x="8" y="41" width="70" height="21"/><rect x="8" y="68" width="43" height="21"/></svg><span>Rankings</span></a>
+      </div>
+    </nav>
+<!-- c22skin:fin cabecera -->
+
+<div class="c22-ribbon"><img src="../assets/ribbon.svg" alt=""></div>
+
+<div class="c22-brandbar">
+  <div class="inner">
+    <div class="marca">
+      <a href="https://c22cepchile.cl" target="_blank" rel="noopener" aria-label="C22 CEP"><img class="logo-c22" src="../assets/logo-color.svg" alt="C22"></a>
+      <a href="https://www.cepchile.cl" target="_blank" rel="noopener" aria-label="CEP"><img class="logo-cep" src="../assets/logo-cep-color.svg" alt="CEP"></a>
+      <span class="sep">|</span>
+      <span class="sub">Monitor Legislativo<br>Congreso Nacional</span>
+    </div>
+    <a class="c22-btn-portal" href="../">← Portal</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="c22skin-fuera" style="padding:44px 0 10px">
+    <div class="c22-eyebrow">Documento interno · Referencia</div>
+    <h1>Manual de estilo del Monitor Legislativo</h1>
+    <p class="lead">Las decisiones estéticas y de lenguaje que rigen las cuatro páginas de la plataforma.
+      Esta página está construida con el CSS real del sitio (<code>assets/c22.css</code>), así que lo que se ve
+      acá es exactamente lo que se ve en producción. Si cambiamos un color o un componente, cambia también este manual.</p>
+    <div class="toc">
+      <a href="#marca">Marca y nombre</a>
+      <a href="#paleta">Paleta</a>
+      <a href="#tipografia">Tipografía</a>
+      <a href="#componentes">Componentes</a>
+      <a href="#estructura">Estructura de página</a>
+      <a href="#lenguaje">Lenguaje</a>
+      <a href="#graficos">Gráficos y datos</a>
+      <a href="#accesibilidad">Accesibilidad</a>
+      <a href="#checklist">Checklist</a>
+    </div>
+  </header>
+
+  <!-- ─────────────────────────────────────────────── 1 · MARCA ── -->
+  <section class="blk" id="marca">
+    <div class="sec-num">01</div>
+    <h2>Marca y nombre</h2>
+    <p>La plataforma se llama <strong>Monitor Legislativo · C22-CEP</strong>. Ese nombre va en el
+      <code>&lt;title&gt;</code> de cada página, en la barra de marca superior y en la línea inferior del footer.
+      Antes convivían tres nombres distintos («Visualizadores Cámara», «Métodos digitales», «Monitor Legislativo»);
+      quedó uno solo.</p>
+    <p>Cubre <strong>Cámara y Senado</strong>, así que el subtítulo institucional dice «Congreso Nacional» y no
+      «Cámara de Diputadas y Diputados». Cuando el texto se refiere específicamente a una de las dos corporaciones,
+      ahí sí se nombra: «Cámara de Diputadas y Diputados» completo, nunca «Diputados» a secas.</p>
+
+    <div class="scroll-x"><table>
+      <tr><th>Dónde</th><th>Qué dice</th></tr>
+      <tr><td><code>&lt;title&gt;</code> portada</td><td>Monitor Legislativo · C22-CEP</td></tr>
+      <tr><td><code>&lt;title&gt;</code> subpágina</td><td>Hemiciclo de votaciones · Monitor Legislativo C22-CEP</td></tr>
+      <tr><td>Barra de marca</td><td>Monitor Legislativo / Congreso Nacional</td></tr>
+      <tr><td>Footer, línea inferior</td><td>2026 · C22 · Centro de Estudios Públicos | Monitor Legislativo · Métodos digitales</td></tr>
+    </table></div>
+
+    <h3>Créditos institucionales</h3>
+    <p>El footer de todas las páginas lleva el apoyo del <strong>Núcleo Milenio para la Ciencia de Datos Sociales (SODAS)</strong>
+      y la columna <strong>Equipo</strong>: Aldo Mascareño, Pablo Henríquez, Juan Rozas, Fabián Belmar y Katherine Aravena.
+      Los logos institucionales son solo dos, C22 y CEP; SODAS va como línea de texto, no como logo, porque es un apoyo
+      a la investigación y no un co-patrocinio de la plataforma.</p>
+  </section>
+
+  <!-- ─────────────────────────────────────────────── 2 · PALETA ── -->
+  <section class="blk" id="paleta">
+    <div class="sec-num">02</div>
+    <h2>Paleta</h2>
+    <p>Cuatro acentos sobre neutros gris-teal. No hay azul de marca. Cualquier color que no esté en esta tabla
+      no es C22 y debe mapearse a uno de estos tokens. Regla dura: <strong>ningún hex suelto</strong> en CSS, JS ni SVG,
+      siempre <code>var(--token)</code>.</p>
+
+    <h3>Acentos</h3>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--green)"></div><div class="nom">Verde</div><div class="val">--green · #4CCAA5</div></div>
+      <div class="sw"><div class="chip" style="background:var(--yellow)"></div><div class="nom">Amarillo</div><div class="val">--yellow · #FFB923</div></div>
+      <div class="sw"><div class="chip" style="background:var(--red)"></div><div class="nom">Rojo</div><div class="val">--red · #F20231</div></div>
+      <div class="sw"><div class="chip" style="background:var(--purple)"></div><div class="nom">Morado</div><div class="val">--purple · #A10856</div></div>
+    </div>
+
+    <h3>Neutros</h3>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--bg)"></div><div class="nom">Fondo</div><div class="val">--bg · #F3F5F5</div></div>
+      <div class="sw"><div class="chip" style="background:var(--bg-white)"></div><div class="nom">Superficie</div><div class="val">--bg-white · #FFFFFF</div></div>
+      <div class="sw"><div class="chip" style="background:var(--dark)"></div><div class="nom">Oscuro</div><div class="val">--dark · #1B1C1E</div></div>
+      <div class="sw"><div class="chip" style="background:var(--text)"></div><div class="nom">Texto</div><div class="val">--text · #303030</div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-2)"></div><div class="nom">Texto 2</div><div class="val">--text-2 · #657D81</div></div>
+      <div class="sw"><div class="chip" style="background:var(--border)"></div><div class="nom">Borde</div><div class="val">--border · teal 20%</div></div>
+    </div>
+
+    <h3>Qué significa cada acento</h3>
+    <div class="scroll-x"><table>
+      <tr><th>Color</th><th>Significado fijo</th><th>Nunca</th></tr>
+      <tr><td>Verde</td><td>Voto a favor · acento primario de la marca (eyebrows, enlaces de sección)</td><td>Señalar un error o un rechazo</td></tr>
+      <tr><td>Amarillo</td><td>Abstención · cursor temporal en las series</td><td>Aprobación</td></tr>
+      <tr><td>Rojo</td><td>Voto en contra · rechazo</td><td>Decorar un título sin significado de voto</td></tr>
+      <tr><td>Morado</td><td>Discurso y destacados editoriales</td><td>Usarlo en eyebrows (esos son siempre verdes)</td></tr>
+      <tr><td>Gris claro</td><td>Ausente, pareo, sin dato</td><td>Confundirse con abstención, que es amarillo</td></tr>
+    </table></div>
+    <p class="nota">La paleta de partidos vive aparte, en <code>assets/paleta-partidos.js</code>, y es la única
+      autorizada para colorear por partido. No se inventan colores de partido en cada página.</p>
+  </section>
+
+  <!-- ─────────────────────────────────────── 3 · TIPOGRAFÍA ── -->
+  <section class="blk" id="tipografia">
+    <div class="sec-num">03</div>
+    <h2>Tipografía</h2>
+    <p><strong>DM Sans</strong> para títulos, cifras y elementos de interfaz. <strong>Montserrat</strong> para
+      texto corrido, etiquetas y footer. Nunca la fuente del sistema como base.</p>
+    <div class="demo">
+      <div style="font-family:var(--dm);font-size:34px;font-weight:700;letter-spacing:-.5px">Título en DM Sans 700</div>
+      <div style="font-family:var(--dm);font-size:19px;margin-top:6px">Subtítulo en DM Sans 400</div>
+      <p style="margin:14px 0 0">Texto corrido en Montserrat 400. Es la fuente del cuerpo: párrafos de las
+        introducciones, notas metodológicas y todo lo que se lee de corrido.</p>
+      <div class="c22-eyebrow" style="margin-top:16px">Etiqueta en Montserrat 700</div>
+    </div>
+    <p class="nota">Las etiquetas y eyebrows van en mayúsculas con <code>letter-spacing</code> de 1,5 a 2px.
+      Los títulos, en cambio, van en capitalización normal: nunca Title Case A La Inglesa.</p>
+  </section>
+
+  <!-- ─────────────────────────────────────── 4 · COMPONENTES ── -->
+  <section class="blk" id="componentes">
+    <div class="sec-num">04</div>
+    <h2>Componentes</h2>
+    <p>Viven en <code>assets/c22.css</code>. Se usan tal cual; si algo hay que cambiar, se cambia ahí y no en
+      cada página por separado.</p>
+
+    <h3>Eyebrow de sección</h3>
+    <div class="demo"><div class="c22-eyebrow">Visualizador 1 · Hemiciclo</div></div>
+    <p class="nota">Línea verde de 24×2px más texto en mayúsculas. Siempre verde, nunca morado.</p>
+
+    <h3>Pills (filtros y pestañas)</h3>
+    <div class="demo demo-row">
+      <button class="c22-pill active">Por voto</button>
+      <button class="c22-pill">Por coalición</button>
+      <button class="c22-pill">Por bloques</button>
+    </div>
+    <p class="nota">Radio 50px. El estado activo es fondo oscuro con texto blanco; nunca un acento de color,
+      que se reserva para significar datos.</p>
+
+    <h3>Badges</h3>
+    <div class="demo demo-row">
+      <span class="c22-badge" style="--c:var(--green)">Aprobado</span>
+      <span class="c22-badge" style="--c:var(--red)">Rechazado</span>
+      <span class="c22-badge" style="--c:var(--yellow)">Abstención</span>
+      <span class="c22-badge solida" style="--c:var(--purple)">Discrepan</span>
+    </div>
+
+    <h3>Tarjetas y paneles</h3>
+    <div class="demo" style="padding:0;border:none;background:transparent">
+      <div class="c22-card" style="max-width:420px">
+        <div class="c22-eyebrow" style="margin-bottom:8px">Última votación</div>
+        <div style="font-weight:700;font-size:16px;line-height:1.3">Modifica la ley N° 21.600 sobre el Servicio de Biodiversidad</div>
+        <div class="nota" style="margin-top:6px">12 ago 2026 · Proyecto de Ley</div>
+      </div>
+    </div>
+    <p class="nota">Fondo blanco, borde suave, radio 14px. Sin sombras: la jerarquía se construye con el
+      contraste de fondo, no con relieve.</p>
+  </section>
+
+  <!-- ─────────────────────────────────── 5 · ESTRUCTURA ── -->
+  <section class="blk" id="estructura">
+    <div class="sec-num">05</div>
+    <h2>Estructura de página</h2>
+    <p>Toda página de la plataforma sigue el mismo orden vertical. Un lector que aprende a moverse en el
+      hemiciclo debe reconocer de inmediato dónde está todo en el panel de votaciones.</p>
+    <pre>ribbon (6px)
+barra de marca      logos C22 + CEP · «Monitor Legislativo / Congreso Nacional» · ← Portal
+encabezado          eyebrow verde · h1 · párrafo de contexto
+controles           selector de corporación · pestañas · pills de modo
+contenido           la visualización y sus paneles
+ribbon (4px)
+footer              marca + SODAS · Productos · Recursos · Equipo</pre>
+
+    <h3>Ancho y aire</h3>
+    <p>Contenido a <strong>1200px</strong> máximo, con <code>padding</code> lateral de 5%. Las secciones se
+      separan con 40-50px verticales. El texto de lectura no pasa de 70 caracteres por línea.</p>
+
+    <h3>Botón «Cómo funciona»</h3>
+    <p>Cada página tiene su guía paso a paso (<code>assets/c22-tour.js</code>), accesible desde el botón
+      «Cómo funciona» y cerrable con <kbd>Esc</kbd>. Es la manera de explicar la herramienta sin llenar la
+      pantalla de instrucciones.</p>
+  </section>
+
+  <!-- ─────────────────────────────────────── 6 · LENGUAJE ── -->
+  <section class="blk" id="lenguaje">
+    <div class="sec-num">06</div>
+    <h2>Lenguaje</h2>
+    <p>Registro sobrio y descriptivo. Afirmamos el dato directo, con su número; el mecanismo que lo explica
+      va aparte y con matiz. La plataforma muestra qué pasó, no dictamina quién tiene razón.</p>
+
+    <div class="ok-mal">
+      <div class="ok"><div class="tit">Así</div>
+        <p>«74 votos a favor, 51 en contra. Aprobado.»</p></div>
+      <div class="mal"><div class="tit">Así no</div>
+        <p>«Contundente triunfo del oficialismo en una votación clave.»</p></div>
+    </div>
+    <div class="ok-mal">
+      <div class="ok"><div class="tit">Así</div>
+        <p>«Cámara de Diputadas y Diputados», «senadoras y senadores».</p></div>
+      <div class="mal"><div class="tit">Así no</div>
+        <p>«Diputados» a secas para referirse a toda la corporación.</p></div>
+    </div>
+    <div class="ok-mal">
+      <div class="ok"><div class="tit">Así</div>
+        <p>«Segunda dimensión»: una fuente de variación ortogonal a la primera, aún en estudio.</p></div>
+      <div class="mal"><div class="tit">Así no</div>
+        <p>«Eje outsider ↔ institucional», «centro excéntrico»: rotular la Dim 2 con un significado que todavía no confirmamos.</p></div>
+    </div>
+
+    <h3>Números</h3>
+    <p>Coma decimal y punto de miles: <strong>0,96</strong> y <strong>15.892</strong>. Fechas en texto
+      («12 ago 2026») y no en formato numérico ambiguo. Los porcentajes van sin decimales salvo que la
+      diferencia relevante esté ahí.</p>
+
+    <h3>Siglas de partido</h3>
+    <p style="font-family:var(--mont)">PC · FA · FRVS · PS · PPD · DC · PdG · PNL · Evópoli · RN · UDI · PRCh · PL · AH · Dem · IND</p>
+    <p class="nota">Correcciones obligadas: <code>Evo</code>/<code>EVOP</code> → Evópoli · <code>PR</code>/<code>PREP</code> → PRCh ·
+      <code>PDC</code> → DC · <code>PCCh</code> → PC. Los senadores independientes electos en cupo de un partido se
+      muestran con ese partido, según <code>data/senado/override_partidos.json</code>.</p>
+  </section>
+
+  <!-- ─────────────────────────────────────── 7 · GRÁFICOS ── -->
+  <section class="blk" id="graficos">
+    <div class="sec-num">07</div>
+    <h2>Gráficos y datos</h2>
+    <p>El color en un gráfico siempre significa algo: voto, coalición o partido. Nunca es decorativo.
+      Si una figura necesita más de un criterio de color a la vez, se separa en dos vistas.</p>
+    <ul>
+      <li><strong>Voto</strong>: verde a favor, rojo en contra, amarillo abstención, gris ausente o pareo.</li>
+      <li><strong>Partido</strong>: siempre desde <code>paleta-partidos.js</code>, nunca colores ad hoc.</li>
+      <li><strong>Escalas</strong>: la dimensión 1 va de izquierda a derecha en el eje horizontal, siempre en ese sentido.</li>
+      <li><strong>Modo colorblind</strong>: toda vista coloreada por voto tiene su alternativa apta para daltonismo.</li>
+    </ul>
+    <p>Cada visualización declara su cobertura: cuántas votaciones, qué período, qué corporación y con qué
+      fecha de corte. Un gráfico sin ese pie no se publica.</p>
+  </section>
+
+  <!-- ────────────────────────────────── 8 · ACCESIBILIDAD ── -->
+  <section class="blk" id="accesibilidad">
+    <div class="sec-num">08</div>
+    <h2>Accesibilidad</h2>
+    <ul>
+      <li>Contraste mínimo 4,5:1 para texto. El gris <code>--text-2</code> no se usa para texto pequeño sobre fondo gris.</li>
+      <li>Todo control interactivo tiene <code>aria-label</code> si su etiqueta visible no basta.</li>
+      <li>Las figuras SVG llevan <code>role="img"</code> y una descripción; los puntos, un <code>&lt;title&gt;</code> con nombre y partido.</li>
+      <li>El sitio funciona con teclado: el tour se cierra con <kbd>Esc</kbd> y las pestañas son botones reales.</li>
+      <li>Todo se ve bien de 360px hacia arriba; el footer y las grillas colapsan a una columna bajo 900px.</li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────────────────── 9 · CHECKLIST ── -->
+  <section class="blk" id="checklist">
+    <div class="sec-num">09</div>
+    <h2>Checklist antes de publicar una página</h2>
+    <ul>
+      <li>El <code>&lt;title&gt;</code> termina en «Monitor Legislativo C22-CEP».</li>
+      <li>La página importa <code>assets/c22.css</code> y no redefine colores propios.</li>
+      <li>No queda ningún hex suelto en el CSS, el JS ni los SVG.</li>
+      <li>Barra de marca y footer completos, con SODAS y la columna Equipo.</li>
+      <li>Los nombres y partidos vienen de los padrones oficiales, con el override del Senado aplicado.</li>
+      <li>Cada figura declara su cobertura y fecha de corte.</li>
+      <li>La Dim 2 aparece sin rótulo interpretativo.</li>
+      <li>Se ve bien en 360px de ancho y con el modo colorblind activado.</li>
+    </ul>
+  </section>
+
+</div>
+
+<div style="line-height:0;margin-top:20px"><img src="../assets/ribbon.svg" alt="" style="width:100%;height:4px;display:block"></div>
+
+<footer class="c22skin-fuera c22-site">
+  <div class="inner">
+    <div>
+      <div class="brand-foot">
+        <img class="logo-c22-foot" src="../assets/logo-blanco.svg" alt="C22">
+        <img class="logo-cep-foot" src="../assets/logo-cep-blanco.svg" alt="CEP">
+      </div>
+      <p class="addr">
+        Centro de Estudios Públicos<br>
+        Monseñor Sótero Sanz 162, Providencia, Santiago de Chile. 7500011<br>
+        +56 2 2328 2400<br>
+        <a href="https://c22cepchile.cl" target="_blank" rel="noopener">c22cepchile.cl</a>
+      </p>
+      <p class="addr" style="margin-top:16px">
+        Esta plataforma cuenta con el apoyo del<br>
+        <a href="https://sodas.cl" target="_blank" rel="noopener">Núcleo Milenio para la Ciencia de Datos Sociales (SODAS)</a>.
+      </p>
+    </div>
+    <div>
+      <h4>Productos</h4>
+      <ul>
+        <li><a href="../hemiciclo/">Hemiciclo de votaciones</a></li>
+        <li><a href="../votaciones/">Análisis de votaciones</a></li>
+        <li><a href="../discurso/">Monitor de discurso</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Recursos</h4>
+      <ul>
+        <li><a href="https://opendata.congreso.cl" target="_blank" rel="noopener">Datos abiertos del Congreso</a></li>
+        <li><a href="https://c22cepchile.cl" target="_blank" rel="noopener">Sitio C22 CEP</a></li>
+        <li><a href="https://www.cepchile.cl" target="_blank" rel="noopener">Centro de Estudios Públicos</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Equipo</h4>
+      <ul>
+        <li>Aldo Mascareño</li>
+        <li>Pablo Henríquez</li>
+        <li>Juan Rozas</li>
+        <li>Fabián Belmar</li>
+        <li>Katherine Aravena</li>
+      </ul>
+    </div>
+  </div>
+  <div class="bottom">
+    <div>2026 · C22 · Centro de Estudios Públicos</div>
+    <div>Monitor Legislativo · Métodos digitales</div>
+  </div>
+</footer>
+
+<!-- c22skin:inicio pie -->
+    <footer class="c22skin-foot">
+      <div class="c22skin-grid">
+        <div class="c22skin-marcas">
+          <img class="c22" src="../assets/logo-blanco.svg" alt="C22">
+          <img class="cep" src="../assets/logo-cep-blanco.svg" alt="Centro de Estudios Públicos">
+          <div class="c22skin-apoyo">
+            <span class="rot">Con el apoyo de</span>
+            <a href="https://sodas.cl" target="_blank" rel="noopener"
+               title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
+               src="../assets/logo-sodas.png"
+               alt="SODAS · Núcleo Milenio para la Ciencia de Datos Sociales"></a>
+          </div>
+        </div>
+        <div class="c22skin-menu">
+          <h3>C22</h3>
+          <ul>
+          <li><a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a></li>
+          <li><a href="https://c22cepchile.cl/personas/">Personas</a></li>
+          <li><a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a></li>
+          <li><a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a></li>
+          <li><a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a></li>
+          <li><a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a></li>
+            <li><a href="https://c22cepchile.cl/contacto/">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Encuéntranos</h3>
+          <div class="c22skin-dir">
+            Centro de Estudios Públicos,<br>Monseñor Sótero Sanz 162, Providencia,<br>Santiago de Chile. 7500011<br><br>
+            +56 22 328 2400<br><a href="mailto:c22@cepchile.cl">c22@cepchile.cl</a>
+          </div>
+          <h3 style="margin-top:26px">Síguenos</h3>
+          <div class="c22skin-redes">
+          <a href="https://twitter.com/cepchile" target="_blank" rel="noopener">X / Twitter</a>
+          <a href="https://www.instagram.com/cepchile" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.linkedin.com/company/centro-de-estudios-p%C3%BAblicos" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.youtube.com/channel/UCBNm3ldq_kNdQexDGJDWOeQ" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div class="c22skin-menu">
+          <h3>Sitios asociados</h3>
+          <ul>
+          <li><a href="https://www.cepchile.cl">Centro de Estudios Públicos</a></li>
+          <li><a href="https://estudiospublicos.cl/index.php/cep/index">Revista Estudios Públicos</a></li>
+          <li><a href="https://c22cepchile.cl">Monitor Constitucional</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="c22skin-legal">
+        <span>Monitor Legislativo · C22 — Centro de Estudios Públicos</span>
+        <span>Datos de la API de datos abiertos del Congreso Nacional</span>
+      </div>
+    </footer>
+  <script>
+  /* Los SVG llevan un lienzo fijo y ancho al 100%, asi que al angostarse la
+     pantalla encogen tambien las letras: los rotulos caian a 2,6 y 4,2 px.
+     Aqui se compensa el factor de escala subiendo el tamaño dentro del lienzo,
+     de modo que en pantalla nunca bajen del minimo. El tamaño original queda
+     guardado, asi que la operacion es reversible e idempotente. */
+  (function () {
+    var MINIMO = 11;    // px reales minimos en pantalla
+    var DENSO = 0.55;   // por debajo de esta escala el grafico va muy reducido
+
+    function base(t) {
+      if (!t.getAttribute('data-fs-base')) {
+        t.setAttribute('data-fs-base', t.getAttribute('font-size') || '12');
+      }
+      return parseFloat(t.getAttribute('data-fs-base')) || 12;
+    }
+
+    function ajustar(svg) {
+      var vb = (svg.getAttribute('viewBox') || '').trim().split(/[ ,]+/).map(Number);
+      var ancho = svg.getBoundingClientRect().width;
+      if (!vb[2] || !ancho) return;
+      var esc = ancho / vb[2];
+      if (esc > 1) esc = 1;
+      var apretado = esc < DENSO;
+      svg.querySelectorAll('text').forEach(function (t) {
+        var b = base(t);
+        var clase = t.getAttribute('class') || '';
+        /* Los rotulos que nombran puntos sueltos se amontonan al agrandarlos:
+           en pantalla angosta se ocultan antes que volverse una mancha. */
+        var suelto = /extreme|punto|etiqueta-dato/.test(clase);
+        if (suelto && apretado) { t.style.display = 'none'; return; }
+        /* El titulo del eje vertical va rotado y choca con los numeros del eje:
+           en pantalla angosta crece la mitad que el resto. */
+        var eje = /axis-label/.test(clase);
+        t.style.display = '';
+        var meta = Math.max(b, (eje && apretado ? MINIMO * 0.8 : MINIMO) / esc);
+        t.setAttribute('font-size', meta.toFixed(1));
+        var largo = 0;
+        try { largo = t.getComputedTextLength(); } catch (e) { largo = 0; }
+        var cabe = vb[2] * 0.94;
+        if (largo > cabe) {
+          t.setAttribute('font-size', Math.max(b, meta * cabe / largo).toFixed(1));
+        }
+      });
+      encajar(svg, vb);
+      descontar(svg);
+    }
+
+    /* Al agrandar un rotulo alineado al borde (los del eje vertical van
+       anclados por la derecha) el signo menos quedaba fuera del lienzo y se
+       recortaba: el eje se leia 1.0, 0.5, 0.0, 0.5, 1.0. Aqui se corre lo
+       justo para que entre. Solo toca los que no traen transformacion
+       propia, para no mover los titulos rotados. */
+    function encajar(svg, vb) {
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var previa = t.getAttribute('transform') || '';
+        if (previa && !/^translate\(-?[\d.]+ 0\)$/.test(previa)) return;
+        t.removeAttribute('transform');
+        var c;
+        try { c = t.getBBox(); } catch (e) { return; }
+        if (!c || !c.width) return;
+        var dx = 0;
+        if (c.x < vb[0] + 1) dx = vb[0] + 1 - c.x;
+        else if (c.x + c.width > vb[0] + vb[2] - 1) dx = vb[0] + vb[2] - 1 - (c.x + c.width);
+        if (Math.abs(dx) > 0.5) t.setAttribute('transform', 'translate(' + dx.toFixed(1) + ' 0)');
+      });
+    }
+
+    /* Los rotulos se montan unos sobre otros: los del eje sobre los numeros y
+       los nombres de diputados entre si, sobre todo en los extremos donde el
+       mapa los amontona. Se resuelve por prioridad: los numeros del eje quedan
+       siempre, el titulo del eje cede ante ellos y los nombres ceden ante todo
+       lo anterior y entre si, en el orden en que fueron dibujados. */
+    function descontar(svg) {
+      var visibles = [];
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var caja = t.getBoundingClientRect();
+        if (!caja.width) return;
+        var clase = t.getAttribute('class') || '';
+        visibles.push({
+          el: t, caja: caja,
+          eje: /axis-label/.test(clase),
+          suelto: /extreme|punto|etiqueta-dato/.test(clase)
+        });
+      });
+      function choca(a, o) {
+        return a.caja.left < o.caja.right - 1 && o.caja.left < a.caja.right - 1 &&
+               a.caja.top < o.caja.bottom - 1 && o.caja.top < a.caja.bottom - 1;
+      }
+      var firmes = visibles.filter(function (v) { return !v.eje && !v.suelto; });
+      function acomodar(lista) {
+        lista.forEach(function (a) {
+          var i;
+          for (i = 0; i < firmes.length; i++) {
+            if (choca(a, firmes[i])) { a.el.style.display = 'none'; return; }
+          }
+          firmes.push(a);
+        });
+      }
+      acomodar(visibles.filter(function (v) { return v.eje; }));
+      acomodar(visibles.filter(function (v) { return v.suelto; }));
+    }
+
+    function pasada() {
+      document.querySelectorAll('svg[viewBox]').forEach(ajustar);
+    }
+    var t;
+    function agendar() { clearTimeout(t); t = setTimeout(pasada, 120); }
+    window.addEventListener('load', agendar);
+    window.addEventListener('resize', agendar);
+    if (window.MutationObserver) {
+      try {
+        new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
+      } catch (e) {}
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', agendar);
+    } else { agendar(); }
+  })();
+  </script>
+<!-- c22skin:fin pie -->
+</body>
+</html>

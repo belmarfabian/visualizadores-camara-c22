@@ -1,0 +1,118 @@
+/* ──────────────────────────────────────────────────────────────
+   Navegador temporal compartido entre hemiciclo / votaciones / discurso.
+   Selo expone una "firma visual" temporal con el mismo look & feel:
+   dropdown + flechas + barra clickeable con ticks por evento.
+   ────────────────────────────────────────────────────────────── */
+.nav-temp {
+  font-family: var(--mont, system-ui);
+  background: var(--bg-white, #fff);
+  border: 1px solid var(--border-light, #e5e5e5);
+  border-radius: 10px;
+  padding: 14px 18px 10px;
+  margin-bottom: 18px;
+}
+.nav-temp__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.nav-temp__btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--bg-alt, #f4f4f4);
+  border: 1px solid var(--border, #ddd);
+  color: var(--text, #222);
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.nav-temp__btn:hover:not(:disabled) {
+  background: var(--dark, #303030);
+  color: #fff;
+  border-color: var(--dark, #303030);
+}
+.nav-temp__btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.nav-temp__select {
+  flex: 1;
+  min-width: 240px;
+  padding: 8px 14px;
+  font-family: var(--dm, "DM Sans"), system-ui;
+  font-size: 13px;
+  color: var(--text, #222);
+  background: var(--bg-alt, #f7f7f7);
+  border: 1px solid var(--border, #ddd);
+  border-radius: 20px;
+  outline: none;
+  cursor: pointer;
+}
+.nav-temp__label {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 4px;
+  font-family: var(--dm, "DM Sans"), system-ui;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #222);
+  letter-spacing: -0.1px;
+}
+.nav-temp__hint {
+  font-size: 11px;
+  color: var(--text-m, #888);
+  margin-top: 6px;
+  font-style: italic;
+}
+.nav-temp__bar {
+  margin-top: 10px;
+  user-select: none;
+}
+.nav-temp__track {
+  position: relative;
+  height: 46px;
+  border-bottom: 1px solid var(--border-light, #e8e8e8);
+}
+.nav-temp[data-mode="interactive"] .nav-temp__track { cursor: pointer; }
+/* Barras del histograma de frecuencia (votaciones por semana) */
+.nav-temp__bar-item {
+  position: absolute;
+  bottom: 0;
+  border-radius: 2px 2px 0 0;
+  pointer-events: auto;
+  transition: opacity 150ms ease, background 150ms ease;
+}
+.nav-temp[data-mode="interactive"] .nav-temp__bar-item { cursor: pointer; }
+.nav-temp[data-mode="interactive"] .nav-temp__bar-item:hover { opacity: 1 !important; }
+.nav-temp__cursor {
+  position: absolute;
+  top: 2px;
+  width: 12px;
+  height: 18px;
+  border-radius: 3px;
+  background: var(--yellow, #FFB923);
+  border: 2px solid var(--dark, #303030);
+  transform: translateX(-6px);
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  transition: left 350ms cubic-bezier(.4,0,.2,1);
+}
+.nav-temp[data-mode="decorative"] .nav-temp__cursor { display: none; }
+.nav-temp__axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--mono, monospace);
+  font-size: 9.5px;
+  color: var(--text-m, #888);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+@media (max-width: 600px) {
+  .nav-temp__bar { display: none; }  /* en mobile la barra se oculta */
+}

@@ -1,0 +1,160 @@
+/* =============================================================================
+   c22-tour.css — Tour guiado + ayuda en contexto (estilo C22-CEP)
+   Componente compartido por las 5 paginas. Sin dependencias externas.
+   Usa los tokens de :root de cada pagina (con fallback al color C22 canonico).
+   ============================================================================= */
+
+/* ---- Boton lanzador "Como funciona" (va en la cabecera de cada pagina) ---- */
+.c22-tour-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--text-2, #657D81);
+  background: var(--bg-white, #fff);
+  border: 1px solid var(--border, rgba(101,125,129,0.2));
+  border-radius: 50px; padding: 8px 16px; cursor: pointer;
+  transition: color .18s, border-color .18s, background .18s;
+  white-space: nowrap;
+}
+.c22-tour-btn:hover {
+  color: var(--green, #4CCAA5);
+  border-color: var(--green, #4CCAA5);
+}
+.c22-tour-btn .c22-tour-btn-ico {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700;
+  line-height: 1;
+}
+
+/* ---- Overlay + spotlight (recorte iluminado sobre el elemento activo) ---- */
+.c22-tour-spot {
+  position: fixed; z-index: 100000; border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(27,28,30, 0.72);   /* --dark al 72% */
+  pointer-events: none;
+  transition: all .32s cubic-bezier(.4,0,.2,1);
+  outline: 2px solid var(--green, #4CCAA5);
+  outline-offset: 2px;
+}
+/* capa que captura clics fuera del popover (para no interactuar con la pagina) */
+.c22-tour-catch {
+  position: fixed; inset: 0; z-index: 99999;
+  background: transparent; cursor: default;
+}
+
+/* ---- Popover (la tarjeta con el texto del paso) ---- */
+.c22-tour-pop {
+  position: fixed; z-index: 100001;
+  width: 340px; max-width: calc(100vw - 32px);
+  background: var(--bg-white, #fff);
+  border: 1px solid var(--border, rgba(101,125,129,0.2));
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(27,28,30, 0.28);
+  padding: 20px 22px 16px;
+  font-family: 'DM Sans', sans-serif; color: var(--text, #303030);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .22s, transform .22s;
+}
+.c22-tour-pop.is-in { opacity: 1; transform: translateY(0); }
+
+.c22-tour-eyebrow {
+  font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.8px;
+  color: var(--green, #4CCAA5);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.c22-tour-eyebrow::before {
+  content: ""; width: 22px; height: 2px;
+  background: var(--green, #4CCAA5); display: inline-block;
+}
+.c22-tour-title {
+  font-size: 17px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -.2px; margin: 0 0 7px;
+}
+.c22-tour-text {
+  font-family: 'Montserrat', sans-serif; font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2, #657D81); margin: 0 0 16px;
+}
+.c22-tour-text strong { color: var(--text, #303030); font-weight: 600; }
+
+/* ---- Fila inferior: progreso + navegacion ---- */
+.c22-tour-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.c22-tour-dots { display: flex; gap: 6px; }
+.c22-tour-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border, rgba(101,125,129,0.25));
+  transition: background .2s, transform .2s;
+}
+.c22-tour-dot.on { background: var(--green, #4CCAA5); transform: scale(1.25); }
+
+.c22-tour-nav { display: flex; align-items: center; gap: 8px; }
+.c22-tour-btn2 {
+  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600;
+  border-radius: 50px; padding: 7px 15px; cursor: pointer;
+  border: 1px solid transparent; transition: all .16s; line-height: 1;
+}
+.c22-tour-prev {
+  background: transparent; color: var(--text-2, #657D81);
+  border-color: var(--border, rgba(101,125,129,0.2)); padding: 7px 12px;
+}
+.c22-tour-prev:hover { color: var(--text, #303030); border-color: var(--text-2, #657D81); }
+.c22-tour-next {
+  background: var(--dark, #1B1C1E); color: #fff; border-color: var(--dark, #1B1C1E);
+}
+.c22-tour-next:hover { opacity: .88; }
+.c22-tour-skip {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--text-m, rgba(101,125,129,0.7));
+  padding: 2px 4px; transition: color .16s;
+}
+.c22-tour-skip:hover { color: var(--red, #F20231); }
+
+/* ---- Ayuda en contexto: icono "?" con tooltip (CSS puro, sin JS) ---- */
+.c22-help {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%; vertical-align: middle;
+  margin-left: 3px;
+  background: var(--border-light, rgba(101,125,129,0.12));
+  color: var(--text-2, #657D81);
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700;
+  cursor: help; position: relative; user-select: none;
+}
+.c22-help::before { content: "?"; line-height: 1; }
+.c22-help::after {
+  content: attr(data-help);
+  position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%) translateY(4px);
+  width: max-content; max-width: 240px;
+  background: var(--dark, #1B1C1E); color: #fff;
+  font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 400;
+  line-height: 1.4; text-align: left; letter-spacing: 0;
+  padding: 9px 12px; border-radius: 9px;
+  box-shadow: 0 10px 30px rgba(27,28,30, 0.25);
+  opacity: 0; pointer-events: none; transition: opacity .16s, transform .16s;
+  z-index: 100002;
+}
+.c22-help::before { position: relative; }
+.c22-help:hover::after, .c22-help:focus::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* flechita del tooltip */
+.c22-help:hover::before { }
+
+/* ---- Microcopy "Como leer esto" (bajo graficos/secciones) ---- */
+.c22-howto {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-family: 'Montserrat', sans-serif; font-size: 12.5px; line-height: 1.5;
+  color: var(--text-2, #657D81);
+  background: var(--border-light, rgba(101,125,129,0.06));
+  border-left: 2px solid var(--green, #4CCAA5);
+  border-radius: 0 8px 8px 0; padding: 9px 13px; margin: 12px 0 0;
+}
+.c22-howto b { color: var(--text, #303030); font-weight: 600; }
+.c22-howto .c22-howto-ico {
+  color: var(--green, #4CCAA5); font-weight: 700; flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .c22-tour-pop { width: calc(100vw - 24px); }
+}

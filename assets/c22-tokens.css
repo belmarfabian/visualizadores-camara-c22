@@ -1,0 +1,38 @@
+/* ============================================================================
+   C22-CEP · Tokens de marca (guia grafica canonica)
+   Fuente de verdad: https://c22cepchile.cl  (extraido y verificado 2026-06)
+   Toda pagina de la plataforma debe usar ESTOS tokens, no hex sueltos.
+   ============================================================================ */
+:root {
+  /* ----- Neutros / fondo ----- */
+  --bg:           #F3F5F5;                    /* fondo de pagina */
+  --bg-white:     #FFFFFF;                    /* superficies, tarjetas */
+  --dark:         #1B1C1E;                    /* footer, fondos oscuros */
+  --text:         #303030;                    /* texto principal */
+  --text-2:       #657D81;                    /* texto secundario / gris-teal de marca */
+  --text-m:       rgba(101,125,129,0.7);      /* texto terciario / muted */
+  --border:       rgba(101,125,129,0.2);      /* bordes */
+  --border-light: rgba(101,125,129,0.1);      /* bordes suaves / divisores */
+
+  /* ----- Acentos de marca (los 4 oficiales) ----- */
+  --green:  #4CCAA5;   /* acento primario C22 (eyebrows, links de seccion) */
+  --yellow: #FFB923;   /* acento (abstencion, cursor temporal) */
+  --red:    #F20231;   /* acento (rechazo, oposicion) */
+  --purple: #A10856;   /* acento (discurso, destacados) */
+
+  /* ----- Tipografia ----- */
+  --dm:    'DM Sans', sans-serif;        /* titulos, UI, body */
+  --mont:  'Montserrat', sans-serif;     /* texto largo, labels, eyebrows, footer */
+  --serif: 'STIX Two Text', serif;       /* citas / pull-quotes (opcional) */
+  --mono:  'IBM Plex Mono', monospace;   /* cifras y coordenadas (opcional) */
+}
+
+/* Carga de fuentes (si la pagina no la incluye en su <head>):
+   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Montserrat:wght@300;400;500;600;700&family=STIX+Two+Text:ital,wght@1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"> */
+
+/* ----------------------------------------------------------------------------
+   PROHIBIDO (no canonico): --gray, --light-gray, --white, --blue, --ink,
+   --muted, --teal-accent, --mint-accent, --gold-accent, --cep-blue, --bg-alt,
+   --bg-panel, --sans, ni hex sueltos tipo #e02424 / #1d4ed8 / #9aa0a6 /
+   #FFD700 / #0080C8 / #56D7B0 / #F2B21B / #9C1C7C. Mapear siempre a un token.
+   ---------------------------------------------------------------------------- */
