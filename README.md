@@ -18,10 +18,14 @@ Las coordenadas ideológicas (dimensiones 1 y 2) provienen de W-NOMINATE (Poole 
 
 Contiene el sitio publicado. El pipeline de datos, los scripts de estimación y los documentos de trabajo viven en un repositorio aparte, de acceso restringido.
 
-## Licencia y cita
+## Derechos
 
-El contenido se publica bajo [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.es): se puede reutilizar, incluso con fines comerciales, siempre que se cite la fuente.
+Todos los derechos reservados. © 2026 C22, Centro de Estudios Públicos.
 
-> Belmar, F. (2026). *Visualizadores de la Cámara de Diputadas y Diputados de Chile*. C22, Centro de Estudios Públicos. https://belmarfabian.github.io/visualizadores-camara-c22/
+Este sitio, su código, sus visualizaciones y los conjuntos de datos derivados
+que contiene no se pueden copiar, redistribuir, adaptar ni reutilizar sin
+permiso previo y por escrito. Ver [LICENSE](LICENSE).
 
-Desarrollo: Fabián Belmar — C22, Centro de Estudios Públicos. Con el apoyo del Núcleo Milenio para la Ciencia de Datos Sociales (SODAS).
+Las votaciones y los discursos analizados provienen de las API de datos
+abiertos del Congreso Nacional de Chile y conservan las condiciones de su
+fuente.
