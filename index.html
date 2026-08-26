@@ -253,9 +253,15 @@
 
     /* Va fuera del hero para poder montarse sobre su borde: mitad dentro,
        mitad fuera, como las tarjetas del sitio del CEP. */
-    /* Se monta 72 px sobre el hero, no 104: con 104 la reserva que hay que
-       dejarle al pie engordaba el hero mas de lo que ahorraba. */
-    .hero-fila { position: relative; z-index: 4; margin-top: -72px; padding: 0 6%; }
+    /* Las tarjetas se montan sobre la foto: mitad dentro, mitad fuera. Antes
+       el rotulo «Qué es el Monitor» iba delante de ellas dentro de este mismo
+       bloque y se comia 141 px del montaje, asi que por mucho que se subiera
+       la fila las tarjetas nunca alcanzaban la foto. */
+    .hero-fila { position: relative; z-index: 4; margin-top: -96px; padding: 0 6%; }
+    .solo-lectores {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
     .hero-fila-in { max-width: var(--ancho); margin: 0 auto; }
     /* Nombra la fila sin robarle una seccion entera: el bloque que lo hacia
        presentaba tarjetas que el lector ya habia pasado. */
@@ -299,6 +305,13 @@
     @media (max-width: 1000px) { .hero-fila .cards { grid-auto-columns: calc((100% - 18px) / 2); } }
     @media (max-width: 660px)  { .hero-fila .cards { grid-auto-columns: 90%; } }
 
+    /* Las flechas del carrusel de herramientas van despues de las tarjetas y a
+       la derecha. Delante quedaban sobre la foto, encima de la linea de la
+       fecha del hero. */
+    .vot-nav-abajo { order: 2; display: flex; justify-content: flex-end;
+      gap: 8px; margin-top: 14px; }
+    .hero-fila-in { display: flex; flex-direction: column; }
+    .hero-fila-in .cards { order: 1; }
     .fila-intro { margin-bottom: 14px; max-width: 620px; }
     .fila-intro p { font-family: var(--mont); font-size: 13.5px; line-height: 1.55;
       color: rgba(255, 255, 255, .92); margin: 8px 0 0;
@@ -413,10 +426,12 @@
       .hero .panel.hoja-sale, .hero .panel.hoja-entra { transition: none; transform: none; opacity: 1; }
     }
 
-    /* Titulos de proyecto muy largos no deben estirar el hero */
+    /* Titulos de proyecto muy largos no deben estirar el hero. Dos lineas y no
+       tres: la tarjeta fija el alto del hero, y el hero tiene que dejar sitio
+       para que las tarjetas de herramientas se monten encima. */
     .hero .vivo-proj {
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -1315,14 +1330,14 @@
     .panel h3 { font-family: var(--mont); font-size: 12px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 1.8px; color: var(--text-2); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
     .panel .p-live { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(76,202,165,.25); }
-    .vivo-proj { font-family: var(--dm); font-size: 17px; font-weight: 600; color: var(--dark); line-height: 1.3; margin: 12px 0 6px; }
-    .vivo-fecha { font-family: var(--mont); font-size: 12px; color: var(--text-2); margin-bottom: 16px; }
-    .vivo-bar { display: flex; height: 34px; border-radius: 8px; overflow: hidden; font-family: var(--mont);
+    .vivo-proj { font-family: var(--dm); font-size: 16.5px; font-weight: 600; color: var(--dark); line-height: 1.28; margin: 9px 0 5px; }
+    .vivo-fecha { font-family: var(--mont); font-size: 12px; color: var(--text-2); margin-bottom: 11px; }
+    .vivo-bar { display: flex; height: 28px; border-radius: 7px; overflow: hidden; font-family: var(--mont);
       font-size: 12px; font-weight: 700; color: #fff; }
     .vivo-bar > span { display: flex; align-items: center; justify-content: center; min-width: 34px; }
-    .vivo-res { font-family: var(--mont); font-size: 13px; font-weight: 700; margin-top: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .vivo-res { font-family: var(--mont); font-size: 12.5px; font-weight: 700; margin-top: 10px; text-transform: uppercase; letter-spacing: .6px; }
     .vivo-link { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--green-txt);
-      text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 14px; }
+      text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px; }
 
     /* ── Carrusel de las 10 votaciones mas recientes ──────────────────────────
        Vive en la misma linea que la tarjeta grande: no agrega altura al hero.
@@ -1774,7 +1789,9 @@
       <div class="hero-txt">
         <div class="eyebrow">Monitor Legislativo · C22-CEP</div>
         <h1>Las votaciones del Congreso, en visualizaciones</h1>
-        <p class="lead">Cámara y Senado 2026-2030, analizados con los métodos digitales del Centro de Estudios Públicos.</p>
+        <p class="lead">Un conjunto de herramientas que leen las votaciones y los discursos
+        del Congreso, y las publicaciones que salen de ellas. Cámara y Senado 2026-2030,
+        con los métodos digitales del Centro de Estudios Públicos.</p>
         <div id="buildStatus" style="margin-top:10px;font-family:var(--mont);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px;min-height:18px" aria-live="polite"></div>
       </div>
       <div class="car-col" id="carCol">
@@ -1786,12 +1803,8 @@
 
   <div class="hero-fila">
     <div class="hero-fila-in">
-      <div class="fila-intro">
-        <h2 class="fila-rotulo">Qué es el Monitor</h2>
-        <p>Un conjunto de herramientas que leen las votaciones y los discursos del
-        Congreso, y las publicaciones que salen de ellas.</p>
-      </div>
-      <div class="vot-nav">
+      <h2 class="solo-lectores">Herramientas del Monitor</h2>
+      <div class="vot-nav vot-nav-abajo">
         <button type="button" data-d="-1" aria-label="Anterior">←</button>
         <button type="button" data-d="1" aria-label="Siguiente">→</button>
       </div>

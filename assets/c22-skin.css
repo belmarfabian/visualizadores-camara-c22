@@ -350,7 +350,7 @@ html.c22-embed body { padding-top: 0; }
    se borraba la reserva de 118 px del index y el rotulo «Qué es el
    Monitor» caia encima de la huincha de fechas. Se reserva lo mismo que
    sube la fila: 72 px de montaje, 78 de reserva. */
-.hero .inner { position: relative; z-index: 3; padding: 26px 5% 78px; }
+.hero .inner { position: relative; z-index: 3; padding: 26px 5% 100px; }
 .hero .eyebrow { color: #fff; }
 .hero h1 {
   color: #fff;
