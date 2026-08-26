@@ -417,6 +417,13 @@
       pointer-events: none;
     }
     .mazo .carta.atras-2 { margin-left: 24px; margin-right: 24px; background: #F7F9F9; }
+    .vivo-pasa {
+      font-family: var(--mont); font-size: 10.5px; font-weight: 700;
+      letter-spacing: .8px; text-transform: uppercase; color: var(--text-m);
+      margin-top: 10px; display: flex; gap: 7px; align-items: baseline;
+    }
+    .vivo-pasa span { font-weight: 600; letter-spacing: .3px; text-transform: none;
+      font-size: 11px; opacity: .85; }
     .mazo .vivo-tira {
       display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
       font-family: var(--mont); font-size: 11.5px; font-weight: 600;
@@ -2176,7 +2183,7 @@
       // leian como carton. Ahora asoman por abajo con el resumen de su
       // votacion: fecha, resultado y marcador. Se ve que hay algo detras.
       var atras = '';
-      for (var q = 1; q <= 2 && lista.length > q; q++) {
+      for (var q = 1; q <= 1 && lista.length > q; q++) {
         var sig = lista[(i + q) % lista.length];
         var apq = /aprob/i.test(sig.resultado || '');
         atras += '<div class="carta atras atras-' + q + '" aria-hidden="true">' +
@@ -2202,7 +2209,8 @@
         '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
         (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
         '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
-        (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>' + atras;
+        (lista.length > 1 ? '<div class="vivo-pasa">' + (i + 1) + ' de ' + lista.length +
+          ' <span>· toca para ver la anterior</span></div>' : '') + '</div>' + atras;
       idx = i;
       // El mazo se pasa con el dedo o con un clic, como un mazo de verdad. La
       // huincha de fechas sigue estando para ir a una en concreto.
@@ -2233,7 +2241,11 @@
       barra(!!timer);
     }
 
-    if (rail && lista.length > 1) {
+    /* La huincha de fechas se retira. Con el mazo -que se pasa con un clic- y
+       el enlace al hemiciclo completo habia cuatro maneras de decir lo mismo
+       apiladas sobre la foto, y la huincha ademas quedaba cortada por el borde
+       derecho. Volverla a encender es cambiar este false. */
+    if (false && rail && lista.length > 1) {
       rail.hidden = false;
       rail.innerHTML = '<div class="car-track">' + lista.map(function (d, k) {
         return '<button class="car-tick" type="button" data-i="' + k + '" title="' +
