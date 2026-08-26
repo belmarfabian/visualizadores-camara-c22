@@ -384,7 +384,9 @@
     /* Las votaciones siguientes son tarjetas de verdad, no adorno: llevan su
        propio proyecto y su propio resultado, y al avanzar la de adelante se va
        y una de ellas toma su lugar. */
-    .mazo { position: relative; }
+    /* Los cantos van en el flujo, uno bajo otro: no hacen falta trucos de
+       posicion ni sitio reservado. */
+    .mazo { position: relative; display: flex; flex-direction: column; }
     .mazo .carta {
       background: #fff; border: 1px solid rgba(27, 28, 30, 0.07);
       /* La tarjeta es el piso del alto del hero: la columna derecha mide mas
@@ -394,16 +396,39 @@
       box-shadow: 0 20px 55px rgba(27, 28, 30, 0.16);
       transition: transform .34s cubic-bezier(.2,.7,.3,1), opacity .34s ease;
     }
+    /* Las siguientes votaciones asoman como cantos bajo la de adelante, cada
+       uno con su fecha, su resultado y su marcador. Antes eran tarjetas
+       enteras corridas en diagonal y encogidas con scale(): el encogido
+       cancelaba el desplazamiento, asi que solo se veia un borde blanco. Eso
+       era lo que se leia como carton. */
     .mazo .carta.atras {
-      position: absolute; inset: 0; z-index: -1;
-      overflow: hidden; pointer-events: none;
+      /* Sin z-index negativo: van en el flujo, debajo de la de adelante. Con
+         z-index -1 quedaban detras del fondo blanco del panel y no se veian. */
+      position: relative;
+      /* El traslape tiene que ser menor que el relleno de arriba, o la de
+         adelante corta el texto del canto por la mitad. */
+      margin: -14px 12px 0; padding: 27px 22px 10px;
+      border-radius: 0 0 16px 16px; border-top: none;
+      border-color: rgba(27, 28, 30, 0.11);
+      background: #FBFCFC;
+      box-shadow: 0 10px 24px rgba(27, 28, 30, .08);
+      pointer-events: none;
     }
-    .mazo .carta.atras-1 { transform: translate(22px, 16px) scale(.965); }
-    .mazo .carta.atras-2 { transform: translate(44px, 32px) scale(.93); }
-    .mazo .carta.atras .vivo-bar, .mazo .carta.atras .vivo-res,
-    .mazo .carta.atras .vivo-link, .mazo .carta.atras .car-prog { visibility: hidden; }
-    .mazo .carta.atras .vivo-proj { opacity: .5; }
-    .mazo .carta.atras h3, .mazo .carta.atras .vivo-fecha { opacity: .55; }
+    .mazo .carta.atras-2 { margin-left: 24px; margin-right: 24px; background: #F7F9F9; }
+    .mazo .vivo-tira {
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+      font-family: var(--mont); font-size: 11.5px; font-weight: 600;
+      color: var(--text-2); padding-top: 2px;
+    }
+    .mazo .vivo-tira .vt-res { font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; }
+    .mazo .vivo-tira .vt-marca { margin-left: auto; font-family: var(--mono, var(--mont));
+      font-weight: 700; color: var(--dark); font-variant-numeric: tabular-nums; }
+
+    /* El mazo se pasa con un clic sobre la tarjeta de adelante. */
+    .mazo .carta.es-pasable { cursor: pointer; }
+    .mazo .carta.es-pasable:hover { box-shadow: 0 24px 62px rgba(27, 28, 30, 0.2); }
+    .mazo .carta.es-pasable:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
     @media (max-width: 720px) { .mazo .carta.atras { display: none; } }
     @media (max-width: 720px) {
       .hero .panel::before, .hero .panel::after { display: none; }
@@ -2144,11 +2169,21 @@
           '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
           (chico ? '' : (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : ''));
       }
+      // Las tarjetas de atras son votaciones de verdad, pero antes solo asomaba
+      // su borde en blanco -22 px, menos que el margen de la tarjeta- y se
+      // leian como carton. Ahora asoman por abajo con el resumen de su
+      // votacion: fecha, resultado y marcador. Se ve que hay algo detras.
       var atras = '';
       for (var q = 1; q <= 2 && lista.length > q; q++) {
         var sig = lista[(i + q) % lista.length];
+        var apq = /aprob/i.test(sig.resultado || '');
         atras += '<div class="carta atras atras-' + q + '" aria-hidden="true">' +
-                 cuerpo(sig, 'Votación anterior', true) + '</div>';
+          '<div class="vivo-tira">' +
+            '<span class="vt-fecha">' + fmtFecha(sig.fecha) + '</span>' +
+            '<span class="vt-res" style="color:' + (apq ? 'var(--green-txt)' : 'var(--red)') + '">' +
+              (sig.resultado || '') + '</span>' +
+            '<span class="vt-marca">' + sig.si + '&ndash;' + sig.no + '</span>' +
+          '</div></div>';
       }
       var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (suave && cv.dataset.pintada) {
@@ -2158,15 +2193,32 @@
       }
       cv.dataset.pintada = '1';
       cv.className = 'panel mazo';
-      cv.innerHTML = atras + '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
+      cv.innerHTML = '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
         '<div class="vivo-proj" title="' + esc(d.proyecto || d.descripcion) + '">' + titular + '</div>' +
         '<div class="vivo-fecha">' + fmtFecha(d.fecha) + (d.tipo ? ' · ' + d.tipo : '') + '</div>' +
         '<div class="vivo-bar">' + seg(d.si, 'var(--green)', 'A favor') + seg(d.abstencion, '#C9CDCE', 'Abstención') + seg(d.no, 'var(--red)', 'En contra') + '</div>' +
         '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
         (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
         '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
-        (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>';
+        (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>' + atras;
       idx = i;
+      // El mazo se pasa con el dedo o con un clic, como un mazo de verdad. La
+      // huincha de fechas sigue estando para ir a una en concreto.
+      var frente = cv.querySelector('.carta:not(.atras)');
+      if (frente && lista.length > 1) {
+        frente.classList.add('es-pasable');
+        frente.setAttribute('role', 'button');
+        frente.setAttribute('tabindex', '0');
+        frente.setAttribute('aria-label', 'Ver la votación anterior');
+        var pasar = function (ev) {
+          if (ev.target && ev.target.closest && ev.target.closest('a')) return;
+          pinta((i + 1) % lista.length);
+        };
+        frente.addEventListener('click', pasar);
+        frente.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pasar(ev); }
+        });
+      }
       if (track) {
         var ts = track.querySelectorAll('.car-tick');
         for (var k = 0; k < ts.length; k++) {
