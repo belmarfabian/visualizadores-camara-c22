@@ -223,7 +223,10 @@
     /* Hero estilo C22 */
     .hero {
       background: var(--bg);
-      padding: 80px 6% 90px;
+      /* El relleno de abajo es el sitio donde se montan las tarjetas de
+         herramientas. Con 90 sobraba: bastan 68 para el mismo montaje. */
+      /* El pie lo reserva .hero .inner: aqui solo el aire minimo. */
+      padding: 80px 6% 6px;
       position: relative;
       overflow: hidden;
     }
@@ -240,13 +243,19 @@
       gap: 54px;
       padding-right: 48px;
       padding-bottom: 118px;   /* sitio para la mitad de la fila que se monta */
-      align-items: center;
+      /* Alineadas arriba y no al centro. Centradas, las dos columnas bajaban
+         hasta el borde del hero y el rotulo «Qué es el Monitor», que se monta
+         ahi, caia encima del sello del SODAS y de la huincha de fechas.
+         Ancladas arriba, el rincon de abajo queda libre para el montaje. */
+      align-items: start;
     }
     @media (max-width: 980px) { .hero .inner { grid-template-columns: 1fr; gap: 30px; } }
 
     /* Va fuera del hero para poder montarse sobre su borde: mitad dentro,
        mitad fuera, como las tarjetas del sitio del CEP. */
-    .hero-fila { position: relative; z-index: 4; margin-top: -104px; padding: 0 6%; }
+    /* Se monta 72 px sobre el hero, no 104: con 104 la reserva que hay que
+       dejarle al pie engordaba el hero mas de lo que ahorraba. */
+    .hero-fila { position: relative; z-index: 4; margin-top: -72px; padding: 0 6%; }
     .hero-fila-in { max-width: var(--ancho); margin: 0 auto; }
     /* Nombra la fila sin robarle una seccion entera: el bloque que lo hacia
        presentaba tarjetas que el lector ya habia pasado. */
@@ -365,7 +374,10 @@
     .mazo { position: relative; }
     .mazo .carta {
       background: #fff; border: 1px solid rgba(27, 28, 30, 0.07);
-      border-radius: 16px; padding: 26px 26px 22px;
+      /* La tarjeta es el piso del alto del hero: la columna derecha mide mas
+         que la izquierda. Con 16 de relleno arriba y 14 abajo se leen igual
+         los mismos datos y el hero baja otros 18. */
+      border-radius: 16px; padding: 16px 22px 14px;
       box-shadow: 0 20px 55px rgba(27, 28, 30, 0.16);
       transition: transform .34s cubic-bezier(.2,.7,.3,1), opacity .34s ease;
     }
@@ -490,7 +502,10 @@
 
     .hero h1 {
       font-family: var(--dm);
-      font-size: clamp(38px, 5.5vw, 64px);
+      /* Era clamp(38px, 5.5vw, 64px): tres lineas de 65 px, 204 en total, el
+         bloque mas alto de toda la portada. A 52 sigue mandando y ocupa 45
+         menos. */
+      font-size: clamp(32px, 4vw, 46px);
       font-weight: 700;
       letter-spacing: -1px;
       line-height: 1;
@@ -1226,7 +1241,7 @@
       }
 
       .hero {
-        padding: 60px 6% 70px;
+        padding: 60px 6% 6px;
       }
 
       section.products {
@@ -1579,7 +1594,7 @@
     html.c22-embed header.site,
     html.c22-embed footer.site,
     html.c22-embed > body > .ribbon:first-of-type { display: none !important; }
-    html.c22-embed .hero { padding-top: 34px; }
+    html.c22-embed .hero { padding-top: 22px; }
     html.c22-embed,
     html.c22-embed body { background: var(--bg); }
     /* Las flechas de los carruseles cuelgan 20 px fuera del contenedor: dentro
@@ -1618,8 +1633,25 @@
        tiene sitio de sobra ahi y el hero no crece. Sigue con su fondo velado
        porque encima va la foto. Vive en el cuerpo y no en el pie, que el modo
        incrustado oculta. */
+    /* El credito del SODAS se fue del hero al cierre. En la cabecera choco dos
+       veces: primero con la huincha de fechas y despues con el rotulo «Qué es
+       el Monitor», que se monta sobre el borde de abajo. Ahi abajo no compite
+       con nada, se ve en los dos modos -el pie propio queda oculto dentro del
+       marco del C22- y de paso el hero adelgaza. */
+    .apoyo-cierre {
+      display: flex; align-items: center; gap: 13px;
+      margin: 0 0 16px !important;
+    }
+    .apoyo-cierre .rot {
+      font-family: var(--mont); font-size: 9.5px; font-weight: 700;
+      letter-spacing: 1.7px; text-transform: uppercase; color: var(--text-m);
+      white-space: nowrap;
+    }
+    .apoyo-cierre img { height: 26px; width: auto; display: block;
+      filter: brightness(0) saturate(100%) opacity(.62); }
+    .apoyo-cierre a:hover img { filter: none; }
     .apoyo-hero {
-      margin-top: 16px; z-index: 3;
+      margin-top: 0; z-index: 3;
       background: rgba(27, 28, 30, .42); backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px); border-radius: 10px; padding: 7px 13px;
       width: fit-content;
@@ -1743,13 +1775,7 @@
         <div class="eyebrow">Monitor Legislativo · C22-CEP</div>
         <h1>Las votaciones del Congreso, en visualizaciones</h1>
         <p class="lead">Cámara y Senado 2026-2030, analizados con los métodos digitales del Centro de Estudios Públicos.</p>
-        <div id="buildStatus" style="margin-top:6px;font-family:var(--mont);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px;min-height:18px" aria-live="polite"></div>
-        <div class="apoyo-hero">
-          <span class="rot">Con el apoyo de</span>
-          <a href="https://sodas.cl" target="_blank" rel="noopener"
-             title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
-             src="assets/logo-sodas.png" alt="SODAS"></a>
-        </div>
+        <div id="buildStatus" style="margin-top:10px;font-family:var(--mont);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px;min-height:18px" aria-live="polite"></div>
       </div>
       <div class="car-col" id="carCol">
         <div class="panel" id="cardVivo"></div>
@@ -1875,6 +1901,12 @@
           se ha movido el eje izquierda-derecha en siete períodos. Los datos vienen de las API de
           datos abiertos del Congreso y se actualizan todos los días. Las posiciones se estiman con
           W-NOMINATE (Poole y Rosenthal, 1985) en R.</p>
+        <p class="apoyo-cierre">
+          <span class="rot">Con el apoyo de</span>
+          <a href="https://sodas.cl" target="_blank" rel="noopener"
+             title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
+             src="assets/logo-sodas.png" alt="SODAS · Núcleo Milenio para la Ciencia de Datos Sociales"></a>
+        </p>
         <p class="about-enlaces">
           <a href="https://github.com/belmarfabian/visualizadores-camara-c22" target="_blank"
             rel="noopener">Método y código en el repositorio</a>

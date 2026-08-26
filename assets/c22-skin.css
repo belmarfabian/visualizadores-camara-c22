@@ -343,7 +343,14 @@ html.c22-embed body { padding-top: 0; }
   pointer-events: none;
 }
 
-.hero .inner { position: relative; z-index: 3; padding: 60px 5%; }
+/* El hero medía 666 px y 204 de esos eran el titular. Con 40 de relleno en
+   vez de 60 arriba y abajo, la foto sigue respirando y se recuperan 40. */
+/* El relleno de abajo NO es decorativo: es la reserva donde se montan las
+   tarjetas de herramientas. Al escribir aqui un padding de un solo valor
+   se borraba la reserva de 118 px del index y el rotulo «Qué es el
+   Monitor» caia encima de la huincha de fechas. Se reserva lo mismo que
+   sube la fila: 72 px de montaje, 78 de reserva. */
+.hero .inner { position: relative; z-index: 3; padding: 26px 5% 78px; }
 .hero .eyebrow { color: #fff; }
 .hero h1 {
   color: #fff;
@@ -356,7 +363,9 @@ html.c22-embed body { padding-top: 0; }
 
 @media (max-width: 900px) {
   .hero { margin: 18px 5% 0; }
-  .hero .inner { padding: 40px 6%; }
+  /* Tambien aqui el pie es la reserva del montaje: con 40 mientras la fila
+     sube 88, el rotulo caia sobre la huincha de fechas. */
+  .hero .inner { padding: 40px 6% 96px; }
   .hero::before { width: 160%; left: -30%; top: -34%; }
 }
 
@@ -412,20 +421,48 @@ html.c22-embed body { padding-top: 0; }
    quedaron a medio camino. Aqui se emparejan.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* G1 · Ancho unico. Los visualizadores limitaban el contenido a 1056px sobre
-   una ventana de 1440 (contenedor de 1200 con 72px de relleno) y Legisladores
-   a 1267. El sitio del C22 usa el 90% de la ventana con margenes del 5%. */
+/* G1 · Un solo ancho para las seis pestañas, decidido en un solo lugar.
+   Antes cada una terminaba distinta. Medido en un marco de 1.296 px:
+   Votaciones 1.258, Hemiciclo 1.250, Portada 1.242, Discurso 1.230,
+   Rankings 1.166 y Legisladores 1.141; las cuatro primeras casi pegadas al
+   borde. La causa era esta misma regla: fijaba el margen en 5% de la ventana
+   y de paso anulaba con !important el max-width de todos los .inner, con lo
+   cual el --ancho: 1180px que el proyecto declara no se respetaba en ninguna
+   parte.
+   Ahora el margen lateral sale de una sola variable, calculada para que el
+   contenido quede centrado en esos 1.180 px, con un piso de 18 px de aire
+   cuando la ventana es mas angosta. */
+:root { --c22s-lado: max(18px, calc((100vw - 1180px) / 2)); }
+
 body > div:not([class]),
-body > main {
+body > main,
+.site-header,
+.metrics-wrap,
+.tabs-nav,
+.pulso,
+.rarezas,
+.products,
+section#analiza,
+.stats,
+.destacados,
+.ranking-dip,
+.rankings-sec,
+.historico,
+section.about {
   max-width: none !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding-left: 5% !important;
-  padding-right: 5% !important;
+  padding-left: var(--c22s-lado) !important;
+  padding-right: var(--c22s-lado) !important;
 }
-/* Legisladores anidaba dos margenes del 5%: el del contenedor exterior y el
-   de la seccion, que dejaban la grilla en 1166 de 1440. */
-section.grilla { padding-left: 0 !important; padding-right: 0 !important; }
+/* El ancho lo decide el relleno de arriba; los contenedores interiores dejan
+   de poner el suyo para que no se sumen dos margenes. Legisladores tiene
+   cuatro secciones con su propio 6% dentro del contenedor que ya lleva el
+   margen: por eso quedaba en 1.038 y no en 1.180. */
+section.grilla,
+section.tope,
+section.filtros,
+section.ficha { padding-left: 0 !important; padding-right: 0 !important; }
 section.grilla > .inner,
 #grilla,
 #grilla.inner,
@@ -506,29 +543,15 @@ html.c22-embed .c22skin-sub {
 }
 html.c22-embed body { padding-top: 0 !important; }
 
-/* E1 · Dentro de la pagina del C22 el iframe ya vive en un contenedor con
-   margenes del 5% (.wrap-s), asi que nuestro propio 5% se sumaba al suyo: el
-   contenido quedaba al 81% de la ventana, visiblemente mas angosto que las
-   demas pestañas. En modo incrustado los margenes laterales los pone el
-   anfitrion y aqui se anulan. */
-html.c22-embed body > div:not([class]),
-html.c22-embed body > main {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-html.c22-embed .pulso,
-html.c22-embed .rarezas,
-html.c22-embed .products,
-html.c22-embed section#analiza,
-html.c22-embed .stats,
-html.c22-embed .destacados,
-html.c22-embed .ranking-dip,
-html.c22-embed .rankings-sec,
-html.c22-embed .historico,
-html.c22-embed section.about {
-  padding-left: 0;
-  padding-right: 0;
-}
+/* E1 · Un solo ancho para las seis pestañas.
+   El iframe ya vive dentro del contenedor del C22, que le da su 5%, asi que el
+   Monitor anulaba ademas su propio margen lateral. El resultado era que cada
+   pestaña terminaba en un ancho distinto -medido en un marco de 1.296 px:
+   Votaciones 1.258, Hemiciclo 1.250, Portada 1.242, Discurso 1.230, Rankings
+   1.166, Legisladores 1.141- y las cuatro primeras casi pegadas al borde.
+   Ahora todas se centran en el --ancho que el propio proyecto declara, 1.180,
+   con un minimo de 18 px de aire cuando el marco es mas angosto que eso. */
+/* El ancho ya lo decide G1 para los dos modos: aqui no se redefine nada. */
 html.c22-embed .hero { margin-left: 0; margin-right: 0; }
 
 /* La barra del Monitor pesaba como una segunda cabecera. Sin relleno propio ni
