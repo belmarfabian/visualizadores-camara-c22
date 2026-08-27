@@ -291,9 +291,6 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
   <h1 style="font-family:var(--dm);font-size:42px;font-weight:700;letter-spacing:-.5px;line-height:1.05;margin:14px 0 14px;color:var(--dark)">
     Hemiciclo: votaciones individuales
   </h1>
-  <p id="hemiIntro" style="font-family:var(--mont);font-size:16px;color:var(--text-2);line-height:1.55;font-weight:400;text-align:justify;hyphens:auto">
-    Visualización de cada votación en la Cámara de Diputadas y Diputados. Los 155 escaños se agrupan en tres bloques (oposición, otros, oficialismo) ordenados de izquierda a derecha según afinidad ideológica. Es una <strong>representación simplificada</strong> del orden real del hemiciclo: las posiciones no replican la disposición física exacta de cada banca, sino que buscan facilitar la lectura ideológica de cada votación.
-  </p>
 </header>
 
 <!-- Toggle Cámara / Senado -->
@@ -323,7 +320,7 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 <div id="metricsBand" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:18px"></div>
 
 <!-- ② Navegador temporal compartido (mismo formato en hemiciclo/votaciones/discurso) -->
-<div id="navTemporalSlot"></div>
+<!-- la linea de tiempo se movio debajo del hemiciclo -->
 
 <!-- Modo de coloreado del hemiciclo -->
 <div id="tourModes" style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap">
@@ -339,8 +336,6 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 
 <!-- ③ Card principal: resumen + hemiciclo + bancadas -->
 <div class="card" style="padding:24px 28px">
-  <!-- Chips de coaliciones que votaron -->
-  <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
 
   <!-- Hemiciclo: SVG con puntos + img HTML overlay alineado por CSS.
        viewBox del SVG: -100 -40 1840 1140 (max-width 920px renderizado).
@@ -379,6 +374,14 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
     <span class="legend-item" data-vote-key="2" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:#FFB923;width:9px;height:9px"></span>Abstención</span>
     <span class="legend-item" data-vote-key="-1" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:rgba(101,125,129,0.25);width:9px;height:9px"></span>Ausente</span>
   </div>
+
+  <!-- Los chips de coaliciones y la linea de tiempo van despues del
+       dibujo: explican y navegan algo que primero hay que ver. Antes
+       ocupaban 200 px por encima y empujaban el hemiciclo fuera de la
+       pantalla. -->
+  <!-- Chips de coaliciones que votaron -->
+  <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
+  <div id="navTemporalSlot" style="margin-top:18px"></div>
 
   <!-- Leyenda de partidos -->
   <div id="partidosLeyenda" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border-light)"></div>

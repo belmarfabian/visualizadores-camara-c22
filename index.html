@@ -437,9 +437,6 @@
     .vivo-clave i { width: 8px; height: 8px; border-radius: 2px;
       display: inline-block; margin-right: 5px; }
 
-    .vivo-pie { display: flex; align-items: baseline; gap: 12px; margin-top: 12px; }
-    .vivo-pasa { margin-left: auto; font-family: var(--mont); font-size: 11px;
-      font-weight: 700; color: var(--text-m); font-variant-numeric: tabular-nums; }
     .mazo .vivo-tira {
       display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
       font-family: var(--mont); font-size: 11.5px; font-weight: 600;
@@ -1367,7 +1364,7 @@
     /* Diez cifras en dos filas de cinco. Con ocho a cuatro columnas las
        tarjetas quedaban anchas y medio vacias. */
     .cifras-fila .facts-grid { display: grid; gap: 14px;
-      grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      grid-template-columns: repeat(4, minmax(0, 1fr)); }
     @media (max-width: 1250px) { .cifras-fila .facts-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 780px)  { .cifras-fila .facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 620px) {
@@ -1482,11 +1479,15 @@
     .rarezas .sub { font-family: var(--mont); font-size: 14px; color: var(--text-2);
       margin: 10px 0 28px; max-width: 700px; line-height: 1.6; }
     /* Seis tarjetas, igual que las cifras: tres por fila cierran parejas. */
-    .rar-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .rar-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
     @media (max-width: 1250px) { .rar-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 780px)  { .rar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 700px) { .rar-grid { grid-template-columns: 1fr; } }
     .rar-grid.rar-plegado > .rar:nth-child(n+6) { display: none; }
+    /* Diez tarjetas en cuatro columnas dejan dos sueltas en la ultima fila:
+       que se repartan el ancho en vez de quedar a la izquierda. */
+    .rar-grid > .rar:nth-child(9):nth-last-child(2) { grid-column: span 2; }
+    .rar-grid > .rar:nth-child(10):nth-last-child(1) { grid-column: span 2; }
     .rar-mas {
       display: block; margin: 16px auto 0; padding: 12px 26px; min-height: 44px;
       border: 1px solid var(--border); border-radius: 999px; background: var(--bg-white);
@@ -2193,22 +2194,6 @@
           '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
           (chico ? '' : (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : ''));
       }
-      // Las tarjetas de atras son votaciones de verdad, pero antes solo asomaba
-      // su borde en blanco -22 px, menos que el margen de la tarjeta- y se
-      // leian como carton. Ahora asoman por abajo con el resumen de su
-      // votacion: fecha, resultado y marcador. Se ve que hay algo detras.
-      var atras = '';
-      for (var q = 1; q <= 1 && lista.length > q; q++) {
-        var sig = lista[(i + q) % lista.length];
-        var apq = /aprob/i.test(sig.resultado || '');
-        atras += '<div class="carta atras atras-' + q + '" aria-hidden="true">' +
-          '<div class="vivo-tira">' +
-            '<span class="vt-fecha">' + fmtFecha(sig.fecha) + '</span>' +
-            '<span class="vt-res" style="color:' + (apq ? 'var(--green-txt)' : 'var(--red)') + '">' +
-              (sig.resultado || '') + '</span>' +
-            '<span class="vt-marca">' + sig.si + '&ndash;' + sig.no + '</span>' +
-          '</div></div>';
-      }
       var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (suave && cv.dataset.pintada) {
         cv.classList.add('hoja-sale');
@@ -2221,6 +2206,10 @@
       // contra, 42 abst.» sobraba. El resultado pasa a un sello arriba, junto
       // al rotulo, y abajo queda una sola linea con el enlace y en que
       // votacion va. De siete elementos a cinco, y una sola en versalitas.
+      // Una tarjeta fija con la ultima votacion y nada mas. Lo que habia -un
+      // mazo con las anteriores asomando, clic para pasarlas, contador «1 / 10»
+      // y una huincha de fechas- eran cuatro maneras de ofrecer lo mismo
+      // encima de la foto. Para ver el resto esta el hemiciclo.
       cv.innerHTML = '<div class="carta">' +
         '<div class="vivo-cab"><div class="vivo-rot">' + rotulo + '</div>' +
           '<span class="vivo-sello ' + (aprob ? 'es-si' : 'es-no') + '">' +
@@ -2231,28 +2220,9 @@
         '<div class="vivo-clave"><span><i style="background:var(--green)"></i>a favor</span>' +
           '<span><i style="background:#C9CDCE"></i>abstención</span>' +
           '<span><i style="background:var(--red)"></i>en contra</span></div>' +
-        '<div class="vivo-pie">' +
-          '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo →</a>' +
-          (lista.length > 1 ? '<span class="vivo-pasa">' + (i + 1) + ' / ' + lista.length + '</span>' : '') +
-        '</div></div>' + atras;
+        '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo →</a>' +
+        '</div>';
       idx = i;
-      // El mazo se pasa con el dedo o con un clic, como un mazo de verdad. La
-      // huincha de fechas sigue estando para ir a una en concreto.
-      var frente = cv.querySelector('.carta:not(.atras)');
-      if (frente && lista.length > 1) {
-        frente.classList.add('es-pasable');
-        frente.setAttribute('role', 'button');
-        frente.setAttribute('tabindex', '0');
-        frente.setAttribute('aria-label', 'Ver la votación anterior');
-        var pasar = function (ev) {
-          if (ev.target && ev.target.closest && ev.target.closest('a')) return;
-          pinta((i + 1) % lista.length);
-        };
-        frente.addEventListener('click', pasar);
-        frente.addEventListener('keydown', function (ev) {
-          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pasar(ev); }
-        });
-      }
       if (track) {
         var ts = track.querySelectorAll('.car-tick');
         for (var k = 0; k < ts.length; k++) {
