@@ -113,7 +113,9 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 .nav-btn { padding: 10px 15px; font-size: 14px; border: 1px solid var(--border); border-radius: 50px; background: var(--bg-white); color: var(--text-2); transition: all .25s ease-in-out; font-weight: 700; text-transform: uppercase; }
 .nav-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
 .nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
-.mode-btn { padding: 10px 15px; font-size: 14px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--text-2); font-weight: 700; transition: all .25s ease-in-out; text-transform: uppercase; }
+/* Median 40 px de alto contra los 28 de Camara/Senado: el mismo tipo de
+   control con dos tamaños distintos en la misma pantalla. */
+.mode-btn { padding: 6px 16px; font-size: 12px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--text-2); font-weight: 700; transition: all .25s ease-in-out; text-transform: uppercase; }
 .mode-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
 .mode-btn:hover:not(.active) { border-color: var(--text-2); }
 .tab-btn { padding: 12px 22px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; border: none; background: transparent; color: var(--text-2); cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; font-family: var(--dm); }
@@ -285,16 +287,15 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 
 <!-- Header -->
 <header style="padding:40px 0 32px">
-  <div title="Primer visualizador de la serie: hemiciclo de votaciones individuales" style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);display:inline-flex;align-items:center;gap:10px">
-    <span style="display:inline-block;width:24px;height:2px;background:var(--green)"></span>Visualizador 1 · Hemiciclo
-  </div>
   <h1 style="font-family:var(--dm);font-size:42px;font-weight:700;letter-spacing:-.5px;line-height:1.05;margin:14px 0 14px;color:var(--dark)">
     Hemiciclo: votaciones individuales
   </h1>
 </header>
 
 <!-- Toggle Cámara / Senado -->
-<div style="padding:0 0 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<!-- El titulo dejaba 50 px de aire antes de este selector cuando el resto
+     de los huecos de la pagina son de 18. -->
+<div style="padding:0 0 14px;margin-top:-24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
   <span style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-m)">Corporación:</span>
   <div id="tourChamber" style="display:inline-flex;background:var(--bg-white);border:1px solid var(--border);border-radius:50px;padding:3px;gap:0">
     <button id="chamberCamara" onclick="setChamber('camara')" class="chamber-btn active" style="padding:6px 16px;font-family:var(--dm);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border:none;border-radius:50px;cursor:pointer;background:var(--dark);color:#fff;transition:all 180ms ease">Cámara <span style="opacity:.7;font-weight:500" id="chamberCamaraN">155</span></button>
@@ -1151,8 +1152,10 @@ function updateSummary() {
     // Altura minima fija para evitar saltos al navegar entre votaciones
     // Altura FIJA del bloque para que no salte entre votaciones con
     // distinto largo de descripcion. Si el texto excede, se trunca con ellipsis.
-    // 128 px daban para tres lineas, y la tercera repetia el titulo.
-    const PROYECTO_HEIGHT = '76px';
+    // Alto MINIMO, no fijo. Con alto fijo de 128 sobraba espacio y con 76 se
+    // recortaba el titulo por la mitad. El minimo evita el salto entre
+    // votaciones sin cortar nunca lo que hay que leer.
+    const PROYECTO_HEIGHT = '86px';
 
     let proyectoHtml = "";
     if (v.proyecto) {
@@ -1169,7 +1172,7 @@ function updateSummary() {
       const metaBits = [tipoTag, ingresoTxt, autoresTxt].filter(Boolean);
       const metaLine = metaBits.length ? `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">${metaBits.join('<span style="color:var(--border)">·</span>')}</div>` : '';
 
-      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1;min-width:0">
             <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">
@@ -1197,19 +1200,19 @@ function updateSummary() {
           ${fechaIngTxt}
           ${fechaTxt ? `<span style="color:var(--border)">·</span>${fechaTxt}` : ''}
         </div>`;
-        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
           <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge}<span>${dec.titulo}</span></div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${dec.subtitulo}</div>
-          ${dec.nota ? `<div style="font-family:var(--mont);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4;font-weight:400;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden" title="${dec.nota.replace(/"/g,'&quot;')}">${dec.nota}</div>` : ''}
+          ${(dec.nota && dec.nota.slice(0, 40) !== (dec.subtitulo || "").slice(0, 40)) ? `<div style="font-family:var(--mont);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4;font-weight:400;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden" title="${dec.nota.replace(/"/g,'&quot;')}">${dec.nota}</div>` : ''}
           ${metaBoletin}
         </div>`;
       } else {
         const metaSinProyecto = `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">
           <span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">${dec.titulo}</span>
-          ${dec.nota ? `<span style="color:var(--text-m)">${dec.nota}</span>` : ''}
+          ${(dec.nota && dec.nota.slice(0, 40) !== (dec.subtitulo || "").slice(0, 40)) ? `<span style="color:var(--text-m)">${dec.nota}</span>` : ''}
           ${fechaTxt}
         </div>`;
-        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
           <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación procedimental</span>'}</div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">${dec.titulo}</div>
           ${metaSinProyecto}
@@ -1217,7 +1220,7 @@ function updateSummary() {
       }
     } else {
       // Caso sin proyecto y sin descripcion: bloque placeholder con la misma altura
-      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación</span>'}</div>
         <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">Sin descripción</div>
         <div style="margin-top:8px;font-family:var(--mont);font-size:11px;color:var(--text-m);font-style:italic">Esta votación no tiene descripción registrada en el sistema de datos abiertos.</div>
@@ -1247,13 +1250,25 @@ function updateSummary() {
     }
 
     mb.style.gridTemplateColumns = "repeat(5, 1fr) 150px";
-    // Arriba solo queda que votacion es; los cinco numeros -a favor, en
-    // contra, abstencion, resultado, fecha- resumen un dibujo que primero hay
-    // que ver, asi que bajan. Entre eso y la ficha mas baja, el hemiciclo sube
-    // por encima del pliegue en vez de empezar en el pixel 638.
-    mb.innerHTML = proyectoHtml;
+    // Los cinco numeros van en una sola linea, no en cinco cajas de 89 px de
+    // alto. La barra de secciones no puede llevarlos -es la misma en las seis
+    // pestañas y solo deja 153 px libres-, pero al lado de la ficha del
+    // proyecto si hay sitio: esa fila ocupaba todo el ancho con la mitad
+    // derecha vacia.
+    const tira = metricsRow.map(m =>
+      `<span style="display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap">
+         <b style="font-family:var(--dm);font-size:15px;font-weight:800;color:${m.color};
+                   letter-spacing:-.2px">${m.val}</b>
+         <span style="font-family:var(--mont);font-size:10.5px;color:var(--text-m);
+                      text-transform:lowercase">${m.lab}</span>
+       </span>`).join('<span style="color:var(--border)">·</span>');
+    const tiraHtml = `<div style="grid-column:1/-1;background:var(--bg-white);
+        padding:9px 22px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+        border-top:1px solid var(--border-light)">${tira}</div>`;
+
+    mb.innerHTML = proyectoHtml + tiraHtml;
     const cifras = document.getElementById("metricsAbajo");
-    if (cifras) cifras.innerHTML = metricsHtml + botonesCellHtml;
+    if (cifras) cifras.innerHTML = botonesCellHtml;
   }
 
   // Bancadas: chips con cada partido y su votacion (Si/No)
