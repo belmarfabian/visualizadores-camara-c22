@@ -381,6 +381,7 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
        pantalla. -->
   <!-- Chips de coaliciones que votaron -->
   <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
+  <div id="metricsAbajo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-top:18px"></div>
   <div id="navTemporalSlot" style="margin-top:18px"></div>
 
   <!-- Leyenda de partidos -->
@@ -1150,7 +1151,8 @@ function updateSummary() {
     // Altura minima fija para evitar saltos al navegar entre votaciones
     // Altura FIJA del bloque para que no salte entre votaciones con
     // distinto largo de descripcion. Si el texto excede, se trunca con ellipsis.
-    const PROYECTO_HEIGHT = '128px';
+    // 128 px daban para tres lineas, y la tercera repetia el titulo.
+    const PROYECTO_HEIGHT = '76px';
 
     let proyectoHtml = "";
     if (v.proyecto) {
@@ -1245,7 +1247,13 @@ function updateSummary() {
     }
 
     mb.style.gridTemplateColumns = "repeat(5, 1fr) 150px";
-    mb.innerHTML = proyectoHtml + metricsHtml + botonesCellHtml;
+    // Arriba solo queda que votacion es; los cinco numeros -a favor, en
+    // contra, abstencion, resultado, fecha- resumen un dibujo que primero hay
+    // que ver, asi que bajan. Entre eso y la ficha mas baja, el hemiciclo sube
+    // por encima del pliegue en vez de empezar en el pixel 638.
+    mb.innerHTML = proyectoHtml;
+    const cifras = document.getElementById("metricsAbajo");
+    if (cifras) cifras.innerHTML = metricsHtml + botonesCellHtml;
   }
 
   // Bancadas: chips con cada partido y su votacion (Si/No)
