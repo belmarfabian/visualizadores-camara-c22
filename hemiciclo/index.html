@@ -1262,11 +1262,14 @@ function updateSummary() {
          <span style="font-family:var(--mont);font-size:10.5px;color:var(--text-m);
                       text-transform:lowercase">${m.lab}</span>
        </span>`).join('<span style="color:var(--border)">·</span>');
-    const tiraHtml = `<div style="grid-column:1/-1;background:var(--bg-white);
-        padding:9px 22px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
-        border-top:1px solid var(--border-light)">${tira}</div>`;
+    // Al costado, no debajo: la ficha ocupaba todo el ancho con la mitad
+    // derecha vacia, y los numeros se llevaban una fila entera por su cuenta.
+    const tiraHtml = `<div style="background:var(--bg-white);padding:12px 22px;
+        display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+        justify-content:flex-end;border-left:1px solid var(--border-light)">${tira}</div>`;
 
-    mb.innerHTML = proyectoHtml + tiraHtml;
+    mb.style.gridTemplateColumns = 'minmax(0,1fr) auto';
+    mb.innerHTML = proyectoHtml.replace('grid-column:1/-1', 'grid-column:auto') + tiraHtml;
     const cifras = document.getElementById("metricsAbajo");
     if (cifras) cifras.innerHTML = botonesCellHtml;
   }
