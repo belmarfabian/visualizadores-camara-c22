@@ -324,7 +324,10 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 <!-- la linea de tiempo se movio debajo del hemiciclo -->
 
 <!-- Modo de coloreado del hemiciclo -->
-<div id="tourModes" style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+<!-- Cambiar el criterio de color es una pregunta de analista. Se muestra
+     con ?avanzado=1; en publico queda «por voto», que es la respuesta a la
+     pregunta con que llega la gente. -->
+<div id="tourModes" style="display:none;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
   <span style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:1px;font-weight:600">Colorear:</span>
   <button id="modeVote" class="mode-btn active" onclick="setMode('vote')" aria-label="Colorear puntos según voto del diputado">Por voto</button>
   <button id="modeCoal" class="mode-btn" onclick="setMode('coalition')" aria-label="Colorear puntos según coalición">Por coalición</button>
@@ -384,6 +387,9 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
   <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
   <div id="metricsAbajo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-top:18px"></div>
   <div id="navTemporalSlot" style="margin-top:18px"></div>
+  <!-- Los dos analisis siguen existiendo: dejan de disputarle al hemiciclo
+       los 61 px de arriba y se ofrecen al final, ya visto el dibujo. -->
+  <div id="masAnalisis" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border-light);font-family:var(--mont);font-size:12px;color:var(--text-m);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap"><span>Ver también</span></div>
 
   <!-- Leyenda de partidos -->
   <div id="partidosLeyenda" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border-light)"></div>
@@ -1134,6 +1140,13 @@ function updateSummary() {
   if (mb) {
     const f = (v.fecha || "").split("-");
     const fechaCorta = f.length === 3 ? `${f[2]}/${f[1]}/${f[0].slice(2)}` : v.fecha;
+    const enLetras = iso => {
+      const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return iso || '';
+      const MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+                   'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      return Number(m[3]) + ' de ' + MES[Number(m[2]) - 1] + ' de ' + m[1];
+    };
     const metricsRow = [
       { val: v.totalSi, lab: "A favor", color: "var(--green)" },
       { val: v.totalNo, lab: "En contra", color: "var(--red)" },
@@ -1167,15 +1180,16 @@ function updateSummary() {
       const iaHint = `<div style="margin-top:10px;padding:8px 10px;background:var(--bg-alt);border-radius:6px;font-size:11px;color:var(--text-m);font-style:italic">Resumen del proyecto generado con IA · próximamente</div>`;
       // Metadata compacta abajo del titulo
       const tipoTag = pr.tipo ? `<span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">${pr.tipo}</span>` : '';
-      const ingresoTxt = pr.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${pr.fechaIngreso}</strong></span>` : '';
+      const ingresoTxt = pr.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${enLetras(pr.fechaIngreso)}</strong></span>` : '';
       const autoresTxt = autoresStr && autoresStr !== '—' ? `<span style="color:var(--text-m)">por <strong style="color:var(--text-2);font-weight:600">${autoresStr}</strong></span>` : '';
-      const metaBits = [tipoTag, ingresoTxt, autoresTxt].filter(Boolean);
+      const votadaTxt = v.fecha ? `<span style="color:var(--text-m)">Votada el <strong style="color:var(--text-2);font-weight:600">${enLetras(v.fecha)}</strong></span>` : '';
+      const metaBits = [tipoTag, votadaTxt, ingresoTxt, autoresTxt].filter(Boolean);
       const metaLine = metaBits.length ? `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">${metaBits.join('<span style="color:var(--border)">·</span>')}</div>` : '';
 
       proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">
+            <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">
               ${tipoBadge}<span>${v.boletin ? `<a href="https://tramitacion.senado.cl/appsenado/templates/tramitacion/index.php?boletin_ini=${v.boletin}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Ver tramitación en el Congreso" style="color:inherit;text-decoration:underline;text-decoration-color:var(--text-m);text-underline-offset:2px">Boletín N° ${v.boletin}</a>` : 'Boletín no disponible'}</span>
             </div>
             <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" title="${pr.nombre.replace(/"/g,'&quot;')}">${pr.nombre}</div>
@@ -1191,17 +1205,17 @@ function updateSummary() {
     } else if (v.descripcion) {
       // Sin proyecto de ley: votacion procedimental, acuerdo, resolucion, o boletin con info externa
       const dec = decodificarDescripcion(v.descripcion);
-      const fechaTxt = v.fecha ? `<span style="color:var(--text-m)">${v.fecha}</span>` : '';
+      const fechaTxt = v.fecha ? `<span style="color:var(--text-m)">Votada el <strong style="color:var(--text-2);font-weight:600">${enLetras(v.fecha)}</strong></span>` : '';
       // Si tenemos info del boletin (titulo del proyecto), mostramos un layout enriquecido
       if (dec.subtitulo) {
-        const fechaIngTxt = dec.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${dec.fechaIngreso}</strong></span>` : '';
+        const fechaIngTxt = dec.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${enLetras(dec.fechaIngreso)}</strong></span>` : '';
         const metaBoletin = `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">
           <span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">Proyecto de ley</span>
           ${fechaIngTxt}
           ${fechaTxt ? `<span style="color:var(--border)">·</span>${fechaTxt}` : ''}
         </div>`;
         proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge}<span>${dec.titulo}</span></div>
+          <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge}<span>${dec.titulo}</span></div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${dec.subtitulo}</div>
           ${(dec.nota && dec.nota.slice(0, 40) !== (dec.subtitulo || "").slice(0, 40)) ? `<div style="font-family:var(--mont);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4;font-weight:400;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden" title="${dec.nota.replace(/"/g,'&quot;')}">${dec.nota}</div>` : ''}
           ${metaBoletin}
@@ -1213,7 +1227,7 @@ function updateSummary() {
           ${fechaTxt}
         </div>`;
         proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación procedimental</span>'}</div>
+          <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación procedimental</span>'}</div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">${dec.titulo}</div>
           ${metaSinProyecto}
         </div>`;
@@ -1221,7 +1235,7 @@ function updateSummary() {
     } else {
       // Caso sin proyecto y sin descripcion: bloque placeholder con la misma altura
       proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación</span>'}</div>
+        <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación</span>'}</div>
         <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">Sin descripción</div>
         <div style="margin-top:8px;font-family:var(--mont);font-size:11px;color:var(--text-m);font-style:italic">Esta votación no tiene descripción registrada en el sistema de datos abiertos.</div>
       </div>`;
@@ -1268,8 +1282,50 @@ function updateSummary() {
         display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
         justify-content:flex-end;border-left:1px solid var(--border-light)">${tira}</div>`;
 
-    mb.style.gridTemplateColumns = 'minmax(0,1fr) auto';
-    mb.innerHTML = proyectoHtml.replace('grid-column:1/-1', 'grid-column:auto') + tiraHtml;
+    // Sin tira de metricas: sus cinco datos ya viven en otra parte -los tres
+    // conteos en la leyenda de colores, el resultado en el sello, la fecha en
+    // la cejilla-. Repetirlos costaba media fila y no agregaba nada.
+    mb.style.gridTemplateColumns = '1fr';
+    mb.innerHTML = proyectoHtml;
+
+    // El resultado -aprobado o rechazado- es el hecho mas importante de la
+    // pagina y era una de seis cajitas iguales. Pasa a sello junto al titulo.
+    const cabecera = mb.querySelector('.ficha-cejilla');
+    if (cabecera && resLabel) {
+      const ok = /aprob/i.test(resLabel);
+      const sello = document.createElement('span');
+      sello.textContent = resLabel;
+      sello.style.cssText = 'margin-left:auto;font-family:var(--mont);' +
+        'font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;' +
+        'padding:4px 11px;border-radius:999px;white-space:nowrap;background:' +
+        (ok ? 'rgba(76,202,165,.18)' : 'rgba(242,2,49,.12)') + ';color:' +
+        (ok ? 'var(--green-txt)' : 'var(--red)');
+      cabecera.appendChild(sello);
+    }
+
+    // Los conteos se funden con la leyenda de colores, que decia lo mismo:
+    // «a favor» aparecia dos veces en la misma pantalla.
+    const leyenda = document.getElementById('leyendaVotos');
+    if (leyenda) {
+      // El total de escaños sale de los circulos ya dibujados: no depende de
+      // ninguna variable global, que es lo que rompio el bloque entero la
+      // primera vez -y con el se cayo tambien el sello del resultado-.
+      let total = document.querySelectorAll('#hemicycle circle').length;
+      const votaron = (v.totalSi || 0) + (v.totalNo || 0) + (v.totalAbstencion || 0);
+      if (!total || total < votaron) total = votaron;
+      const porClave = {'1': v.totalSi, '0': v.totalNo, '2': v.totalAbstencion,
+                        '-1': Math.max(0, total - votaron)};
+      leyenda.querySelectorAll('.legend-item').forEach(it => {
+        const k = it.getAttribute('data-vote-key');
+        it.querySelectorAll('.legend-num').forEach(e => e.remove());
+        if (porClave[k] === undefined || porClave[k] === null) return;
+        const b = document.createElement('b');
+        b.className = 'legend-num';
+        b.textContent = porClave[k];
+        b.style.cssText = 'font-family:var(--dm);font-weight:800;color:var(--dark);margin-left:2px';
+        it.appendChild(b);
+      });
+    }
     const cifras = document.getElementById("metricsAbajo");
     if (cifras) cifras.innerHTML = botonesCellHtml;
   }
@@ -2073,5 +2129,47 @@ C22Tour.define('hemiciclo', [
   })();
   </script>
 <!-- c22skin:fin pie -->
+<script>
+/* Superficie simple, contenido completo. Los dos analisis y el selector de
+   coloreado no se borran: el primero baja al pie y el segundo se enciende con
+   ?avanzado=1. */
+(function () {
+  var avanzado = /[?&]avanzado=1\b/.test(location.search);
+  if (avanzado) {
+    var tm = document.getElementById('tourModes');
+    if (tm) tm.style.display = 'flex';
+  }
+  function moverPestanas() {
+    var pie = document.getElementById('masAnalisis');
+    var botones = [].slice.call(document.querySelectorAll('.tab-btn'));
+    if (!pie || !botones.length || pie.dataset.listo) return;
+    var otras = botones.filter(function (b) {
+      return (b.textContent || '').toUpperCase().indexOf('HEMICICLO') < 0;
+    });
+    if (!otras.length) return;
+    otras.forEach(function (b) {
+      if (!avanzado) b.style.display = 'none';
+      var a = document.createElement('button');
+      a.type = 'button';
+      a.textContent = (b.textContent || '').trim().toLowerCase();
+      a.style.cssText = 'background:none;border:none;padding:0;cursor:pointer;' +
+        'font-family:var(--mont);font-size:12px;font-weight:700;color:var(--green-txt);' +
+        'border-bottom:1px solid currentColor';
+      a.addEventListener('click', function () {
+        b.style.display = '';
+        b.click();
+        b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      pie.appendChild(a);
+    });
+    // con una sola pestaña visible, la fila deja de ser navegacion
+    var nav = botones[0].closest('nav');
+    if (nav && !avanzado) nav.style.display = 'none';
+    pie.dataset.listo = '1';
+  }
+  addEventListener('load', function () { setTimeout(moverPestanas, 400); });
+  setTimeout(moverPestanas, 1200);
+})();
+</script>
 </body>
 </html>
