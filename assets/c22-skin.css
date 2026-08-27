@@ -764,3 +764,62 @@ html.c22-embed .hero { margin-top: 0; }
    92 px, y ese desplazamiento en pleno scroll molestaba mas de lo que rendia.
    Ademas el marco real mide 824 px de 900 -no los 675 que suponia-, con lo
    cual los 55 px de la barra son un 6,7% y no valen el enredo. */
+
+/* ── G3 · El titulo y las secciones, en una sola fila ──────────────────────
+   Medido en la pantalla real de un portatil: 545 px utiles bajo la cabecera
+   del C22. De esos, la pastilla se llevaba 75 y el titulo con sus margenes
+   otros 165: el 44% del alto antes de que empezara nada. Y decian lo mismo,
+   porque la pastilla ya marca la seccion en la que estamos.
+
+   Fundidas ocupan unos 56 px. Las reglas de .c22skin-sub dejan de alcanzar a
+   los enlaces al moverlos -son descendientes de otro padre-, asi que aqui se
+   escriben de nuevo, ya sin pildora ni iconos. */
+.c22skin-fila {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px 28px; flex-wrap: wrap;
+  padding: 4px 0 11px; margin: 0 0 16px;
+  border-bottom: 1px solid rgba(27, 28, 30, .1);
+}
+.c22skin-fila > h1 {
+  font-size: 26px !important; line-height: 1.15; margin: 0 !important;
+  letter-spacing: -.4px; flex: 1 1 auto; min-width: 0;
+}
+.c22skin-fila .c22skin-pastilla {
+  background: none; box-shadow: none; border-radius: 0; padding: 0;
+  display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;
+  justify-content: flex-end; pointer-events: auto;
+}
+/* Sin iconos: a 25 px de alto pesaban mas que el titulo que acompañan, y en
+   una fila de texto no queda sitio para ellos. */
+.c22skin-fila .c22skin-ico { display: none; }
+.c22skin-fila .c22skin-rotulo { display: none; }
+.c22skin-fila .c22skin-pastilla a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .4px;
+  text-transform: uppercase; text-decoration: none;
+  color: rgba(27, 28, 30, .5); white-space: nowrap;
+  padding: 0; border-bottom: 0; position: relative;
+  transition: color 150ms ease;
+}
+.c22skin-fila .c22skin-pastilla a:hover { color: rgb(27, 28, 30); }
+.c22skin-fila .c22skin-pastilla a.c22skin-aqui { color: rgb(27, 28, 30); }
+.c22skin-fila .c22skin-pastilla a.c22skin-aqui::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -6px;
+  height: 2px; background: #4CCAA5;
+}
+@media (max-width: 860px) {
+  /* Con poco ancho el titulo y las secciones no caben en la misma linea. Se
+     apilan, y las secciones se deslizan al costado en vez de envolverse en
+     tres filas, que es lo que hacia la pastilla en un telefono. */
+  .c22skin-fila { flex-direction: column; align-items: stretch; gap: 10px; }
+  .c22skin-fila > h1 { font-size: 22px !important; }
+  .c22skin-fila .c22skin-pastilla {
+    justify-content: flex-start; flex-wrap: nowrap;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+  }
+  .c22skin-fila .c22skin-pastilla::-webkit-scrollbar { display: none; }
+  .c22skin-fila .c22skin-pastilla a { flex: 0 0 auto; padding: 6px 0; }
+  .c22skin-fila .c22skin-pastilla a.c22skin-aqui::after { bottom: 0; }
+}
