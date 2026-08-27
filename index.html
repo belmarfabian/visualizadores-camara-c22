@@ -417,13 +417,29 @@
       pointer-events: none;
     }
     .mazo .carta.atras-2 { margin-left: 24px; margin-right: 24px; background: #F7F9F9; }
-    .vivo-pasa {
+    /* Cabecera de la ficha: el rotulo a la izquierda y el resultado como sello
+       a la derecha. Antes el resultado era una linea entera en versalitas
+       verdes que ademas repetia los numeros de la barra. */
+    .vivo-cab { display: flex; align-items: center; gap: 12px; }
+    .vivo-cab .vivo-rot { margin: 0; flex: 1; }
+    .vivo-sello {
       font-family: var(--mont); font-size: 10.5px; font-weight: 700;
-      letter-spacing: .8px; text-transform: uppercase; color: var(--text-m);
-      margin-top: 10px; display: flex; gap: 7px; align-items: baseline;
+      letter-spacing: .8px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; white-space: nowrap;
     }
-    .vivo-pasa span { font-weight: 600; letter-spacing: .3px; text-transform: none;
-      font-size: 11px; opacity: .85; }
+    .vivo-sello.es-si { background: rgba(76, 202, 165, .18); color: var(--green-txt); }
+    .vivo-sello.es-no { background: rgba(242, 2, 49, .12); color: var(--red); }
+
+    /* Que significa cada color de la barra, en gris y pequeno: antes habia que
+       deducirlo o leerlo en la linea repetida. */
+    .vivo-clave { display: flex; gap: 14px; margin-top: 7px;
+      font-family: var(--mont); font-size: 10.5px; color: var(--text-m); }
+    .vivo-clave i { width: 8px; height: 8px; border-radius: 2px;
+      display: inline-block; margin-right: 5px; }
+
+    .vivo-pie { display: flex; align-items: baseline; gap: 12px; margin-top: 12px; }
+    .vivo-pasa { margin-left: auto; font-family: var(--mont); font-size: 11px;
+      font-weight: 700; color: var(--text-m); font-variant-numeric: tabular-nums; }
     .mazo .vivo-tira {
       display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
       font-family: var(--mont); font-size: 11.5px; font-weight: 600;
@@ -1370,8 +1386,8 @@
       font-size: 12px; font-weight: 700; color: #fff; }
     .vivo-bar > span { display: flex; align-items: center; justify-content: center; min-width: 34px; }
     .vivo-res { font-family: var(--mont); font-size: 12.5px; font-weight: 700; margin-top: 10px; text-transform: uppercase; letter-spacing: .6px; }
-    .vivo-link { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--green-txt);
-      text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 10px; }
+    .vivo-link { font-family: var(--mont); font-size: 12px; font-weight: 700;
+      color: var(--green-txt); letter-spacing: .2px; display: inline-block; }
 
     /* ── Carrusel de las 10 votaciones mas recientes ──────────────────────────
        Vive en la misma linea que la tarjeta grande: no agrega altura al hero.
@@ -2201,15 +2217,24 @@
       }
       cv.dataset.pintada = '1';
       cv.className = 'panel mazo';
-      cv.innerHTML = '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
+      // La barra ya dice 62/42/18: la linea que repetia «62 a favor, 18 en
+      // contra, 42 abst.» sobraba. El resultado pasa a un sello arriba, junto
+      // al rotulo, y abajo queda una sola linea con el enlace y en que
+      // votacion va. De siete elementos a cinco, y una sola en versalitas.
+      cv.innerHTML = '<div class="carta">' +
+        '<div class="vivo-cab"><div class="vivo-rot">' + rotulo + '</div>' +
+          '<span class="vivo-sello ' + (aprob ? 'es-si' : 'es-no') + '">' +
+          (d.resultado || '') + '</span></div>' +
         '<div class="vivo-proj" title="' + esc(d.proyecto || d.descripcion) + '">' + titular + '</div>' +
         '<div class="vivo-fecha">' + fmtFecha(d.fecha) + (d.tipo ? ' · ' + d.tipo : '') + '</div>' +
         '<div class="vivo-bar">' + seg(d.si, 'var(--green)', 'A favor') + seg(d.abstencion, '#C9CDCE', 'Abstención') + seg(d.no, 'var(--red)', 'En contra') + '</div>' +
-        '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
-        (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
-        '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
-        (lista.length > 1 ? '<div class="vivo-pasa">' + (i + 1) + ' de ' + lista.length +
-          ' <span>· toca para ver la anterior</span></div>' : '') + '</div>' + atras;
+        '<div class="vivo-clave"><span><i style="background:var(--green)"></i>a favor</span>' +
+          '<span><i style="background:#C9CDCE"></i>abstención</span>' +
+          '<span><i style="background:var(--red)"></i>en contra</span></div>' +
+        '<div class="vivo-pie">' +
+          '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo →</a>' +
+          (lista.length > 1 ? '<span class="vivo-pasa">' + (i + 1) + ' / ' + lista.length + '</span>' : '') +
+        '</div></div>' + atras;
       idx = i;
       // El mazo se pasa con el dedo o con un clic, como un mazo de verdad. La
       // huincha de fechas sigue estando para ir a una en concreto.
