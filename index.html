@@ -69,77 +69,6 @@
     window.addEventListener('resize', barra);
   })();
   </script>
-  <script>
-  /* La barra de secciones y el titulo de la pagina, en una sola fila.
-
-     Iban en dos: la pastilla blanca de 75 px y debajo un titulo de 42 px con
-     sus margenes, 165 px mas. En una pantalla de portatil -545 px utiles tras
-     la cabecera del C22- eso es el 44% del alto antes de que empiece el
-     contenido, y las dos dicen lo mismo: la pastilla ya marca en que seccion
-     estamos.
-
-     Fundidas son una fila de unos 56 px: el titulo a la izquierda en 26 px,
-     las secciones a la derecha como texto. Se pierde la pildora blanca, que
-     era la cita visual del selector de Publicaciones del C22; a cambio el
-     hemiciclo entra entero en la pantalla.
-
-     En la portada no se aplica: alli la pastilla flota sobre la imagen del
-     hero y el titulo es el titular del sitio, no el rotulo de una seccion. */
-  (function () {
-    var intentos = 0;
-
-    function titulo() {
-      /* Un titulo escondido para lectores de pantalla -el de rankings- no
-         puede encabezar la fila: la dejaria con un hueco del alto de nada. */
-      var todos = document.querySelectorAll('h1');
-      for (var i = 0; i < todos.length; i++) {
-        var b = todos[i].getBoundingClientRect();
-        if (todos[i].offsetParent !== null && b.height > 12 && b.width > 60) {
-          return todos[i];
-        }
-      }
-      return null;
-    }
-
-    /* Devuelve true cuando ya no hay nada mas que hacer. */
-    function fundir() {
-      if (document.querySelector('.c22skin-fila')) return true;
-      var barra = document.querySelector('.c22skin-sub');
-      var pastilla = barra && barra.querySelector('.c22skin-pastilla');
-      if (!pastilla) return false;
-      if (document.querySelector('.hero')) return true;   /* portada */
-
-      /* La barra se inyecta al abrir el cuerpo y el titulo viene mas abajo, asi
-         que en paginas con megabytes de datos en linea el parser suele estar
-         todavia lejos de el. Sin esta espera la fila se armaba sin titulo. */
-      var h1 = titulo();
-      if (!h1) {
-        if (intentos < 24) return false;
-        h1 = null;   /* se rinde: fila solo con las secciones */
-      }
-
-      var fila = document.createElement('div');
-      fila.className = 'c22skin-fila';
-      if (h1) {
-        h1.parentNode.insertBefore(fila, h1);
-        fila.appendChild(h1);
-      } else {
-        barra.parentNode.insertBefore(fila, barra);
-      }
-      fila.appendChild(pastilla);
-      if (barra.parentNode) barra.parentNode.removeChild(barra);
-      return true;
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', fundir);
-    } else { fundir(); }
-    var t = setInterval(function () {
-      intentos++;
-      if (fundir() || intentos > 30) clearInterval(t);
-    }, 200);
-  })();
-  </script>
   <!-- c22skin:fin alto -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -294,10 +223,7 @@
     /* Hero estilo C22 */
     .hero {
       background: var(--bg);
-      /* El relleno de abajo es el sitio donde se montan las tarjetas de
-         herramientas. Con 90 sobraba: bastan 68 para el mismo montaje. */
-      /* El pie lo reserva .hero .inner: aqui solo el aire minimo. */
-      padding: 80px 6% 6px;
+      padding: 80px 6% 90px;
       position: relative;
       overflow: hidden;
     }
@@ -314,25 +240,13 @@
       gap: 54px;
       padding-right: 48px;
       padding-bottom: 118px;   /* sitio para la mitad de la fila que se monta */
-      /* Alineadas arriba y no al centro. Centradas, las dos columnas bajaban
-         hasta el borde del hero y el rotulo «Qué es el Monitor», que se monta
-         ahi, caia encima del sello del SODAS y de la huincha de fechas.
-         Ancladas arriba, el rincon de abajo queda libre para el montaje. */
-      align-items: start;
+      align-items: center;
     }
     @media (max-width: 980px) { .hero .inner { grid-template-columns: 1fr; gap: 30px; } }
 
     /* Va fuera del hero para poder montarse sobre su borde: mitad dentro,
        mitad fuera, como las tarjetas del sitio del CEP. */
-    /* Las tarjetas se montan sobre la foto: mitad dentro, mitad fuera. Antes
-       el rotulo «Qué es el Monitor» iba delante de ellas dentro de este mismo
-       bloque y se comia 141 px del montaje, asi que por mucho que se subiera
-       la fila las tarjetas nunca alcanzaban la foto. */
-    .hero-fila { position: relative; z-index: 4; margin-top: -96px; padding: 0 6%; }
-    .solo-lectores {
-      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
-    }
+    .hero-fila { position: relative; z-index: 4; margin-top: -104px; padding: 0 6%; }
     .hero-fila-in { max-width: var(--ancho); margin: 0 auto; }
     /* Nombra la fila sin robarle una seccion entera: el bloque que lo hacia
        presentaba tarjetas que el lector ya habia pasado. */
@@ -376,13 +290,6 @@
     @media (max-width: 1000px) { .hero-fila .cards { grid-auto-columns: calc((100% - 18px) / 2); } }
     @media (max-width: 660px)  { .hero-fila .cards { grid-auto-columns: 90%; } }
 
-    /* Las flechas del carrusel de herramientas van despues de las tarjetas y a
-       la derecha. Delante quedaban sobre la foto, encima de la linea de la
-       fecha del hero. */
-    .vot-nav-abajo { order: 2; display: flex; justify-content: flex-end;
-      gap: 8px; margin-top: 14px; }
-    .hero-fila-in { display: flex; flex-direction: column; }
-    .hero-fila-in .cards { order: 1; }
     .fila-intro { margin-bottom: 14px; max-width: 620px; }
     .fila-intro p { font-family: var(--mont); font-size: 13.5px; line-height: 1.55;
       color: rgba(255, 255, 255, .92); margin: 8px 0 0;
@@ -440,88 +347,38 @@
     /* La votacion mas reciente viaja al hero, sobre la foto. Detras asoman dos
        hojas: dicen que hay mas votaciones para atras, como el carrusel del
        sitio del C22, y hacen entendible el selector de fechas de abajo. */
-    /* El panel deja de ser una caja blanca. Con fondo, borde, sombra y relleno
-       propios quedaban cuatro rectangulos blancos anidados -panel 428, tarjeta
-       374, cantos 350 y 326- y el conjunto se veia desparramado. La superficie
-       es la tarjeta; el panel solo agrupa. */
     .hero .panel {
       position: relative;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-      /* Sin recorte: los cantos de atras asoman por abajo y un overflow oculto
-         los cortaria. */
+      /* Opaca a proposito: con fondo translucido las hojas de atras se
+         transparentaban a traves de la tarjeta en vez de asomar solo por el
+         borde, y se veia como una mancha clara encima del texto. */
+      background: #fff;
+      border: 1px solid rgba(27, 28, 30, 0.07);
+      box-shadow: 0 20px 55px rgba(27, 28, 30, 0.16);
+      /* Sin recorte: las hojas de atras sobresalen por la derecha y un
+         overflow oculto las cortaba justo en el borde. */
       overflow: visible;
     }
     /* Las votaciones siguientes son tarjetas de verdad, no adorno: llevan su
        propio proyecto y su propio resultado, y al avanzar la de adelante se va
        y una de ellas toma su lugar. */
-    /* Los cantos van en el flujo, uno bajo otro: no hacen falta trucos de
-       posicion ni sitio reservado. */
-    .mazo { position: relative; display: flex; flex-direction: column; }
+    .mazo { position: relative; }
     .mazo .carta {
       background: #fff; border: 1px solid rgba(27, 28, 30, 0.07);
-      /* La tarjeta es el piso del alto del hero: la columna derecha mide mas
-         que la izquierda. Con 16 de relleno arriba y 14 abajo se leen igual
-         los mismos datos y el hero baja otros 18. */
-      border-radius: 16px; padding: 16px 22px 14px;
+      border-radius: 16px; padding: 26px 26px 22px;
       box-shadow: 0 20px 55px rgba(27, 28, 30, 0.16);
       transition: transform .34s cubic-bezier(.2,.7,.3,1), opacity .34s ease;
     }
-    /* Las siguientes votaciones asoman como cantos bajo la de adelante, cada
-       uno con su fecha, su resultado y su marcador. Antes eran tarjetas
-       enteras corridas en diagonal y encogidas con scale(): el encogido
-       cancelaba el desplazamiento, asi que solo se veia un borde blanco. Eso
-       era lo que se leia como carton. */
     .mazo .carta.atras {
-      /* Sin z-index negativo: van en el flujo, debajo de la de adelante. Con
-         z-index -1 quedaban detras del fondo blanco del panel y no se veian. */
-      position: relative;
-      /* El traslape tiene que ser menor que el relleno de arriba, o la de
-         adelante corta el texto del canto por la mitad. */
-      margin: -14px 12px 0; padding: 27px 22px 10px;
-      border-radius: 0 0 16px 16px; border-top: none;
-      border-color: rgba(27, 28, 30, 0.11);
-      background: #FBFCFC;
-      box-shadow: 0 10px 24px rgba(27, 28, 30, .08);
-      pointer-events: none;
+      position: absolute; inset: 0; z-index: -1;
+      overflow: hidden; pointer-events: none;
     }
-    .mazo .carta.atras-2 { margin-left: 24px; margin-right: 24px; background: #F7F9F9; }
-    /* Cabecera de la ficha: el rotulo a la izquierda y el resultado como sello
-       a la derecha. Antes el resultado era una linea entera en versalitas
-       verdes que ademas repetia los numeros de la barra. */
-    .vivo-cab { display: flex; align-items: center; gap: 12px; }
-    .vivo-cab .vivo-rot { margin: 0; flex: 1; }
-    .vivo-sello {
-      font-family: var(--mont); font-size: 10.5px; font-weight: 700;
-      letter-spacing: .8px; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 999px; white-space: nowrap;
-    }
-    .vivo-sello.es-si { background: rgba(76, 202, 165, .18); color: var(--green-txt); }
-    .vivo-sello.es-no { background: rgba(242, 2, 49, .12); color: var(--red); }
-
-    /* Que significa cada color de la barra, en gris y pequeno: antes habia que
-       deducirlo o leerlo en la linea repetida. */
-    .vivo-clave { display: flex; gap: 14px; margin-top: 7px;
-      font-family: var(--mont); font-size: 10.5px; color: var(--text-m); }
-    .vivo-clave i { width: 8px; height: 8px; border-radius: 2px;
-      display: inline-block; margin-right: 5px; }
-
-    .mazo .vivo-tira {
-      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-      font-family: var(--mont); font-size: 11.5px; font-weight: 600;
-      color: var(--text-2); padding-top: 2px;
-    }
-    .mazo .vivo-tira .vt-res { font-weight: 700; text-transform: uppercase;
-      letter-spacing: .5px; }
-    .mazo .vivo-tira .vt-marca { margin-left: auto; font-family: var(--mono, var(--mont));
-      font-weight: 700; color: var(--dark); font-variant-numeric: tabular-nums; }
-
-    /* El mazo se pasa con un clic sobre la tarjeta de adelante. */
-    .mazo .carta.es-pasable { cursor: pointer; }
-    .mazo .carta.es-pasable:hover { box-shadow: 0 24px 62px rgba(27, 28, 30, 0.2); }
-    .mazo .carta.es-pasable:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+    .mazo .carta.atras-1 { transform: translate(22px, 16px) scale(.965); }
+    .mazo .carta.atras-2 { transform: translate(44px, 32px) scale(.93); }
+    .mazo .carta.atras .vivo-bar, .mazo .carta.atras .vivo-res,
+    .mazo .carta.atras .vivo-link, .mazo .carta.atras .car-prog { visibility: hidden; }
+    .mazo .carta.atras .vivo-proj { opacity: .5; }
+    .mazo .carta.atras h3, .mazo .carta.atras .vivo-fecha { opacity: .55; }
     @media (max-width: 720px) { .mazo .carta.atras { display: none; } }
     @media (max-width: 720px) {
       .hero .panel::before, .hero .panel::after { display: none; }
@@ -544,12 +401,10 @@
       .hero .panel.hoja-sale, .hero .panel.hoja-entra { transition: none; transform: none; opacity: 1; }
     }
 
-    /* Titulos de proyecto muy largos no deben estirar el hero. Dos lineas y no
-       tres: la tarjeta fija el alto del hero, y el hero tiene que dejar sitio
-       para que las tarjetas de herramientas se monten encima. */
+    /* Titulos de proyecto muy largos no deben estirar el hero */
     .hero .vivo-proj {
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -635,10 +490,7 @@
 
     .hero h1 {
       font-family: var(--dm);
-      /* Era clamp(38px, 5.5vw, 64px): tres lineas de 65 px, 204 en total, el
-         bloque mas alto de toda la portada. A 52 sigue mandando y ocupa 45
-         menos. */
-      font-size: clamp(32px, 4vw, 46px);
+      font-size: clamp(38px, 5.5vw, 64px);
       font-weight: 700;
       letter-spacing: -1px;
       line-height: 1;
@@ -1374,7 +1226,7 @@
       }
 
       .hero {
-        padding: 60px 6% 6px;
+        padding: 60px 6% 70px;
       }
 
       section.products {
@@ -1435,7 +1287,7 @@
     /* Diez cifras en dos filas de cinco. Con ocho a cuatro columnas las
        tarjetas quedaban anchas y medio vacias. */
     .cifras-fila .facts-grid { display: grid; gap: 14px;
-      grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      grid-template-columns: repeat(5, minmax(0, 1fr)); }
     @media (max-width: 1250px) { .cifras-fila .facts-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 780px)  { .cifras-fila .facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 620px) {
@@ -1448,14 +1300,14 @@
     .panel h3 { font-family: var(--mont); font-size: 12px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 1.8px; color: var(--text-2); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
     .panel .p-live { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(76,202,165,.25); }
-    .vivo-proj { font-family: var(--dm); font-size: 16.5px; font-weight: 600; color: var(--dark); line-height: 1.28; margin: 9px 0 5px; }
-    .vivo-fecha { font-family: var(--mont); font-size: 12px; color: var(--text-2); margin-bottom: 11px; }
-    .vivo-bar { display: flex; height: 28px; border-radius: 7px; overflow: hidden; font-family: var(--mont);
+    .vivo-proj { font-family: var(--dm); font-size: 17px; font-weight: 600; color: var(--dark); line-height: 1.3; margin: 12px 0 6px; }
+    .vivo-fecha { font-family: var(--mont); font-size: 12px; color: var(--text-2); margin-bottom: 16px; }
+    .vivo-bar { display: flex; height: 34px; border-radius: 8px; overflow: hidden; font-family: var(--mont);
       font-size: 12px; font-weight: 700; color: #fff; }
     .vivo-bar > span { display: flex; align-items: center; justify-content: center; min-width: 34px; }
-    .vivo-res { font-family: var(--mont); font-size: 12.5px; font-weight: 700; margin-top: 10px; text-transform: uppercase; letter-spacing: .6px; }
-    .vivo-link { font-family: var(--mont); font-size: 12px; font-weight: 700;
-      color: var(--green-txt); letter-spacing: .2px; display: inline-block; }
+    .vivo-res { font-family: var(--mont); font-size: 13px; font-weight: 700; margin-top: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .vivo-link { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--green-txt);
+      text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-top: 14px; }
 
     /* ── Carrusel de las 10 votaciones mas recientes ──────────────────────────
        Vive en la misma linea que la tarjeta grande: no agrega altura al hero.
@@ -1550,15 +1402,11 @@
     .rarezas .sub { font-family: var(--mont); font-size: 14px; color: var(--text-2);
       margin: 10px 0 28px; max-width: 700px; line-height: 1.6; }
     /* Seis tarjetas, igual que las cifras: tres por fila cierran parejas. */
-    .rar-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .rar-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
     @media (max-width: 1250px) { .rar-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 780px)  { .rar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 700px) { .rar-grid { grid-template-columns: 1fr; } }
     .rar-grid.rar-plegado > .rar:nth-child(n+6) { display: none; }
-    /* Diez tarjetas en cuatro columnas dejan dos sueltas en la ultima fila:
-       que se repartan el ancho en vez de quedar a la izquierda. */
-    .rar-grid > .rar:nth-child(9):nth-last-child(2) { grid-column: span 2; }
-    .rar-grid > .rar:nth-child(10):nth-last-child(1) { grid-column: span 2; }
     .rar-mas {
       display: block; margin: 16px auto 0; padding: 12px 26px; min-height: 44px;
       border: 1px solid var(--border); border-radius: 999px; background: var(--bg-white);
@@ -1731,7 +1579,7 @@
     html.c22-embed header.site,
     html.c22-embed footer.site,
     html.c22-embed > body > .ribbon:first-of-type { display: none !important; }
-    html.c22-embed .hero { padding-top: 22px; }
+    html.c22-embed .hero { padding-top: 34px; }
     html.c22-embed,
     html.c22-embed body { background: var(--bg); }
     /* Las flechas de los carruseles cuelgan 20 px fuera del contenedor: dentro
@@ -1770,25 +1618,8 @@
        tiene sitio de sobra ahi y el hero no crece. Sigue con su fondo velado
        porque encima va la foto. Vive en el cuerpo y no en el pie, que el modo
        incrustado oculta. */
-    /* El credito del SODAS se fue del hero al cierre. En la cabecera choco dos
-       veces: primero con la huincha de fechas y despues con el rotulo «Qué es
-       el Monitor», que se monta sobre el borde de abajo. Ahi abajo no compite
-       con nada, se ve en los dos modos -el pie propio queda oculto dentro del
-       marco del C22- y de paso el hero adelgaza. */
-    .apoyo-cierre {
-      display: flex; align-items: center; gap: 13px;
-      margin: 0 0 16px !important;
-    }
-    .apoyo-cierre .rot {
-      font-family: var(--mont); font-size: 9.5px; font-weight: 700;
-      letter-spacing: 1.7px; text-transform: uppercase; color: var(--text-m);
-      white-space: nowrap;
-    }
-    .apoyo-cierre img { height: 26px; width: auto; display: block;
-      filter: brightness(0) saturate(100%) opacity(.62); }
-    .apoyo-cierre a:hover img { filter: none; }
     .apoyo-hero {
-      margin-top: 0; z-index: 3;
+      margin-top: 16px; z-index: 3;
       background: rgba(27, 28, 30, .42); backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px); border-radius: 10px; padding: 7px 13px;
       width: fit-content;
@@ -1911,9 +1742,14 @@
       <div class="hero-txt">
         <div class="eyebrow">Monitor Legislativo · C22-CEP</div>
         <h1>Las votaciones del Congreso, en visualizaciones</h1>
-        <p class="lead">Leemos las votaciones y los discursos del Congreso.
-        Cámara y Senado, 2026-2030.</p>
-        <div id="buildStatus" style="margin-top:10px;font-family:var(--mont);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px;min-height:18px" aria-live="polite"></div>
+        <p class="lead">Cámara y Senado 2026-2030, analizados con los métodos digitales del Centro de Estudios Públicos.</p>
+        <div id="buildStatus" style="margin-top:6px;font-family:var(--mont);font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:8px;min-height:18px" aria-live="polite"></div>
+        <div class="apoyo-hero">
+          <span class="rot">Con el apoyo de</span>
+          <a href="https://sodas.cl" target="_blank" rel="noopener"
+             title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
+             src="assets/logo-sodas.png" alt="SODAS"></a>
+        </div>
       </div>
       <div class="car-col" id="carCol">
         <div class="panel" id="cardVivo"></div>
@@ -1924,8 +1760,12 @@
 
   <div class="hero-fila">
     <div class="hero-fila-in">
-      <h2 class="solo-lectores">Herramientas del Monitor</h2>
-      <div class="vot-nav vot-nav-abajo">
+      <div class="fila-intro">
+        <h2 class="fila-rotulo">Qué es el Monitor</h2>
+        <p>Un conjunto de herramientas que leen las votaciones y los discursos del
+        Congreso, y las publicaciones que salen de ellas.</p>
+      </div>
+      <div class="vot-nav">
         <button type="button" data-d="-1" aria-label="Anterior">←</button>
         <button type="button" data-d="1" aria-label="Siguiente">→</button>
       </div>
@@ -2035,12 +1875,6 @@
           se ha movido el eje izquierda-derecha en siete períodos. Los datos vienen de las API de
           datos abiertos del Congreso y se actualizan todos los días. Las posiciones se estiman con
           W-NOMINATE (Poole y Rosenthal, 1985) en R.</p>
-        <p class="apoyo-cierre">
-          <span class="rot">Con el apoyo de</span>
-          <a href="https://sodas.cl" target="_blank" rel="noopener"
-             title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
-             src="assets/logo-sodas.png" alt="SODAS · Núcleo Milenio para la Ciencia de Datos Sociales"></a>
-        </p>
         <p class="about-enlaces">
           <a href="https://github.com/belmarfabian/visualizadores-camara-c22" target="_blank"
             rel="noopener">Método y código en el repositorio</a>
@@ -2265,6 +2099,12 @@
           '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
           (chico ? '' : (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : ''));
       }
+      var atras = '';
+      for (var q = 1; q <= 2 && lista.length > q; q++) {
+        var sig = lista[(i + q) % lista.length];
+        atras += '<div class="carta atras atras-' + q + '" aria-hidden="true">' +
+                 cuerpo(sig, 'Votación anterior', true) + '</div>';
+      }
       var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (suave && cv.dataset.pintada) {
         cv.classList.add('hoja-sale');
@@ -2273,26 +2113,14 @@
       }
       cv.dataset.pintada = '1';
       cv.className = 'panel mazo';
-      // La barra ya dice 62/42/18: la linea que repetia «62 a favor, 18 en
-      // contra, 42 abst.» sobraba. El resultado pasa a un sello arriba, junto
-      // al rotulo, y abajo queda una sola linea con el enlace y en que
-      // votacion va. De siete elementos a cinco, y una sola en versalitas.
-      // Una tarjeta fija con la ultima votacion y nada mas. Lo que habia -un
-      // mazo con las anteriores asomando, clic para pasarlas, contador «1 / 10»
-      // y una huincha de fechas- eran cuatro maneras de ofrecer lo mismo
-      // encima de la foto. Para ver el resto esta el hemiciclo.
-      cv.innerHTML = '<div class="carta">' +
-        '<div class="vivo-cab"><div class="vivo-rot">' + rotulo + '</div>' +
-          '<span class="vivo-sello ' + (aprob ? 'es-si' : 'es-no') + '">' +
-          (d.resultado || '') + '</span></div>' +
+      cv.innerHTML = atras + '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
         '<div class="vivo-proj" title="' + esc(d.proyecto || d.descripcion) + '">' + titular + '</div>' +
         '<div class="vivo-fecha">' + fmtFecha(d.fecha) + (d.tipo ? ' · ' + d.tipo : '') + '</div>' +
         '<div class="vivo-bar">' + seg(d.si, 'var(--green)', 'A favor') + seg(d.abstencion, '#C9CDCE', 'Abstención') + seg(d.no, 'var(--red)', 'En contra') + '</div>' +
-        '<div class="vivo-clave"><span><i style="background:var(--green)"></i>a favor</span>' +
-          '<span><i style="background:#C9CDCE"></i>abstención</span>' +
-          '<span><i style="background:var(--red)"></i>en contra</span></div>' +
-        '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo →</a>' +
-        '</div>';
+        '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
+        (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
+        '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
+        (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>';
       idx = i;
       if (track) {
         var ts = track.querySelectorAll('.car-tick');
@@ -2306,11 +2134,7 @@
       barra(!!timer);
     }
 
-    /* La huincha de fechas se retira. Con el mazo -que se pasa con un clic- y
-       el enlace al hemiciclo completo habia cuatro maneras de decir lo mismo
-       apiladas sobre la foto, y la huincha ademas quedaba cortada por el borde
-       derecho. Volverla a encender es cambiar este false. */
-    if (false && rail && lista.length > 1) {
+    if (rail && lista.length > 1) {
       rail.hidden = false;
       rail.innerHTML = '<div class="car-track">' + lista.map(function (d, k) {
         return '<button class="car-tick" type="button" data-i="' + k + '" title="' +
@@ -2994,7 +2818,11 @@
         <span>Monitor Legislativo · C22 — Centro de Estudios Públicos</span>
         <span>Datos de la API de datos abiertos del Congreso Nacional</span>
       </div>
-    </footer>
+    
+<div class="c22skin-autoria" style="border-top:1px solid rgba(255,255,255,.18);margin-top:18px;padding-top:14px;font-size:12.5px;line-height:1.6;opacity:.85">
+  <p style="margin:0 0 4px">© 2026 C22, Centro de Estudios Públicos. Todos los derechos reservados.</p>
+</div>
+</footer>
   <script>
   /* Los SVG llevan un lienzo fijo y ancho al 100%, asi que al angostarse la
      pantalla encogen tambien las letras: los rotulos caian a 2,6 y 4,2 px.

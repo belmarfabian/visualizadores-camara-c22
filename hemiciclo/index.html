@@ -68,77 +68,6 @@
     window.addEventListener('resize', barra);
   })();
   </script>
-  <script>
-  /* La barra de secciones y el titulo de la pagina, en una sola fila.
-
-     Iban en dos: la pastilla blanca de 75 px y debajo un titulo de 42 px con
-     sus margenes, 165 px mas. En una pantalla de portatil -545 px utiles tras
-     la cabecera del C22- eso es el 44% del alto antes de que empiece el
-     contenido, y las dos dicen lo mismo: la pastilla ya marca en que seccion
-     estamos.
-
-     Fundidas son una fila de unos 56 px: el titulo a la izquierda en 26 px,
-     las secciones a la derecha como texto. Se pierde la pildora blanca, que
-     era la cita visual del selector de Publicaciones del C22; a cambio el
-     hemiciclo entra entero en la pantalla.
-
-     En la portada no se aplica: alli la pastilla flota sobre la imagen del
-     hero y el titulo es el titular del sitio, no el rotulo de una seccion. */
-  (function () {
-    var intentos = 0;
-
-    function titulo() {
-      /* Un titulo escondido para lectores de pantalla -el de rankings- no
-         puede encabezar la fila: la dejaria con un hueco del alto de nada. */
-      var todos = document.querySelectorAll('h1');
-      for (var i = 0; i < todos.length; i++) {
-        var b = todos[i].getBoundingClientRect();
-        if (todos[i].offsetParent !== null && b.height > 12 && b.width > 60) {
-          return todos[i];
-        }
-      }
-      return null;
-    }
-
-    /* Devuelve true cuando ya no hay nada mas que hacer. */
-    function fundir() {
-      if (document.querySelector('.c22skin-fila')) return true;
-      var barra = document.querySelector('.c22skin-sub');
-      var pastilla = barra && barra.querySelector('.c22skin-pastilla');
-      if (!pastilla) return false;
-      if (document.querySelector('.hero')) return true;   /* portada */
-
-      /* La barra se inyecta al abrir el cuerpo y el titulo viene mas abajo, asi
-         que en paginas con megabytes de datos en linea el parser suele estar
-         todavia lejos de el. Sin esta espera la fila se armaba sin titulo. */
-      var h1 = titulo();
-      if (!h1) {
-        if (intentos < 24) return false;
-        h1 = null;   /* se rinde: fila solo con las secciones */
-      }
-
-      var fila = document.createElement('div');
-      fila.className = 'c22skin-fila';
-      if (h1) {
-        h1.parentNode.insertBefore(fila, h1);
-        fila.appendChild(h1);
-      } else {
-        barra.parentNode.insertBefore(fila, barra);
-      }
-      fila.appendChild(pastilla);
-      if (barra.parentNode) barra.parentNode.removeChild(barra);
-      return true;
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', fundir);
-    } else { fundir(); }
-    var t = setInterval(function () {
-      intentos++;
-      if (fundir() || intentos > 30) clearInterval(t);
-    }, 200);
-  })();
-  </script>
   <!-- c22skin:fin alto -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -184,9 +113,7 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 .nav-btn { padding: 10px 15px; font-size: 14px; border: 1px solid var(--border); border-radius: 50px; background: var(--bg-white); color: var(--text-2); transition: all .25s ease-in-out; font-weight: 700; text-transform: uppercase; }
 .nav-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
 .nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
-/* Median 40 px de alto contra los 28 de Camara/Senado: el mismo tipo de
-   control con dos tamaños distintos en la misma pantalla. */
-.mode-btn { padding: 6px 16px; font-size: 12px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--text-2); font-weight: 700; transition: all .25s ease-in-out; text-transform: uppercase; }
+.mode-btn { padding: 10px 15px; font-size: 14px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--text-2); font-weight: 700; transition: all .25s ease-in-out; text-transform: uppercase; }
 .mode-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
 .mode-btn:hover:not(.active) { border-color: var(--text-2); }
 .tab-btn { padding: 12px 22px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; border: none; background: transparent; color: var(--text-2); cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; font-family: var(--dm); }
@@ -357,16 +284,20 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 <div style="max-width:1200px;margin:0 auto;padding:0 5%">
 
 <!-- Header -->
-<header style="padding:14px 0 14px">
+<header style="padding:40px 0 32px">
+  <div title="Primer visualizador de la serie: hemiciclo de votaciones individuales" style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);display:inline-flex;align-items:center;gap:10px">
+    <span style="display:inline-block;width:24px;height:2px;background:var(--green)"></span>Visualizador 1 · Hemiciclo
+  </div>
   <h1 style="font-family:var(--dm);font-size:42px;font-weight:700;letter-spacing:-.5px;line-height:1.05;margin:14px 0 14px;color:var(--dark)">
     Hemiciclo: votaciones individuales
   </h1>
+  <p id="hemiIntro" style="font-family:var(--mont);font-size:16px;color:var(--text-2);line-height:1.55;font-weight:400;text-align:justify;hyphens:auto">
+    Visualización de cada votación en la Cámara de Diputadas y Diputados. Los 155 escaños se agrupan en tres bloques (oposición, otros, oficialismo) ordenados de izquierda a derecha según afinidad ideológica. Es una <strong>representación simplificada</strong> del orden real del hemiciclo: las posiciones no replican la disposición física exacta de cada banca, sino que buscan facilitar la lectura ideológica de cada votación.
+  </p>
 </header>
 
 <!-- Toggle Cámara / Senado -->
-<!-- El titulo dejaba 50 px de aire antes de este selector cuando el resto
-     de los huecos de la pagina son de 18. -->
-<div style="padding:0 0 14px;margin-top:-24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<div style="padding:0 0 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
   <span style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-m)">Corporación:</span>
   <div id="tourChamber" style="display:inline-flex;background:var(--bg-white);border:1px solid var(--border);border-radius:50px;padding:3px;gap:0">
     <button id="chamberCamara" onclick="setChamber('camara')" class="chamber-btn active" style="padding:6px 16px;font-family:var(--dm);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border:none;border-radius:50px;cursor:pointer;background:var(--dark);color:#fff;transition:all 180ms ease">Cámara <span style="opacity:.7;font-weight:500" id="chamberCamaraN">155</span></button>
@@ -392,13 +323,10 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 <div id="metricsBand" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:18px"></div>
 
 <!-- ② Navegador temporal compartido (mismo formato en hemiciclo/votaciones/discurso) -->
-<!-- la linea de tiempo se movio debajo del hemiciclo -->
+<div id="navTemporalSlot"></div>
 
 <!-- Modo de coloreado del hemiciclo -->
-<!-- Cambiar el criterio de color es una pregunta de analista. Se muestra
-     con ?avanzado=1; en publico queda «por voto», que es la respuesta a la
-     pregunta con que llega la gente. -->
-<div id="tourModes" style="display:none;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+<div id="tourModes" style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap">
   <span style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:1px;font-weight:600">Colorear:</span>
   <button id="modeVote" class="mode-btn active" onclick="setMode('vote')" aria-label="Colorear puntos según voto del diputado">Por voto</button>
   <button id="modeCoal" class="mode-btn" onclick="setMode('coalition')" aria-label="Colorear puntos según coalición">Por coalición</button>
@@ -410,7 +338,9 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 <div id="depDetail" style="margin-bottom:18px"></div>
 
 <!-- ③ Card principal: resumen + hemiciclo + bancadas -->
-<div class="card" style="padding:16px 28px">
+<div class="card" style="padding:24px 28px">
+  <!-- Chips de coaliciones que votaron -->
+  <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
 
   <!-- Hemiciclo: SVG con puntos + img HTML overlay alineado por CSS.
        viewBox del SVG: -100 -40 1840 1140 (max-width 920px renderizado).
@@ -422,8 +352,8 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
        en pixeles renderizados: x_left = (46-(-100))*0.5 = 73 px,
        x_right = (1594-(-100))*0.5 = 847 px (de 920). La imagen va de
        x=25 a 25+1591=1616 → renderizada de 62.5 px a 858 px. -->
-  <div style="text-align:center;position:relative;display:block;width:100%;max-width:1124px;margin:0 auto">
-    <svg id="hemicycle" xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 2370 600" role="img" aria-label="Hemiciclo de la Cámara de Diputadas y Diputados con 155 escaños" style="width:100%;max-width:1124px;display:block;margin:0 auto;position:relative;z-index:1">
+  <div style="text-align:center;position:relative;display:block;width:100%;max-width:920px;margin:0 auto">
+    <svg id="hemicycle" xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 2370 600" role="img" aria-label="Hemiciclo de la Cámara de Diputadas y Diputados con 155 escaños" style="width:100%;max-width:920px;display:block;margin:0 auto;position:relative;z-index:1">
       <!-- Fondo: SVG real del hemiciclo chileno (Wikimedia Commons),
            atenuado. Embebido como elemento <object> via foreignObject
            porque <image href> con SVG produce desalineamiento por la
@@ -449,18 +379,6 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
     <span class="legend-item" data-vote-key="2" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:#FFB923;width:9px;height:9px"></span>Abstención</span>
     <span class="legend-item" data-vote-key="-1" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:rgba(101,125,129,0.25);width:9px;height:9px"></span>Ausente</span>
   </div>
-
-  <!-- Los chips de coaliciones y la linea de tiempo van despues del
-       dibujo: explican y navegan algo que primero hay que ver. Antes
-       ocupaban 200 px por encima y empujaban el hemiciclo fuera de la
-       pantalla. -->
-  <!-- Chips de coaliciones que votaron -->
-  <div id="voteSummary" style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--border-light)"></div>
-  <div id="metricsAbajo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-top:18px"></div>
-  <div id="navTemporalSlot" style="margin-top:18px"></div>
-  <!-- Los dos analisis siguen existiendo: dejan de disputarle al hemiciclo
-       los 61 px de arriba y se ofrecen al final, ya visto el dibujo. -->
-  <div id="masAnalisis" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border-light);font-family:var(--mont);font-size:12px;color:var(--text-m);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap"><span>Ver también</span></div>
 
   <!-- Leyenda de partidos -->
   <div id="partidosLeyenda" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border-light)"></div>
@@ -1211,13 +1129,6 @@ function updateSummary() {
   if (mb) {
     const f = (v.fecha || "").split("-");
     const fechaCorta = f.length === 3 ? `${f[2]}/${f[1]}/${f[0].slice(2)}` : v.fecha;
-    const enLetras = iso => {
-      const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
-      if (!m) return iso || '';
-      const MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
-                   'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-      return Number(m[3]) + ' de ' + MES[Number(m[2]) - 1] + ' de ' + m[1];
-    };
     const metricsRow = [
       { val: v.totalSi, lab: "A favor", color: "var(--green)" },
       { val: v.totalNo, lab: "En contra", color: "var(--red)" },
@@ -1236,10 +1147,7 @@ function updateSummary() {
     // Altura minima fija para evitar saltos al navegar entre votaciones
     // Altura FIJA del bloque para que no salte entre votaciones con
     // distinto largo de descripcion. Si el texto excede, se trunca con ellipsis.
-    // Alto MINIMO, no fijo. Con alto fijo de 128 sobraba espacio y con 76 se
-    // recortaba el titulo por la mitad. El minimo evita el salto entre
-    // votaciones sin cortar nunca lo que hay que leer.
-    const PROYECTO_HEIGHT = '86px';
+    const PROYECTO_HEIGHT = '128px';
 
     let proyectoHtml = "";
     if (v.proyecto) {
@@ -1251,16 +1159,15 @@ function updateSummary() {
       const iaHint = `<div style="margin-top:10px;padding:8px 10px;background:var(--bg-alt);border-radius:6px;font-size:11px;color:var(--text-m);font-style:italic">Resumen del proyecto generado con IA · próximamente</div>`;
       // Metadata compacta abajo del titulo
       const tipoTag = pr.tipo ? `<span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">${pr.tipo}</span>` : '';
-      const ingresoTxt = pr.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${enLetras(pr.fechaIngreso)}</strong></span>` : '';
+      const ingresoTxt = pr.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${pr.fechaIngreso}</strong></span>` : '';
       const autoresTxt = autoresStr && autoresStr !== '—' ? `<span style="color:var(--text-m)">por <strong style="color:var(--text-2);font-weight:600">${autoresStr}</strong></span>` : '';
-      const votadaTxt = v.fecha ? `<span style="color:var(--text-m)">Votada el <strong style="color:var(--text-2);font-weight:600">${enLetras(v.fecha)}</strong></span>` : '';
-      const metaBits = [tipoTag, votadaTxt, ingresoTxt, autoresTxt].filter(Boolean);
+      const metaBits = [tipoTag, ingresoTxt, autoresTxt].filter(Boolean);
       const metaLine = metaBits.length ? `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">${metaBits.join('<span style="color:var(--border)">·</span>')}</div>` : '';
 
-      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1;min-width:0">
-            <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">
               ${tipoBadge}<span>${v.boletin ? `<a href="https://tramitacion.senado.cl/appsenado/templates/tramitacion/index.php?boletin_ini=${v.boletin}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Ver tramitación en el Congreso" style="color:inherit;text-decoration:underline;text-decoration-color:var(--text-m);text-underline-offset:2px">Boletín N° ${v.boletin}</a>` : 'Boletín no disponible'}</span>
             </div>
             <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" title="${pr.nombre.replace(/"/g,'&quot;')}">${pr.nombre}</div>
@@ -1276,37 +1183,37 @@ function updateSummary() {
     } else if (v.descripcion) {
       // Sin proyecto de ley: votacion procedimental, acuerdo, resolucion, o boletin con info externa
       const dec = decodificarDescripcion(v.descripcion);
-      const fechaTxt = v.fecha ? `<span style="color:var(--text-m)">Votada el <strong style="color:var(--text-2);font-weight:600">${enLetras(v.fecha)}</strong></span>` : '';
+      const fechaTxt = v.fecha ? `<span style="color:var(--text-m)">${v.fecha}</span>` : '';
       // Si tenemos info del boletin (titulo del proyecto), mostramos un layout enriquecido
       if (dec.subtitulo) {
-        const fechaIngTxt = dec.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${enLetras(dec.fechaIngreso)}</strong></span>` : '';
+        const fechaIngTxt = dec.fechaIngreso ? `<span style="color:var(--text-m)">Ingresado el <strong style="color:var(--text-2);font-weight:600">${dec.fechaIngreso}</strong></span>` : '';
         const metaBoletin = `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">
           <span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">Proyecto de ley</span>
           ${fechaIngTxt}
           ${fechaTxt ? `<span style="color:var(--border)">·</span>${fechaTxt}` : ''}
         </div>`;
-        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-          <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge}<span>${dec.titulo}</span></div>
+        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge}<span>${dec.titulo}</span></div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${dec.subtitulo}</div>
-          ${(dec.nota && dec.nota.slice(0, 40) !== (dec.subtitulo || "").slice(0, 40)) ? `<div style="font-family:var(--mont);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4;font-weight:400;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden" title="${dec.nota.replace(/"/g,'&quot;')}">${dec.nota}</div>` : ''}
+          ${dec.nota ? `<div style="font-family:var(--mont);font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4;font-weight:400;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden" title="${dec.nota.replace(/"/g,'&quot;')}">${dec.nota}</div>` : ''}
           ${metaBoletin}
         </div>`;
       } else {
         const metaSinProyecto = `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px;font-family:var(--mont);font-size:11px;line-height:1.4">
           <span style="display:inline-flex;align-items:center;background:var(--bg-alt);padding:2px 9px;border-radius:50px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px">${dec.titulo}</span>
-          ${(dec.nota && dec.nota.slice(0, 40) !== (dec.subtitulo || "").slice(0, 40)) ? `<span style="color:var(--text-m)">${dec.nota}</span>` : ''}
+          ${dec.nota ? `<span style="color:var(--text-m)">${dec.nota}</span>` : ''}
           ${fechaTxt}
         </div>`;
-        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-          <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación procedimental</span>'}</div>
+        proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación procedimental</span>'}</div>
           <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">${dec.titulo}</div>
           ${metaSinProyecto}
         </div>`;
       }
     } else {
       // Caso sin proyecto y sin descripcion: bloque placeholder con la misma altura
-      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);min-height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
-        <div class="ficha-cejilla" style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación</span>'}</div>
+      proyectoHtml = `<div style="grid-column:1/-1;background:var(--bg-white);padding:14px 22px;border-bottom:1px solid var(--border);height:${PROYECTO_HEIGHT};box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-m)">${tipoBadge || '<span>Votación</span>'}</div>
         <div style="font-family:var(--dm);font-size:16px;font-weight:700;color:var(--dark);line-height:1.3;letter-spacing:-.1px">Sin descripción</div>
         <div style="margin-top:8px;font-family:var(--mont);font-size:11px;color:var(--text-m);font-style:italic">Esta votación no tiene descripción registrada en el sistema de datos abiertos.</div>
       </div>`;
@@ -1335,70 +1242,7 @@ function updateSummary() {
     }
 
     mb.style.gridTemplateColumns = "repeat(5, 1fr) 150px";
-    // Los cinco numeros van en una sola linea, no en cinco cajas de 89 px de
-    // alto. La barra de secciones no puede llevarlos -es la misma en las seis
-    // pestañas y solo deja 153 px libres-, pero al lado de la ficha del
-    // proyecto si hay sitio: esa fila ocupaba todo el ancho con la mitad
-    // derecha vacia.
-    const tira = metricsRow.map(m =>
-      `<span style="display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap">
-         <b style="font-family:var(--dm);font-size:15px;font-weight:800;color:${m.color};
-                   letter-spacing:-.2px">${m.val}</b>
-         <span style="font-family:var(--mont);font-size:10.5px;color:var(--text-m);
-                      text-transform:lowercase">${m.lab}</span>
-       </span>`).join('<span style="color:var(--border)">·</span>');
-    // Al costado, no debajo: la ficha ocupaba todo el ancho con la mitad
-    // derecha vacia, y los numeros se llevaban una fila entera por su cuenta.
-    const tiraHtml = `<div style="background:var(--bg-white);padding:12px 22px;
-        display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
-        justify-content:flex-end;border-left:1px solid var(--border-light)">${tira}</div>`;
-
-    // Sin tira de metricas: sus cinco datos ya viven en otra parte -los tres
-    // conteos en la leyenda de colores, el resultado en el sello, la fecha en
-    // la cejilla-. Repetirlos costaba media fila y no agregaba nada.
-    mb.style.gridTemplateColumns = '1fr';
-    mb.innerHTML = proyectoHtml;
-
-    // El resultado -aprobado o rechazado- es el hecho mas importante de la
-    // pagina y era una de seis cajitas iguales. Pasa a sello junto al titulo.
-    const cabecera = mb.querySelector('.ficha-cejilla');
-    if (cabecera && resLabel) {
-      const ok = /aprob/i.test(resLabel);
-      const sello = document.createElement('span');
-      sello.textContent = resLabel;
-      sello.style.cssText = 'margin-left:auto;font-family:var(--mont);' +
-        'font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;' +
-        'padding:4px 11px;border-radius:999px;white-space:nowrap;background:' +
-        (ok ? 'rgba(76,202,165,.18)' : 'rgba(242,2,49,.12)') + ';color:' +
-        (ok ? 'var(--green-txt)' : 'var(--red)');
-      cabecera.appendChild(sello);
-    }
-
-    // Los conteos se funden con la leyenda de colores, que decia lo mismo:
-    // «a favor» aparecia dos veces en la misma pantalla.
-    const leyenda = document.getElementById('leyendaVotos');
-    if (leyenda) {
-      // El total de escaños sale de los circulos ya dibujados: no depende de
-      // ninguna variable global, que es lo que rompio el bloque entero la
-      // primera vez -y con el se cayo tambien el sello del resultado-.
-      let total = document.querySelectorAll('#hemicycle circle').length;
-      const votaron = (v.totalSi || 0) + (v.totalNo || 0) + (v.totalAbstencion || 0);
-      if (!total || total < votaron) total = votaron;
-      const porClave = {'1': v.totalSi, '0': v.totalNo, '2': v.totalAbstencion,
-                        '-1': Math.max(0, total - votaron)};
-      leyenda.querySelectorAll('.legend-item').forEach(it => {
-        const k = it.getAttribute('data-vote-key');
-        it.querySelectorAll('.legend-num').forEach(e => e.remove());
-        if (porClave[k] === undefined || porClave[k] === null) return;
-        const b = document.createElement('b');
-        b.className = 'legend-num';
-        b.textContent = porClave[k];
-        b.style.cssText = 'font-family:var(--dm);font-weight:800;color:var(--dark);margin-left:2px';
-        it.appendChild(b);
-      });
-    }
-    const cifras = document.getElementById("metricsAbajo");
-    if (cifras) cifras.innerHTML = botonesCellHtml;
+    mb.innerHTML = proyectoHtml + metricsHtml + botonesCellHtml;
   }
 
   // Bancadas: chips con cada partido y su votacion (Si/No)
@@ -2022,48 +1866,6 @@ C22Tour.define('hemiciclo', [
   { title: 'Listo', before: function(){ setMainTab('hemi'); },
     text: 'Eso es todo. Explora a tu ritmo, y si te pierdes, el botón <strong>Cómo funciona</strong> te trae de vuelta acá.' }
 ]);
-</script>
-<script>
-/* Superficie simple, contenido completo. Los dos analisis y el selector de
-   coloreado no se borran: el primero baja al pie y el segundo se enciende con
-   ?avanzado=1. */
-(function () {
-  var avanzado = /[?&]avanzado=1\b/.test(location.search);
-  if (avanzado) {
-    var tm = document.getElementById('tourModes');
-    if (tm) tm.style.display = 'flex';
-  }
-  function moverPestanas() {
-    var pie = document.getElementById('masAnalisis');
-    var botones = [].slice.call(document.querySelectorAll('.tab-btn'));
-    if (!pie || !botones.length || pie.dataset.listo) return;
-    var otras = botones.filter(function (b) {
-      return (b.textContent || '').toUpperCase().indexOf('HEMICICLO') < 0;
-    });
-    if (!otras.length) return;
-    otras.forEach(function (b) {
-      if (!avanzado) b.style.display = 'none';
-      var a = document.createElement('button');
-      a.type = 'button';
-      a.textContent = (b.textContent || '').trim().toLowerCase();
-      a.style.cssText = 'background:none;border:none;padding:0;cursor:pointer;' +
-        'font-family:var(--mont);font-size:12px;font-weight:700;color:var(--green-txt);' +
-        'border-bottom:1px solid currentColor';
-      a.addEventListener('click', function () {
-        b.style.display = '';
-        b.click();
-        b.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-      pie.appendChild(a);
-    });
-    // con una sola pestaña visible, la fila deja de ser navegacion
-    var nav = botones[0].closest('nav');
-    if (nav && !avanzado) nav.style.display = 'none';
-    pie.dataset.listo = '1';
-  }
-  addEventListener('load', function () { setTimeout(moverPestanas, 400); });
-  setTimeout(moverPestanas, 1200);
-})();
 </script>
 <!-- c22skin:inicio pie -->
     <footer class="c22skin-foot">
