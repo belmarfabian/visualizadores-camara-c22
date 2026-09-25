@@ -1393,6 +1393,15 @@
     .rank-rest-nom { flex: 1; font-family: var(--dm); font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .rank-rest-val { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--dark); width: 46px; text-align: right; flex-shrink: 0; }
     @media (max-width: 720px) { .rank-cols { grid-template-columns: 1fr; } }
+
+    @media (min-width: 1101px) {
+      .hero-fila .cards { grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); overflow: visible; }
+      .hero-fila .vot-nav { display: none; }
+    }
+    .hero .busca .sec-label { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+    .hero .busca-info { display: block; margin-top: 8px; font-size: 11px; color: rgba(255,255,255,.9);
+      text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+    .rar-grid { align-items: stretch !important; }
   </style>
   <style>
     
@@ -1557,9 +1566,10 @@
           <div class="busca-campo">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
             <input id="buscaVot" type="search" autocomplete="off" spellcheck="false"
-                   placeholder="Una materia, una ley o un boletín: agua, pensiones, 17324-33…">
-            <span class="busca-info" id="buscaInfo">580 votaciones · 2026-2030</span>
+                   placeholder="Tema o boletín: agua, pensiones…">
+            
           </div>
+          <span class="busca-info" id="buscaInfo">580 votaciones · 2026-2030</span>
           <div class="busca-lista" id="buscaLista" hidden></div>
         </section>
       </div>
@@ -1685,7 +1695,7 @@
           W-NOMINATE (Poole y Rosenthal, 1985) en R.</p>
         <p class="about-enlaces">
           <a href="https://github.com/belmarfabian/visualizadores-camara-c22" target="_blank"
-            rel="noopener">Método y código en el repositorio</a>
+            rel="noopener">Sobre el sitio publicado</a>
           <a href="https://c22cepchile.cl" target="_blank" rel="noopener">C22 · Centro de Estudios Públicos</a>
         </p>
       </div>
@@ -1792,10 +1802,10 @@
     var p = bi.build.split('-');
     var fecha = parseInt(p[2]) + ' ' + M[parseInt(p[1]) - 1] + ' ' + p[0];
     var dias = Math.floor((Date.now() - new Date(bi.build + 'T12:00:00')) / 86400000);
-    var color = dias <= 1 ? 'var(--green)' : (dias <= 3 ? 'var(--yellow)' : 'var(--red)');
-    var estado = dias <= 1 ? 'al día' : (dias + ' días atrás');
+    var color = dias <= 1 ? 'var(--green)' : (dias <= 3 ? 'var(--yellow)' : 'var(--text-m)');
+    var estado = dias <= 1 ? ' · al día' : '';
     el.innerHTML = '<span class="latido" style="--tono:' + color + '"></span>' +
-      '<span>Datos actualizados el <strong style="color:var(--text);font-weight:600">' + fecha + '</strong> · ' + estado + '</span>';
+      '<span>Datos actualizados el <strong style="color:var(--text);font-weight:600">' + fecha + '</strong>' + estado + '</span>';
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pinta);
   else pinta();
