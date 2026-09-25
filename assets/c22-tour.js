@@ -158,7 +158,7 @@
       var delay = (opts && opts.delay) || 700;
       var seen = false;
       try { seen = localStorage.getItem(lsKey()) === '1'; } catch (err) {}
-      if (!seen && !(opts && opts.manual)) {
+      if (!seen && opts && opts.auto) {
         window.addEventListener('load', function () { setTimeout(start, delay); });
       }
     },

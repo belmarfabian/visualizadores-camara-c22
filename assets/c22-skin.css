@@ -523,8 +523,8 @@ html, body { overflow-x: clip; }
   .c22skin-sub > .c22skin-pastilla::-webkit-scrollbar { display: none; }
   
   .c22skin-sub > .c22skin-pastilla {
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
   }
   
   .c22skin-sub a { font-size: 11.5px; letter-spacing: .2px; flex: 0 0 auto;
