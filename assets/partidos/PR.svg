@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="468.319px" height="590.38px" viewBox="0 0 468.319 590.38" enable-background="new 0 0 468.319 590.38"
+	 xml:space="preserve">
+<g id="Balsón">
+	<polygon id="Base_blanca" fill="#FFFFFF" points="11.154,11.238 456.959,11.238 456.959,380.745 231.86,576.097 11.154,380.745 	
+		"/>
+	<polygon fill="#E11A30" points="231.86,578.379 456.862,385.2 456.862,121.55 55.322,417.678 	"/>
+	<polygon fill="#192985" points="444.544,11.238 11.154,11.238 11.154,329.505 214.673,180.047 284.602,180.047 284.602,128.694 	
+		"/>
+</g>
+<g id="Borde_y_letras">
+	<path fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-miterlimit="10" d="M311.078,363.397l38.896,46.37l-32.272,27.855
+		l-61.786-74.226l-63.562-0.091l0.04,81.322h-36.066V242.492h217.773v120.78L311.078,363.397z M337.91,271.501H192.648v53.039
+		H337.91V271.501z"/>
+	<path fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-miterlimit="10" d="M128.174,197.4v83.88H90.731v-209.5h210.897
+		v125.494L128.174,197.4z M265.575,100.615H128.15v64.027h137.425V100.615z"/>
+	<polygon fill="none" stroke="#000000" stroke-width="15" stroke-miterlimit="10" points="11.258,12.76 457.062,12.76 
+		457.062,384.231 234.159,577.62 11.258,384.231 	"/>
+</g>
+</svg>
