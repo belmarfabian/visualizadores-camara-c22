@@ -166,6 +166,8 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
 #networkSvg .net-arrow.dim { fill-opacity:.05; }
 #networkSvg .net-node { cursor:pointer; }
 #networkSvg .net-node circle { fill:#657D81; stroke:#fff; stroke-width:1.5px; transition:fill .2s; }
+#networkSvg .net-node text { visibility:hidden; }
+#networkSvg .net-label { font-family:'DM Sans',sans-serif; font-weight:600; fill:#303030; pointer-events:none; paint-order:stroke; stroke:#fff; stroke-width:4px; stroke-linejoin:round; }
 #networkSvg .net-node text { font-family:'DM Sans',sans-serif; font-weight:600; fill:#303030; pointer-events:none; }
 #networkSvg .net-node.match circle { fill:#A10856; }
 #networkSvg .net-node.match text { fill:#A10856; }
@@ -216,7 +218,9 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
       .node-pill .score { font-size: 11px; }
       .nav-temp__btn { min-height: 40px; }
     }
-  </style>
+
+  .net-node text { paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+</style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
   <script src="../assets/c22-anim.js" defer></script>
@@ -967,6 +971,13 @@ function nodeRadius(n) {
   return 7 + Math.pow(t, 0.7) * 22;
 }
 
+function frase(t) {
+  if (!t) return t;
+  const w = t.split(' ').map((x, i) => (x.length > 1 && x === x.toUpperCase()) ? x : x.toLowerCase());
+  const s = w.join(' ');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function buildNetwork() {
   const svgEl = document.getElementById('networkSvg');
   if (!svgEl || typeof d3 === 'undefined') return;
@@ -1028,13 +1039,21 @@ function buildNetwork() {
     })
     .text(d => d.id);
 
+  const labelG = gContent.append('g').attr('class', 'net-labels')
+    .selectAll('text').data(nodes).join('text')
+    .attr('class', 'net-label')
+    .attr('text-anchor', 'middle')
+    .attr('dy', d => -nodeRadius(d) - 5)
+    .attr('font-size', d => Math.round(10 + (nodeRadius(d) - 7) * 0.35))
+    .text(d => d.id);
+
   netSimulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(70).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-220))
+    .force('link', d3.forceLink(links).id(d => d.id).distance(95).strength(0.45))
+    .force('charge', d3.forceManyBody().strength(-340))
     .force('center', d3.forceCenter(W / 2, H / 2))
     .force('x', d3.forceX(W / 2).strength(0.04))
     .force('y', d3.forceY(H / 2).strength(0.06))
-    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 12))
+    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 22))
     .alphaDecay(0.0228)
     .velocityDecay(0.4);
 
@@ -1056,6 +1075,7 @@ function buildNetwork() {
         return d.target.y - (dy / dist) * tr;
       });
     nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
+    labelG.attr('transform', d => `translate(${d.x},${d.y})`);
   });
 
   const drag = d3.drag()
@@ -1245,7 +1265,7 @@ function applySesion(idx) {
 
   const m = s.meta;
   document.getElementById('ses-eyebrow').textContent = `Sesión en discusión · ${m.numero}ª (${formatFecha(m.fecha)})`;
-  document.getElementById('ses-titulo').textContent = m.orden_dia;
+  document.getElementById('ses-titulo').textContent = frase(m.orden_dia);
   const fechaN = formatFecha(m.fecha);
   document.getElementById('ses-meta').textContent =
     `Sesión ordinaria · ${fechaN} · ${m.paginas} páginas del Diario`;
@@ -1312,7 +1332,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const items = SESIONES_DATA.sesiones.map((s, i) => ({
     id: String(i),
     fecha: s.meta.fecha,
-    label: `Sesión ${s.meta.numero}ª · ${(s.meta.orden_dia || '').slice(0, 60)}`,
+    label: `Sesión ${s.meta.numero}ª · ${frase(s.meta.orden_dia || '').slice(0, 60)}`,
   }));
   window.__navTemp = window.mountNavTemporal({
     container: document.getElementById('navTemporalSlot'),
