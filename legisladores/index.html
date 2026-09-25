@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  
+  <script>
+   
+  (function () {
+    var raiz = document.documentElement;
+    var forzado = /[?&]embed=1/.test(location.search);
+    var enMarco = false;
+    try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
+     
+    if (forzado || enMarco) raiz.classList.add('c22-embed');
+    if (!enMarco) return;
+
+    var ultimo = 0;
+    function avisar() {
+      var h = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      if (Math.abs(h - ultimo) < 3) return;
+      ultimo = h;
+      try { parent.postMessage({ c22monitor: 'alto', alto: h }, '*'); } catch (e) {}
+    }
+    window.addEventListener('load', avisar);
+    window.addEventListener('resize', avisar);
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(avisar).observe(raiz); } catch (e) {}
+    }
+    setInterval(avisar, 1200);
+     
+    [0, 60, 160, 320, 700, 1500, 3000].forEach(function (ms) { setTimeout(avisar, ms); });
+    if (window.requestAnimationFrame) requestAnimationFrame(avisar);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', avisar);
+    } else { avisar(); }
+
+    var altoInicial = window.innerHeight;
+    var desde = Date.now();
+    raiz.style.overflowY = 'hidden';
+    function barra() {
+      var cont = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      var respondio = window.innerHeight !== altoInicial;
+      var calza = Math.abs(window.innerHeight - cont) < 40;
+      var margen = Date.now() - desde < 3000;
+      raiz.style.overflowY = (calza || respondio || margen) ? 'hidden' : '';
+    }
+    setInterval(barra, 400);
+    window.addEventListener('resize', barra);
+  })();
+  </script>
+  
+  <meta charset="utf-8">
+  <script>window.SELLOS_PARTIDOS={"PC": {"a": "PC.png", "n": "Partido Comunista", "c": "#8B0000"}, "AH": {"a": "AH.png", "n": "Acción Humanista", "c": "#967000"}, "FA": {"a": "FA.png", "n": "Frente Amplio", "c": "#1B5E20"}, "PS": {"a": "PS.png", "n": "Partido Socialista", "c": "#E32C27"}, "PR": {"a": "PR.png", "n": "Partido Radical", "c": "#795548"}, "PPD": {"a": "PPD.png", "n": "Partido por la Democracia", "c": "#814D00"}, "PL": {"a": "PL.png", "n": "Partido Liberal", "c": "#E6175D"}, "DC": {"a": "DC.png", "n": "Partido Demócrata Cristiano", "c": "#027EB6"}, "FRVS": {"a": "FRVS.png", "n": "Federación Regionalista Verde Social", "c": "#3A863D"}, "PdG": {"a": "PdG.png", "n": "Partido de la Gente", "c": "#C800EA"}, "Dem": {"a": "Dem.png", "n": "Demócratas", "c": "#9C27B0"}, "PSC": {"a": "PSC.png", "n": "Partido Social Cristiano", "c": "#DF3500"}, "Evópoli": {"a": "Evopoli.png", "n": "Evolución Política", "c": "#1E847A"}, "RN": {"a": "RN.png", "n": "Renovación Nacional", "c": "#087EB3"}, "UDI": {"a": "UDI.png", "n": "Unión Demócrata Independiente", "c": "#EA1A16"}, "PNL": {"a": "PNL.png", "n": "Partido Nacional Libertario", "c": "#847700"}, "PRCh": {"a": "PRCh.png", "n": "Partido Republicano", "c": "#1B4B8A"}, "DEM": {"a": "Dem.png", "n": "Demócratas", "c": "#9C27B0"}, "Demócratas": {"a": "Dem.png", "n": "Demócratas", "c": "#9C27B0"}, "Democratas": {"a": "Dem.png", "n": "Demócratas", "c": "#9C27B0"}, "EVOP": {"a": "Evopoli.png", "n": "Evolución Política", "c": "#1E847A"}, "Evopoli": {"a": "Evopoli.png", "n": "Evolución Política", "c": "#1E847A"}, "PDG": {"a": "PdG.png", "n": "Partido de la Gente", "c": "#C800EA"}, "PAH": {"a": "AH.png", "n": "Acción Humanista", "c": "#967000"}}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legisladores · Monitor Legislativo C22-CEP</title>
+  <meta name="description"
+    content="Ficha de cada legislador del período 2026-2030: posición ideológica, lealtad a su bloque, asistencia y votos que llamaron la atención.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F3F5F5;
+      --bg-white: #FFFFFF;
+      --border: #D8DEDF;
+      --border-light: #E8ECEC;
+      --text: #303030;
+      --text-2: #657D81;
+      --text-m: rgba(101, 125, 129, 0.7);
+      --green: #4CCAA5;
+      --yellow: #FFB923;
+      --red: #F20231;
+      --purple: #A10856;
+      --dark: #1B1C1E;
+      --dm: 'DM Sans', sans-serif;
+      --mont: 'Montserrat', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--dm);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header.site { background: var(--bg-white); border-bottom: 1px solid var(--border-light); padding: 16px 6%; }
+    header.site .inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+    header.site .logos { display: flex; align-items: center; gap: 14px; }
+    header.site img.logo-c22 { height: 44px; }
+    header.site img.logo-cep { height: 30px; }
+    header.site .sep { color: var(--border); }
+    header.site .sub {
+      font-family: var(--mont); font-size: 12px; font-weight: 600; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--text-2); line-height: 1.4;
+    }
+    header.site .volver {
+      margin-left: auto; font-family: var(--mont); font-size: 12px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2);
+    }
+    header.site .volver:hover { color: var(--dark); }
+    @media (max-width: 700px) { header.site .sub { display: none; } }
+
+    .tope { padding: 44px 6% 0; }
+    .tope .inner { max-width: 1280px; margin: 0 auto; }
+    .tope h1 {
+      font-family: var(--dm); font-size: clamp(30px, 4.4vw, 46px); font-weight: 700;
+      letter-spacing: -1px; color: var(--dark); line-height: 1.05;
+    }
+    .tope p.lead {
+      font-family: var(--mont); font-size: 15px; color: var(--text-2);
+      margin-top: 12px; max-width: 660px; line-height: 1.6;
+    }
+
+    .filtros { padding: 26px 6% 0; }
+    .filtros .inner {
+      max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap;
+      gap: 12px; align-items: center;
+    }
+    .buscador {
+      flex: 1; min-width: 240px; position: relative;
+    }
+    .buscador input {
+      width: 100%; font-family: var(--mont); font-size: 14px; color: var(--text);
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: 50px; padding: 12px 18px 12px 42px; outline: none;
+    }
+    .buscador input:focus { border-color: var(--green); }
+    .buscador::before {
+      content: '⌕'; position: absolute; left: 17px; top: 50%; transform: translateY(-50%);
+      font-size: 19px; color: var(--text-m); pointer-events: none;
+    }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip-f {
+      font-family: var(--mont); font-size: 12px; font-weight: 600; letter-spacing: .4px;
+      background: var(--bg-white); border: 1px solid var(--border); color: var(--text-2);
+      padding: 10px 16px; border-radius: 50px; cursor: pointer; transition: all .18s;
+    }
+    .chip-f:hover { border-color: var(--text-2); }
+    .chip-f[aria-pressed="true"] { background: var(--dark); border-color: var(--dark); color: #fff; }
+    select.filtro-partido {
+      font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--text-2);
+      background: var(--bg-white); border: 1px solid var(--border); border-radius: 50px;
+      padding: 10px 16px; cursor: pointer; outline: none;
+    }
+    .conteo {
+      font-family: var(--mont); font-size: 12px; color: var(--text-m);
+      letter-spacing: 1px; text-transform: uppercase; width: 100%;
+      margin-top: 4px;
+    }
+
+    .grilla { padding: 22px 6% 70px; }
+    .grilla .inner {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px;
+    }
+    
+    @media (max-width: 560px) {
+      .grilla { padding: 18px 4% 50px; }
+      .grilla .inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .p-card { padding: 14px 8px; border-radius: 12px; }
+      .p-card .cara, .p-card .ini { width: 62px; height: 62px; margin-bottom: 9px;
+        border-width: 2px; }
+      .p-card .ini { font-size: 17px; }
+      .p-card .nom { font-size: 13px; }
+      .p-card .meta { margin-top: 7px; gap: 5px; }
+      .badge { font-size: 9px; padding: 2px 6px; }
+    }
+    .p-card {
+      background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: 14px; padding: 20px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .p-card:hover {
+      transform: translateY(-3px); box-shadow: 0 12px 30px rgba(27, 28, 30, .1);
+      border-color: var(--border);
+    }
+    .p-card .cara, .p-card .ini {
+      width: 82px; height: 82px; border-radius: 50%; object-fit: cover;
+      margin-bottom: 13px; border: 3px solid var(--border-light);
+    }
+    .p-card .ini {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mont); font-size: 22px; font-weight: 700; color: #fff;
+    }
+    .p-card .nom {
+      font-family: var(--dm); font-size: 15.5px; font-weight: 700;
+      color: var(--dark); line-height: 1.22;
+    }
+    .p-card .meta { margin-top: 9px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center; }
+    
+    .badge {
+      display: inline-flex; align-items: center; border-radius: 5px;
+      font-family: var(--mont); font-size: 11px; font-weight: 700; letter-spacing: .3px;
+    }
+    
+    .retrato { position: relative; display: inline-block; line-height: 0; flex-shrink: 0; }
+    .p-card .retrato { margin-bottom: 13px; }
+    .p-card .cara, .p-card .ini { margin-bottom: 0; }
+    .chapa {
+      position: absolute; right: -2px; bottom: -2px;
+      border-radius: 50%; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(27, 28, 30, .22);
+    }
+    .chapa img { width: 78%; height: 78%; object-fit: contain; display: block; }
+    .p-card .chapa { width: 26px; height: 26px; }
+    .f-top .chapa { width: 40px; height: 40px; right: 2px; bottom: 2px; }
+    @media (max-width: 560px) {
+      .p-card .retrato { margin-bottom: 9px; }
+      .p-card .cara, .p-card .ini { margin-bottom: 0; }
+      .p-card .chapa { width: 22px; height: 22px; }
+    }
+    .camara-tag {
+      font-family: var(--mont); font-size: 10px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-m);
+    }
+    .vacio {
+      grid-column: 1 / -1; text-align: center; padding: 60px 20px;
+      font-family: var(--mont); font-size: 15px; color: var(--text-2);
+    }
+
+    .ficha { padding: 34px 6% 70px; }
+    .ficha .inner { max-width: 1080px; margin: 0 auto; }
+    .volver-lista {
+      font-family: var(--mont); font-size: 12px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--text-2); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px;
+      background: none; border: none; padding: 0;
+    }
+    .volver-lista:hover { color: var(--dark); }
+    .f-top {
+      background: var(--bg-white); border: 1px solid var(--border-light); border-radius: 18px;
+      padding: 32px; display: flex; gap: 28px; align-items: center; flex-wrap: wrap;
+    }
+    .f-top .cara, .f-top .ini {
+      width: 132px; height: 132px; border-radius: 50%; object-fit: cover;
+      border: 4px solid var(--border-light); flex-shrink: 0;
+    }
+    .f-top .ini {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mont); font-size: 34px; font-weight: 700; color: #fff;
+    }
+    .f-top .datos { min-width: 0; flex: 1; }
+    .f-top h2 {
+      font-family: var(--dm); font-size: clamp(26px, 3.4vw, 38px); font-weight: 700;
+      letter-spacing: -.8px; color: var(--dark); line-height: 1.1;
+    }
+    .f-top .linea { margin-top: 13px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .f-top .dato {
+      font-family: var(--mont); font-size: 13px; color: var(--text-2);
+    }
+    .f-top .dato b { color: var(--dark); font-weight: 600; }
+
+    .f-metricas {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr));
+      gap: 14px; margin-top: 18px;
+    }
+    .met {
+      background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .met .rot {
+      font-family: var(--mont); font-size: 10.5px; font-weight: 700; letter-spacing: 1.3px;
+      text-transform: uppercase; color: var(--text-m);
+    }
+    .met .val {
+      font-family: var(--dm); font-size: 30px; font-weight: 700; color: var(--dark);
+      margin-top: 7px; line-height: 1;
+    }
+    .met .pista {
+      position: relative; height: 7px; background: #EDF0F0; border-radius: 4px; margin-top: 12px;
+    }
+    
+    .met .pista.eje {
+      height: 10px; border-radius: 5px;
+      background: linear-gradient(90deg, #F20231 0%, #FFB923 50%, #1565C0 100%);
+    }
+    .met .relleno { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--green); }
+    .met .marca {
+      position: absolute; top: -4px; bottom: -4px; width: 4px; border-radius: 3px;
+      background: #fff; transform: translateX(-50%);
+      box-shadow: 0 0 0 1.5px rgba(27, 28, 30, .55), 0 1px 4px rgba(0, 0, 0, .3);
+    }
+    .met .mid { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--border); }
+    .met .extremos {
+      display: flex; justify-content: space-between; margin-top: 7px;
+      font-family: var(--mont); font-size: 9.5px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--text-m);
+    }
+    .met .nota { font-family: var(--mont); font-size: 11px; color: var(--text-m); margin-top: 9px; line-height: 1.45; }
+
+    .f-seccion {
+      font-family: var(--mont); font-size: 12px; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--text-2); margin: 34px 0 14px;
+    }
+    .f-rareza {
+      background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 11px;
+      display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap;
+    }
+    .f-rareza .op {
+      font-family: var(--mont); font-size: 12px; font-weight: 700; color: var(--purple);
+      text-transform: uppercase; letter-spacing: .8px; white-space: nowrap;
+    }
+    .f-rareza .txt { font-family: var(--mont); font-size: 14px; color: var(--text); flex: 1; min-width: 220px; line-height: 1.5; }
+    .f-rareza .num {
+      font-family: var(--mont); font-size: 11px; font-weight: 600; color: var(--text-m);
+      letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
+    }
+    .sin-datos {
+      font-family: var(--mont); font-size: 14px; color: var(--text-2);
+      background: var(--bg-white); border: 1px dashed var(--border);
+      border-radius: 14px; padding: 22px; line-height: 1.55;
+    }
+
+    footer.site { background: var(--dark); color: rgba(255, 255, 255, .75); padding: 46px 6% 28px; }
+    footer.site .inner {
+      max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between;
+      gap: 40px; flex-wrap: wrap; padding-bottom: 26px;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+    footer.site .marca { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    footer.site .marca img.c22 { height: 54px; }
+    footer.site .marca img.cep { height: 36px; }
+    footer.site .dir { font-family: var(--mont); font-size: 13px; line-height: 1.7; color: rgba(255, 255, 255, .6); }
+    footer.site .apoyo .rot {
+      display: block; font-family: var(--mont); font-size: 10px; font-weight: 700;
+      letter-spacing: 1.8px; text-transform: uppercase; color: rgba(255, 255, 255, .42); margin-bottom: 11px;
+    }
+    footer.site .apoyo img { height: 34px; display: block; opacity: .92; }
+    footer.site .apoyo .nom {
+      display: block; font-family: var(--mont); font-size: 11px;
+      color: rgba(255, 255, 255, .5); margin-top: 9px;
+    }
+    footer.site .bajo {
+      max-width: 1280px; margin: 20px auto 0; font-family: var(--mont); font-size: 11px;
+      color: rgba(255, 255, 255, .45); letter-spacing: 1.4px; text-transform: uppercase;
+    }
+
+    [hidden] { display: none !important; }
+  </style>
+  <style>
+    
+    html.c22-embed .c22-embed-oculto { display: none !important; }
+
+    @media (max-width: 560px) {
+      .p-card .badge, .p-card .camara-tag { font-size: 11px; }
+    }
+
+    .solo-lectores {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
+  </style>
+  
+  <link rel="stylesheet" href="../assets/c22-skin.css">
+  <script src="../assets/c22-anim.js" defer></script>
+</head>
+
+<body>
+
+    <header class="c22skin-head">
+      <a class="c22skin-logo" href="https://c22cepchile.cl"><img src="../assets/logo-color.svg" alt="C22"></a>
+      <nav class="c22skin-nav" aria-label="Secciones de C22">
+        <a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a>
+        <a href="https://c22cepchile.cl/personas/">Personas</a>
+        <a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a>
+        <a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a>
+        <a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a>
+        <a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a>
+        <a href="../" class="c22skin-aqui" aria-current="page">Monitor</a>
+      </nav>
+      <a class="c22skin-contacto" href="https://c22cepchile.cl/contacto/">Contacto</a>
+      <a class="c22skin-buscar" href="https://c22cepchile.cl/?s=" aria-label="Buscar en el sitio de C22">Buscar</a>
+      <a class="c22skin-cep" href="https://www.cepchile.cl" target="_blank" rel="noopener"><img src="../assets/logo-cep-color.svg" alt="Centro de Estudios Públicos"></a>
+    </header>
+    <nav class="c22skin-sub" aria-label="Secciones del Monitor Legislativo">
+      <div class="c22skin-pastilla">
+        <a href="../" class="" data-rotulo="Portada"><svg class="c22skin-ico" viewBox="0 0 112 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 47 56 10l49 37"/><path d="M17.5 39v54h77V39"/><path d="M43 93V63.5h26V93"/></svg><span>Portada</span></a>
+        <a href="../hemiciclo/" class="" data-rotulo="Hemiciclo"><svg class="c22skin-ico" viewBox="0 0 126 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 93.5h117"/><circle cx="18" cy="77" r="7.5"/><circle cx="35.5" cy="54" r="7.5"/><circle cx="63" cy="45" r="7.5"/><circle cx="90.5" cy="54" r="7.5"/><circle cx="108" cy="77" r="7.5"/><path d="M52 93.5v-9h22v9"/></svg><span>Hemiciclo</span></a>
+        <a href="../votaciones/" class="" data-rotulo="Votaciones"><svg class="c22skin-ico" viewBox="0 0 106 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 93.5h96"/><rect x="15" y="56" width="22" height="37.5"/><rect x="42" y="22" width="22" height="71.5"/><rect x="69" y="42" width="22" height="51.5"/></svg><span>Votaciones</span></a>
+        <a href="../discurso/" class="" data-rotulo="Discurso"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26a9 9 0 0 1 9-9h86a9 9 0 0 1 9 9v42a9 9 0 0 1-9 9H43L23 93.5V77h-8a9 9 0 0 1-9-9z"/><path d="M25 38h66"/><path d="M25 57h40"/></svg><span>Discurso</span></a>
+        <a href="../legisladores/" aria-current="page" class="c22skin-aqui" data-rotulo="Legisladores"><svg class="c22skin-ico" viewBox="0 0 122 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="44" cy="31" r="18"/><path d="M8 90a36 36 0 0 1 72 0"/><circle cx="95" cy="42" r="13"/><path d="M89 76a23 23 0 0 1 26 14"/></svg><span>Legisladores</span></a>
+        <a href="../rankings/" class="" data-rotulo="Rankings"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="14" width="100" height="21"/><rect x="8" y="41" width="70" height="21"/><rect x="8" y="68" width="43" height="21"/></svg><span>Rankings</span></a>
+      </div>
+    </nav>
+
+  <script>
+   
+  (function () {
+    var forzado = /[?&]embed=1\b/.test(location.search);
+    var enMarco = false;
+    try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
+    if (!(forzado || enMarco)) return;
+    document.documentElement.classList.add('c22-embed');
+
+    function esCinta(el) { return !!el.querySelector('img[src*="ribbon.svg"]'); }
+    function esBarra(el) {
+      return !!el.querySelector('img[src*="logo-color.svg"], img[src*="logo-cep-color.svg"]');
+    }
+
+    function ocultar() {
+      var cuerpo = document.body;
+      if (!cuerpo) return;
+      var hijos = Array.prototype.slice.call(cuerpo.children).filter(function (el) {
+        return !/^(SCRIPT|STYLE|LINK|TEMPLATE|NOSCRIPT)$/.test(el.tagName);
+      });
+      hijos.slice(0, 4).forEach(function (el) {
+        if (esCinta(el) || esBarra(el)) el.classList.add('c22-embed-oculto');
+      });
+      var pies = document.querySelectorAll('footer');
+      if (pies.length) {
+        var pie = pies[pies.length - 1];
+        pie.classList.add('c22-embed-oculto');
+        var previo = pie.previousElementSibling;
+        if (previo && esCinta(previo)) previo.classList.add('c22-embed-oculto');
+      }
+      document.addEventListener('click', function (ev) {
+        var a = ev.target.closest && ev.target.closest('a[href]');
+        if (!a) return;
+        if (/^https?:\/\//i.test(a.getAttribute('href')) &&
+            a.hostname !== location.hostname && !a.target) { a.target = '_blank'; }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ocultar);
+    } else { ocultar(); }
+  })();
+  </script>
+
+  <header class="c22skin-fuera site">
+    <div class="inner">
+      <div class="logos">
+        <a href="../"><img class="logo-c22" src="../assets/logo-color.svg" alt="C22"></a>
+        <a href="https://www.cepchile.cl" target="_blank" rel="noopener"><img class="logo-cep"
+            src="../assets/logo-cep-color.svg" alt="CEP"></a>
+      </div>
+      <span class="sep">|</span>
+      <div class="sub">Monitor Legislativo /<br>Congreso Nacional</div>
+      <a class="volver" href="../">← Portada</a>
+    </div>
+  </header>
+
+  <div id="vistaLista">
+    <section class="tope">
+      <div class="inner">
+        <h1>Quiénes componen el Congreso</h1>
+        <p class="lead">Una ficha por cada diputada, diputado y senador del período 2026-2030, con su
+          posición en el mapa de votaciones y su comportamiento en la Sala.</p>
+      </div>
+    </section>
+
+    <section class="filtros">
+      <div class="inner">
+        <div class="buscador">
+          <input id="q" type="search" placeholder="Buscar por nombre o partido" aria-label="Buscar legislador"
+            autocomplete="off">
+        </div>
+        <div class="chips" role="group" aria-label="Filtrar por cámara">
+          <button class="chip-f" data-camara="" aria-pressed="true">Ambas cámaras</button>
+          <button class="chip-f" data-camara="D" aria-pressed="false">Diputados</button>
+          <button class="chip-f" data-camara="S" aria-pressed="false">Senadores</button>
+        </div>
+        <select class="filtro-partido" id="fPartido" aria-label="Filtrar por partido">
+          <option value="">Todos los partidos</option>
+        </select>
+        <div class="conteo" id="conteo"></div>
+      </div>
+    </section>
+
+    <section class="grilla">
+      <h2 class="solo-lectores">Listado de legisladores</h2>
+      <div class="inner" id="grilla"></div>
+    </section>
+  </div>
+
+  <div id="vistaFicha" hidden>
+    <section class="ficha">
+      <div class="inner">
+        <button class="volver-lista" id="volverLista">← Volver al listado</button>
+        <div id="fichaCuerpo"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="c22skin-fuera site">
+    <div class="inner">
+      <div>
+        <div class="marca">
+          <img class="c22" src="../assets/logo-blanco.svg" alt="C22">
+          <img class="cep" src="../assets/logo-cep-blanco.svg" alt="CEP">
+        </div>
+        <p class="dir">Centro de Estudios Públicos<br>
+          Monseñor Sótero Sanz 162, Providencia, Santiago de Chile<br>
+          <a href="https://c22cepchile.cl" target="_blank" rel="noopener"
+            style="color:rgba(255,255,255,.85)">c22cepchile.cl</a>
+        </p>
+      </div>
+      <div class="apoyo">
+        <span class="rot">Con el apoyo de</span>
+        <a href="https://sodas.cl" target="_blank" rel="noopener"><img src="../assets/logo-sodas.png" alt="SODAS"></a>
+        <span class="nom">Núcleo Milenio para la Ciencia de Datos Sociales</span>
+      </div>
+    </div>
+    <div class="bajo">2026 · C22 · Centro de Estudios Públicos</div>
+  </footer>
+
+  <script>window.LEGISLADORES=[{"id":"1186","camara":"D","nombre":"Ignacio Achurra Díaz","corto":"Ignacio Achurra","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.822,"dim2":-0.156,"foto":true,"m":{"lealtad":0.996,"asistencia":0.955,"abstencion":0.043,"oficialismo":0.608,"gmp":0.929},"rarezas":[]},{"id":"1009","camara":"D","nombre":"Jorge Alessandri Vergara","corto":"Jorge Alessandri","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.777,"dim2":0.029,"foto":true,"m":{"lealtad":0.97,"asistencia":0.764,"abstencion":0.027,"oficialismo":0.696,"gmp":0.942},"rarezas":[]},{"id":"803","camara":"D","nombre":"René Alinco Bustos","corto":"René Alinco","partido":"Federación Regionalista Verde Social","sigla":"FRVS","coalicion":"Independiente","dim1":-0.4,"dim2":0.818,"foto":true,"m":{"lealtad":0.705,"asistencia":0.721,"abstencion":0.124,"oficialismo":0.639,"gmp":0.643},"rarezas":[{"fecha":"2026-07-22","que":"Cambia el Código de Minería en materia de amparo minero","opcion":"se abstuvo","si":126,"no":0,"abstencion":2},{"fecha":"2026-07-08","que":"Protege las tarifas eléctricas de los hogares","opcion":"votó en contra","si":130,"no":1,"abstencion":1},{"fecha":"2026-07-08","que":"Protege las tarifas eléctricas de los hogares","opcion":"votó en contra","si":130,"no":1,"abstencion":1},{"fecha":"2026-07-08","que":"Protege las tarifas eléctricas de los hogares","opcion":"votó en contra","si":131,"no":1,"abstencion":0}]},{"id":"1100","camara":"D","nombre":"Cristián Araya Lerdo de Tejada","corto":"Cristián Araya","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.938,"dim2":-0.231,"foto":true,"m":{"lealtad":1.0,"asistencia":0.902,"abstencion":0.027,"oficialismo":0.692,"gmp":0.976},"rarezas":[]},{"id":"1099","camara":"D","nombre":"Jaime Araya Guerrero","corto":"Jaime Araya","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Independiente","dim1":-0.553,"dim2":0.054,"foto":true,"m":{"lealtad":0.773,"asistencia":0.714,"abstencion":0.043,"oficialismo":0.659,"gmp":0.883},"rarezas":[{"fecha":"2026-06-16","que":"Permite votar por separado los capítulos de una acusación constitucional","opcion":"votó en contra","si":146,"no":1,"abstencion":0}]},{"id":"1110","camara":"S","nombre":"Pedro Araya Guerrero","corto":"Pedro Araya","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Oposición","region":"Región de Antofagasta","dim1":-0.724,"dim2":0.245,"foto":true,"m":{"gmp":0.913},"rarezas":[]},{"id":"1187","camara":"D","nombre":"Carlo Arqueros Pizarro","corto":"Carlo Arqueros","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.935,"dim2":-0.245,"foto":true,"m":{"lealtad":1.0,"asistencia":0.966,"abstencion":0.027,"oficialismo":0.681,"gmp":0.974},"rarezas":[]},{"id":"1102","camara":"D","nombre":"Roberto Arroyo Muñoz","corto":"Roberto Arroyo","partido":"Partido Social Cristiano","sigla":"PSC","coalicion":"Republicanos","dim1":0.624,"dim2":-0.058,"foto":true,"m":{"lealtad":0.925,"asistencia":0.784,"abstencion":0.057,"oficialismo":0.748,"gmp":0.879},"rarezas":[]},{"id":"1500","camara":"S","nombre":"Danisa Astudillo Peiretti","corto":"Danisa Astudillo","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región de Tarapacá","dim1":-0.85,"dim2":-0.172,"foto":true,"m":{"gmp":0.976},"rarezas":[]},{"id":"1501","camara":"S","nombre":"Andrea Balladares Letelier","corto":"Andrea Balladares","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región del Maule","dim1":0.858,"dim2":0.077,"foto":true,"m":{"gmp":0.955},"rarezas":[]},{"id":"1104","camara":"D","nombre":"Chiara Barchiesi Chávez","corto":"Chiara Barchiesi","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.912,"dim2":-0.238,"foto":true,"m":{"lealtad":0.996,"asistencia":0.886,"abstencion":0.027,"oficialismo":0.68,"gmp":0.972},"rarezas":[]},{"id":"1188","camara":"D","nombre":"Marcos Barraza Gómez","corto":"Marcos Barraza","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.964,"dim2":0.087,"foto":true,"m":{"lealtad":1.0,"asistencia":0.99,"abstencion":0.033,"oficialismo":0.58,"gmp":0.931},"rarezas":[]},{"id":"1012","camara":"D","nombre":"Boris Barrera Moreno","corto":"Boris Barrera","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.996,"dim2":0.062,"foto":true,"m":{"lealtad":0.998,"asistencia":0.96,"abstencion":0.036,"oficialismo":0.579,"gmp":0.934},"rarezas":[]},{"id":"1105","camara":"D","nombre":"Héctor Barría Angulo","corto":"Héctor Barría","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.415,"dim2":0.735,"foto":true,"m":{"lealtad":0.967,"asistencia":0.793,"abstencion":0.02,"oficialismo":0.716,"gmp":0.826},"rarezas":[]},{"id":"1189","camara":"D","nombre":"Jaime Bassa Mercado","corto":"Jaime Bassa","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.866,"dim2":-0.138,"foto":true,"m":{"lealtad":0.974,"asistencia":0.883,"abstencion":0.025,"oficialismo":0.583,"gmp":0.901},"rarezas":[{"fecha":"2026-03-24","que":"Contiene el precio del kerosene doméstico durante la emergencia energética","opcion":"votó en contra","si":148,"no":1,"abstencion":0}]},{"id":"1190","camara":"D","nombre":"Enrique Bassaletti Riess","corto":"Enrique Bassaletti","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Independiente","dim1":0.955,"dim2":-0.226,"foto":true,"m":{"lealtad":0.587,"asistencia":0.978,"abstencion":0.03,"oficialismo":0.68,"gmp":0.972},"rarezas":[]},{"id":"1191","camara":"D","nombre":"Valentina Becerra Peña","corto":"Valentina Becerra","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.929,"dim2":-0.217,"foto":true,"m":{"lealtad":1.0,"asistencia":0.917,"abstencion":0.026,"oficialismo":0.676,"gmp":0.975},"rarezas":[]},{"id":"1502","camara":"S","nombre":"Miguel Ángel Becker Alvear","corto":"Miguel Ángel Becker","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de La Araucanía","dim1":0.9,"dim2":-0.141,"foto":true,"m":{"gmp":0.968},"rarezas":[]},{"id":"1107","camara":"D","nombre":"María Francisca Bello Campos","corto":"María Bello","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":null,"dim2":null,"foto":true,"m":{"lealtad":null,"asistencia":0.0,"abstencion":null,"oficialismo":null,"gmp":null},"rarezas":[]},{"id":"1108","camara":"D","nombre":"Juan Carlos Beltrán Silva","corto":"Juan Beltrán","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.61,"dim2":-0.092,"foto":true,"m":{"lealtad":0.957,"asistencia":0.883,"abstencion":0.045,"oficialismo":0.765,"gmp":0.879},"rarezas":[]},{"id":"1013","camara":"D","nombre":"Alejandro Bernales Maldonado","corto":"Alejandro Bernales","partido":"Partido Liberal de Chile","sigla":"PL","coalicion":"Centro","dim1":-0.389,"dim2":0.07,"foto":true,"m":{"lealtad":0.894,"asistencia":0.841,"abstencion":0.068,"oficialismo":0.807,"gmp":0.776},"rarezas":[{"fecha":"2026-03-24","que":"Faculta a los administradores de condominios para emitir certificados de residencia","opcion":"se abstuvo","si":149,"no":0,"abstencion":1}]},{"id":"1192","camara":"D","nombre":"Lilian Betancurt Delgado","corto":"Lilian Betancurt","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.058,"dim2":-0.998,"foto":true,"m":{"lealtad":0.869,"asistencia":0.514,"abstencion":0.05,"oficialismo":0.76,"gmp":0.845},"rarezas":[]},{"id":"1110","camara":"D","nombre":"Carlos Bianchi Chelech","corto":"Carlos Bianchi","partido":"Independientes","sigla":"IND","coalicion":"Independiente","dim1":-0.467,"dim2":-0.107,"foto":true,"m":{"lealtad":0.824,"asistencia":0.812,"abstencion":0.049,"oficialismo":0.734,"gmp":0.832},"rarezas":[]},{"id":"1324","camara":"S","nombre":"Karim Bianchi Retamales","corto":"Karim Bianchi","partido":"Independientes","sigla":"IND","coalicion":"Otros","region":"Región de Magallanes y la Antártica Chilena","dim1":-0.642,"dim2":0.542,"foto":true,"m":{"gmp":0.713},"rarezas":[]},{"id":"815","camara":"D","nombre":"Sergio Bobadilla Muñoz","corto":"Sergio Bobadilla","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.789,"dim2":0.102,"foto":true,"m":{"lealtad":0.965,"asistencia":0.893,"abstencion":0.008,"oficialismo":0.693,"gmp":0.905},"rarezas":[]},{"id":"1193","camara":"D","nombre":"Patricio Briones Moller","corto":"Patricio Briones","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.071,"dim2":-0.992,"foto":true,"m":{"lealtad":0.908,"asistencia":0.986,"abstencion":0.066,"oficialismo":0.758,"gmp":0.843},"rarezas":[]},{"id":"1015","camara":"D","nombre":"Jorge Brito Hasbún","corto":"Jorge Brito","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.819,"dim2":-0.035,"foto":true,"m":{"lealtad":0.988,"asistencia":0.781,"abstencion":0.042,"oficialismo":0.599,"gmp":0.92},"rarezas":[]},{"id":"1114","camara":"D","nombre":"Félix Bugueño Sotelo","corto":"Félix Bugueño","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.761,"dim2":0.012,"foto":true,"m":{"lealtad":0.991,"asistencia":0.869,"abstencion":0.095,"oficialismo":0.654,"gmp":0.934},"rarezas":[]},{"id":"1194","camara":"D","nombre":"Daniel Bustos Leal","corto":"Daniel Bustos","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.913,"dim2":-0.219,"foto":true,"m":{"lealtad":0.998,"asistencia":0.95,"abstencion":0.031,"oficialismo":0.691,"gmp":0.97},"rarezas":[]},{"id":"1207","camara":"D","nombre":"Valentina Cáceres Monsálvez","corto":"Valentina Cáceres","partido":"Frente Amplio","sigla":"FA","coalicion":"Independiente","dim1":-0.784,"dim2":-0.063,"foto":true,"m":{"lealtad":0.724,"asistencia":0.809,"abstencion":0.043,"oficialismo":0.615,"gmp":0.924},"rarezas":[]},{"id":"1503","camara":"S","nombre":"Miguel Ángel Calisto Águila","corto":"Miguel Ángel Calisto","partido":"Evolución Política","sigla":"Evópoli","coalicion":"Oficialismo","region":"Región de Aysén del General Carlos Ibáñez del Campo ","dim1":0.689,"dim2":-0.291,"foto":true,"m":{"gmp":0.923},"rarezas":[]},{"id":"1116","camara":"D","nombre":"Felipe Camaño Cárdenas","corto":"Felipe Camaño","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Independiente","dim1":-0.34,"dim2":0.37,"foto":true,"m":{"lealtad":0.814,"asistencia":0.803,"abstencion":0.043,"oficialismo":0.78,"gmp":0.767},"rarezas":[]},{"id":"1325","camara":"S","nombre":"Fabiola Campillai Rojas","corto":"Fabiola Campillai","partido":"Independientes","sigla":"IND","coalicion":"Otros","region":"Región Metropolitana de Santiago","dim1":-0.981,"dim2":0.04,"foto":true,"m":{"gmp":0.936},"rarezas":[]},{"id":"1504","camara":"S","nombre":"Karol Cariola Oliva","corto":"Karol Cariola","partido":"Partido Comunista","sigla":"PC","coalicion":"Oposición","region":"Región de Valparaíso","dim1":-0.939,"dim2":0.055,"foto":true,"m":{"gmp":0.965},"rarezas":[]},{"id":"1017","camara":"D","nombre":"Álvaro Carter Fernández","corto":"Álvaro Carter","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.931,"dim2":-0.222,"foto":true,"m":{"lealtad":1.0,"asistencia":0.866,"abstencion":0.034,"oficialismo":0.687,"gmp":0.974},"rarezas":[]},{"id":"1505","camara":"S","nombre":"Rodolfo Carter Fernández","corto":"Rodolfo Carter","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Oficialismo","region":"Región de La Araucanía","dim1":0.819,"dim2":-0.019,"foto":true,"m":{"gmp":0.962},"rarezas":[]},{"id":"1195","camara":"D","nombre":"Carlos Carvajal Gallardo","corto":"Carlos Carvajal","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Independiente","dim1":-0.499,"dim2":0.004,"foto":true,"m":{"lealtad":0.796,"asistencia":0.943,"abstencion":0.059,"oficialismo":0.717,"gmp":0.825},"rarezas":[]},{"id":"1320","camara":"S","nombre":"Loreto Carvajal Ambiado","corto":"Loreto Carvajal","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Oposición","region":"Región de Ñuble","dim1":-0.825,"dim2":0.072,"foto":true,"m":{"gmp":0.959},"rarezas":[]},{"id":"1117","camara":"D","nombre":"Nathalie Castillo Rojas","corto":"Nathalie Castillo","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.975,"dim2":0.063,"foto":true,"m":{"lealtad":0.995,"asistencia":0.728,"abstencion":0.019,"oficialismo":0.519,"gmp":0.933},"rarezas":[{"fecha":"2026-04-08","que":"Aumenta las sanciones por evadir el pago en el transporte público","opcion":"se abstuvo","si":145,"no":0,"abstencion":2}]},{"id":"1196","camara":"D","nombre":"Priscilla Castillo Gerli","corto":"Priscilla Castillo","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.376,"dim2":0.605,"foto":true,"m":{"lealtad":0.943,"asistencia":0.969,"abstencion":0.032,"oficialismo":0.73,"gmp":0.792},"rarezas":[]},{"id":"1326","camara":"S","nombre":"Juan Luis Castro González","corto":"Juan Luis Castro","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región del Libertador General Bernardo O'Higgins","dim1":-0.841,"dim2":-0.175,"foto":true,"m":{"gmp":0.982},"rarezas":[]},{"id":"1184","camara":"D","nombre":"Roberto Celedón Fernández","corto":"Roberto Celedón","partido":"Frente Amplio","sigla":"FA","coalicion":"Independiente","dim1":-0.794,"dim2":-0.062,"foto":true,"m":{"lealtad":0.707,"asistencia":0.969,"abstencion":0.059,"oficialismo":0.631,"gmp":0.893},"rarezas":[]},{"id":"1021","camara":"D","nombre":"Andrés Celis Montt","corto":"Andrés Celis","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.704,"dim2":0.33,"foto":true,"m":{"lealtad":0.972,"asistencia":0.91,"abstencion":0.044,"oficialismo":0.705,"gmp":0.898},"rarezas":[]},{"id":"1506","camara":"S","nombre":"Ricardo Celis Araya","corto":"Ricardo Celis","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Oposición","region":"Región de La Araucanía","dim1":-0.814,"dim2":0.055,"foto":true,"m":{"gmp":0.952},"rarezas":[]},{"id":"1197","camara":"D","nombre":"Carlos Chandía Alarcón","corto":"Carlos Chandía","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.596,"dim2":0.105,"foto":true,"m":{"lealtad":0.939,"asistencia":0.955,"abstencion":0.054,"oficialismo":0.744,"gmp":0.845},"rarezas":[{"fecha":"2026-08-12","que":"Concede la nacionalidad por gracia al ciudadano uruguayo Pablo Lemoine","opcion":"se abstuvo","si":133,"no":0,"abstencion":1}]},{"id":"1198","camara":"D","nombre":"Paz Charpentier Rajcevich","corto":"Paz Charpentier","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.956,"dim2":-0.251,"foto":true,"m":{"lealtad":0.998,"asistencia":0.945,"abstencion":0.027,"oficialismo":0.689,"gmp":0.977},"rarezas":[]},{"id":"1507","camara":"S","nombre":"Daniella Cicardini Milla","corto":"Daniella  Cicardini","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región de Atacama","dim1":-0.85,"dim2":-0.131,"foto":true,"m":{"gmp":0.962},"rarezas":[]},{"id":"1199","camara":"D","nombre":"Jaime Coloma Álamos","corto":"Jaime Coloma","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.77,"dim2":0.216,"foto":true,"m":{"lealtad":0.985,"asistencia":0.947,"abstencion":0.058,"oficialismo":0.714,"gmp":0.94},"rarezas":[]},{"id":"1119","camara":"D","nombre":"Sara Concha Smith","corto":"Sara Concha","partido":"Partido Social Cristiano","sigla":"PSC","coalicion":"Republicanos","dim1":0.609,"dim2":0.041,"foto":true,"m":{"lealtad":0.929,"asistencia":0.952,"abstencion":0.049,"oficialismo":0.756,"gmp":0.905},"rarezas":[]},{"id":"1200","camara":"D","nombre":"Cristian Contreras Radovic","corto":"Cristian Contreras","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":0.372,"dim2":0.016,"foto":true,"m":{"lealtad":0.738,"asistencia":0.969,"abstencion":0.055,"oficialismo":0.765,"gmp":0.699},"rarezas":[]},{"id":"1201","camara":"D","nombre":"Flor Contreras Vivallo","corto":"Flor Contreras","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.08,"dim2":-0.827,"foto":true,"m":{"lealtad":0.906,"asistencia":0.986,"abstencion":0.072,"oficialismo":0.746,"gmp":0.831},"rarezas":[]},{"id":"1202","camara":"D","nombre":"Eduardo Cretton Rebolledo","corto":"Eduardo Cretton","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.814,"dim2":0.304,"foto":true,"m":{"lealtad":0.988,"asistencia":0.938,"abstencion":0.059,"oficialismo":0.697,"gmp":0.954},"rarezas":[]},{"id":"1204","camara":"D","nombre":"Francisco Crisóstomo Llanos","corto":"Francisco Crisóstomo","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.695,"dim2":-0.14,"foto":true,"m":{"lealtad":0.991,"asistencia":0.966,"abstencion":0.046,"oficialismo":0.639,"gmp":0.92},"rarezas":[]},{"id":"1203","camara":"D","nombre":"Sebastián Cristoffanini Jaraquemada","corto":"Sebastián Cristoffanini","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.925,"dim2":-0.199,"foto":true,"m":{"lealtad":1.0,"asistencia":0.947,"abstencion":0.033,"oficialismo":0.689,"gmp":0.98},"rarezas":[]},{"id":"1327","camara":"S","nombre":"Luciano Cruz-Coke Carvallo","corto":"Luciano Cruz-Coke","partido":"Evolución Política","sigla":"Evópoli","coalicion":"Oficialismo","region":"Región Metropolitana de Santiago","dim1":0.846,"dim2":-0.218,"foto":true,"m":{"gmp":0.953},"rarezas":[]},{"id":"1205","camara":"D","nombre":"Carlos Cuadrado Prats","corto":"Carlos Cuadrado","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Socialismo Democrático","dim1":-0.601,"dim2":0.097,"foto":true,"m":{"lealtad":0.939,"asistencia":0.864,"abstencion":0.046,"oficialismo":0.657,"gmp":0.842},"rarezas":[]},{"id":"1206","camara":"D","nombre":"Carolina Cucumides Calderón","corto":"Carolina Cucumides","partido":"Partido Socialista","sigla":"PS","coalicion":"Independiente","dim1":-0.701,"dim2":-0.183,"foto":true,"m":{"lealtad":0.736,"asistencia":0.988,"abstencion":0.04,"oficialismo":0.64,"gmp":0.922},"rarezas":[]},{"id":"1122","camara":"D","nombre":"Luis Alberto Cuello Peña y Lillo","corto":"Luis Cuello","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.991,"dim2":0.073,"foto":true,"m":{"lealtad":0.998,"asistencia":0.943,"abstencion":0.042,"oficialismo":0.573,"gmp":0.94},"rarezas":[]},{"id":"1208","camara":"D","nombre":"Jorge Díaz Ibarra","corto":"Jorge Díaz","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.405,"dim2":0.691,"foto":true,"m":{"lealtad":0.976,"asistencia":0.9,"abstencion":0.031,"oficialismo":0.753,"gmp":0.843},"rarezas":[]},{"id":"1028","camara":"D","nombre":"Eduardo Durán Salinas","corto":"Eduardo Durán","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.668,"dim2":0.022,"foto":true,"m":{"lealtad":0.969,"asistencia":0.879,"abstencion":0.059,"oficialismo":0.719,"gmp":0.916},"rarezas":[]},{"id":"1328","camara":"S","nombre":"Rojo Edwards","corto":"Rojo Edwards","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región Metropolitana de Santiago","dim1":0.802,"dim2":0.11,"foto":true,"m":{"gmp":0.961},"rarezas":[]},{"id":"1329","camara":"S","nombre":"Fidel Espinoza Sandoval","corto":"Fidel Espinoza","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región de Los Lagos","dim1":-0.84,"dim2":-0.172,"foto":true,"m":{"gmp":0.978},"rarezas":[]},{"id":"1209","camara":"D","nombre":"Matías Fernández Hartwig","corto":"Matías Fernández","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.839,"dim2":-0.158,"foto":true,"m":{"lealtad":0.994,"asistencia":0.981,"abstencion":0.053,"oficialismo":0.605,"gmp":0.943},"rarezas":[]},{"id":"1508","camara":"S","nombre":"Camila Flores Oporto","corto":"Camila Flores","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Valparaíso","dim1":0.911,"dim2":-0.02,"foto":true,"m":{"gmp":0.903},"rarezas":[]},{"id":"1330","camara":"S","nombre":"Iván Flores García","corto":"Iván Flores","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Oposición","region":"Región de Los Ríos","dim1":-0.772,"dim2":0.158,"foto":true,"m":{"gmp":0.932},"rarezas":[]},{"id":"1127","camara":"D","nombre":"Lorena Fries Monleón","corto":"Lorena Fries","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.831,"dim2":-0.254,"foto":true,"m":{"lealtad":0.988,"asistencia":0.883,"abstencion":0.055,"oficialismo":0.574,"gmp":0.923},"rarezas":[]},{"id":"1331","camara":"S","nombre":"Sergio Gahona Salazar","corto":"Sergio Gahona","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Oficialismo","region":"Región de Coquimbo","dim1":0.82,"dim2":0.033,"foto":true,"m":{"gmp":0.95},"rarezas":[]},{"id":"843","camara":"D","nombre":"René Manuel García García","corto":"René García","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.682,"dim2":0.062,"foto":true,"m":{"lealtad":0.969,"asistencia":0.862,"abstencion":0.034,"oficialismo":0.751,"gmp":0.884},"rarezas":[]},{"id":"1210","camara":"D","nombre":"Gustavo Gatica Villarroel","corto":"Gustavo Gatica","partido":"Partido Comunista","sigla":"PC","coalicion":"Independiente","dim1":-0.972,"dim2":0.029,"foto":true,"m":{"lealtad":0.672,"asistencia":0.938,"abstencion":0.04,"oficialismo":0.584,"gmp":0.933},"rarezas":[]},{"id":"1332","camara":"S","nombre":"María José Gatica Bertin","corto":"María José Gatica","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Los Ríos","dim1":0.849,"dim2":-0.198,"foto":true,"m":{"gmp":0.923},"rarezas":[]},{"id":"1128","camara":"D","nombre":"Ana María Gazmuri Vieira","corto":"Ana Gazmuri","partido":"Partido Acción Humanista","sigla":"PAH","coalicion":"Apruebo Dignidad","dim1":-0.945,"dim2":0.092,"foto":true,"m":{"lealtad":0.998,"asistencia":0.809,"abstencion":0.034,"oficialismo":0.594,"gmp":0.913},"rarezas":[]},{"id":"1131","camara":"D","nombre":"Mauro González Villarroel","corto":"Mauro González","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.668,"dim2":0.072,"foto":true,"m":{"lealtad":0.967,"asistencia":0.788,"abstencion":0.066,"oficialismo":0.717,"gmp":0.907},"rarezas":[]},{"id":"1211","camara":"D","nombre":"Sofía González Cortés","corto":"Sofía González","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.992,"dim2":0.061,"foto":true,"m":{"lealtad":0.995,"asistencia":0.972,"abstencion":0.032,"oficialismo":0.571,"gmp":0.936},"rarezas":[]},{"id":"1212","camara":"D","nombre":"Erich Grohs Marín","corto":"Erich Grohs","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.895,"dim2":0.447,"foto":true,"m":{"lealtad":0.957,"asistencia":0.853,"abstencion":0.022,"oficialismo":0.657,"gmp":0.95},"rarezas":[]},{"id":"1132","camara":"D","nombre":"Jorge Guzmán Zepeda","corto":"Jorge Guzmán","partido":"Evolución Política","sigla":"EVOP","coalicion":"Chile Vamos","dim1":0.622,"dim2":0.321,"foto":true,"m":{"lealtad":0.965,"asistencia":0.871,"abstencion":0.05,"oficialismo":0.733,"gmp":0.884},"rarezas":[]},{"id":"1213","camara":"D","nombre":"Irací Hassler Jacob","corto":"Irací Hassler","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.961,"dim2":0.072,"foto":true,"m":{"lealtad":1.0,"asistencia":0.971,"abstencion":0.036,"oficialismo":0.58,"gmp":0.934},"rarezas":[]},{"id":"986","camara":"D","nombre":"Marcela Hernando Pérez","corto":"Marcela Hernando","partido":"Partido Radical de Chile","sigla":"PR","coalicion":"Socialismo Democrático","dim1":-0.475,"dim2":0.004,"foto":true,"m":{"lealtad":0.893,"asistencia":0.853,"abstencion":0.109,"oficialismo":0.787,"gmp":0.818},"rarezas":[]},{"id":"1214","camara":"D","nombre":"Constanza Hube Portus","corto":"Constanza Hube","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.787,"dim2":0.226,"foto":true,"m":{"lealtad":0.978,"asistencia":0.929,"abstencion":0.072,"oficialismo":0.694,"gmp":0.928},"rarezas":[{"fecha":"2026-07-08","que":"Protege las tarifas eléctricas de los hogares","opcion":"se abstuvo","si":130,"no":1,"abstencion":1},{"fecha":"2026-05-20","que":"Dispone medidas para la reconstrucción nacional y el desarrollo económico y social","opcion":"se abstuvo","si":152,"no":0,"abstencion":1}]},{"id":"1222","camara":"S","nombre":"Francisco Huenchumilla Jaramillo","corto":"Francisco Huenchumilla","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Oposición","region":"Región de La Araucanía","dim1":-0.933,"dim2":0.225,"foto":true,"m":{"gmp":0.937},"rarezas":[]},{"id":"1509","camara":"S","nombre":"Diego Ibáñez Cotroneo","corto":"Diego Ibáñez","partido":"Frente Amplio","sigla":"FA","coalicion":"Oposición","region":"Región de Valparaíso","dim1":-0.94,"dim2":-0.341,"foto":true,"m":{"gmp":0.977},"rarezas":[]},{"id":"1038","camara":"D","nombre":"Marcos Ilabaca Cerda","corto":"Marcos Ilabaca","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.665,"dim2":-0.189,"foto":true,"m":{"lealtad":0.968,"asistencia":0.84,"abstencion":0.051,"oficialismo":0.647,"gmp":0.87},"rarezas":[]},{"id":"1133","camara":"D","nombre":"Juan Irarrázaval Rossel","corto":"Juan Irarrázaval","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.932,"dim2":-0.23,"foto":true,"m":{"lealtad":1.0,"asistencia":0.917,"abstencion":0.03,"oficialismo":0.686,"gmp":0.974},"rarezas":[]},{"id":"1216","camara":"D","nombre":"Stephanie Jéldrez Ortiz","corto":"Stephanie Jéldrez","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.968,"dim2":-0.214,"foto":true,"m":{"lealtad":0.998,"asistencia":0.912,"abstencion":0.026,"oficialismo":0.683,"gmp":0.97},"rarezas":[]},{"id":"1039","camara":"D","nombre":"Pamela Jiles Moreno","corto":"Pamela Jiles","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.316,"dim2":-0.949,"foto":true,"m":{"lealtad":0.896,"asistencia":0.81,"abstencion":0.055,"oficialismo":0.635,"gmp":0.828},"rarezas":[]},{"id":"1215","camara":"D","nombre":"Álvaro Jofré Cáceres","corto":"Álvaro Jofré","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.896,"dim2":0.444,"foto":true,"m":{"lealtad":0.953,"asistencia":0.966,"abstencion":0.021,"oficialismo":0.672,"gmp":0.936},"rarezas":[]},{"id":"1510","camara":"S","nombre":"Vanessa Kaiser Barents-Von Hohenhagen","corto":"Vanessa Kaiser","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Oficialismo","region":"Región de La Araucanía","dim1":0.942,"dim2":0.335,"foto":true,"m":{"gmp":0.898},"rarezas":[]},{"id":"1217","camara":"D","nombre":"Pier Karlezi Hazleby","corto":"Pier Karlezi","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.912,"dim2":0.41,"foto":true,"m":{"lealtad":0.947,"asistencia":0.924,"abstencion":0.021,"oficialismo":0.667,"gmp":0.939},"rarezas":[]},{"id":"1218","camara":"D","nombre":"José Antonio Kast Adriasola","corto":"José Kast","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.937,"dim2":-0.211,"foto":true,"m":{"lealtad":0.998,"asistencia":0.986,"abstencion":0.03,"oficialismo":0.683,"gmp":0.971},"rarezas":[]},{"id":"1219","camara":"D","nombre":"Tomás Kast Sommerhoff","corto":"Tomás Kast","partido":"Evolución Política","sigla":"EVOP","coalicion":"Chile Vamos","dim1":0.68,"dim2":0.12,"foto":true,"m":{"lealtad":0.97,"asistencia":0.866,"abstencion":0.008,"oficialismo":0.709,"gmp":0.908},"rarezas":[]},{"id":"1333","camara":"S","nombre":"Sebastián Keitel Bianchi","corto":"Sebastián Keitel","partido":"Evolución Política","sigla":"Evópoli","coalicion":"Oficialismo","region":"Región del Biobío","dim1":0.836,"dim2":-0.274,"foto":true,"m":{"gmp":0.947},"rarezas":[]},{"id":"1220","camara":"D","nombre":"Leandro Kunstmann Collado","corto":"Leandro Kunstmann","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.909,"dim2":-0.261,"foto":true,"m":{"lealtad":0.994,"asistencia":0.964,"abstencion":0.032,"oficialismo":0.684,"gmp":0.966},"rarezas":[{"fecha":"2026-07-15","que":"Entrega un bono extraordinario de apoyo a la niñez","opcion":"votó en contra","si":120,"no":2,"abstencion":0}]},{"id":"1334","camara":"S","nombre":"Alejandro Kusanovic Glusevic","corto":"Alejandro Kusanovic","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Magallanes y la Antártica Chilena","dim1":0.936,"dim2":-0.351,"foto":true,"m":{"gmp":0.927},"rarezas":[]},{"id":"911","camara":"S","nombre":"Carlos Ignacio Kuschel Silva","corto":"Carlos Ignacio Kuschel","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Los Lagos","dim1":0.973,"dim2":-0.04,"foto":true,"m":{"gmp":0.975},"rarezas":[]},{"id":"1511","camara":"S","nombre":"Enrique Lee Flores","corto":"Enrique Lee","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Arica y Parinacota","dim1":0.854,"dim2":0.521,"foto":true,"m":{"gmp":0.977},"rarezas":[]},{"id":"1044","camara":"D","nombre":"Raúl Leiva Carvajal","corto":"Raúl Leiva","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.622,"dim2":-0.217,"foto":true,"m":{"lealtad":0.982,"asistencia":0.8,"abstencion":0.056,"oficialismo":0.648,"gmp":0.911},"rarezas":[]},{"id":"1140","camara":"D","nombre":"Daniel Lilayu Vivanco","corto":"Daniel Lilayu","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.781,"dim2":0.219,"foto":true,"m":{"lealtad":0.986,"asistencia":0.884,"abstencion":0.053,"oficialismo":0.706,"gmp":0.925},"rarezas":[{"fecha":"2026-03-25","que":"Endurece la fiscalización de los clubes de fútbol y abre su propiedad a los hinchas","opcion":"se abstuvo","si":148,"no":0,"abstencion":1}]},{"id":"1512","camara":"S","nombre":"Andrés Longton Herrera","corto":"Andrés Longton","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Valparaíso","dim1":0.843,"dim2":0.172,"foto":true,"m":{"gmp":0.934},"rarezas":[]},{"id":"1221","camara":"D","nombre":"Benjamín Lorca Inzunza","corto":"Benjamín Lorca","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.941,"dim2":-0.211,"foto":true,"m":{"lealtad":0.998,"asistencia":0.943,"abstencion":0.027,"oficialismo":0.68,"gmp":0.974},"rarezas":[]},{"id":"1335","camara":"S","nombre":"Javier Macaya Danús","corto":"Javier Macaya","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Oficialismo","region":"Región del Libertador General Bernardo O'Higgins","dim1":0.843,"dim2":0.066,"foto":true,"m":{"gmp":0.962},"rarezas":[]},{"id":"1222","camara":"D","nombre":"Andrea Macías Palma","corto":"Andrea Macías","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.803,"dim2":-0.167,"foto":true,"m":{"lealtad":0.969,"asistencia":0.895,"abstencion":0.066,"oficialismo":0.6,"gmp":0.927},"rarezas":[{"fecha":"2026-03-23","que":"Agrega agravantes al tráfico de drogas para endurecer las penas","opcion":"votó en contra","si":142,"no":1,"abstencion":0}]},{"id":"1141","camara":"D","nombre":"Luis Malla Valenzuela","corto":"Luis Malla","partido":"Partido Liberal de Chile","sigla":"PL","coalicion":"Centro","dim1":-0.458,"dim2":-0.021,"foto":true,"m":{"lealtad":0.912,"asistencia":0.831,"abstencion":0.083,"oficialismo":0.778,"gmp":0.839},"rarezas":[]},{"id":"1142","camara":"D","nombre":"Daniel Manouchehri Lobos","corto":"Daniel Manouchehri","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.679,"dim2":-0.167,"foto":true,"m":{"lealtad":0.989,"asistencia":0.897,"abstencion":0.106,"oficialismo":0.682,"gmp":0.931},"rarezas":[]},{"id":"1223","camara":"D","nombre":"Hans Marowski Cuevas","corto":"Hans Marowski","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.907,"dim2":0.421,"foto":true,"m":{"lealtad":0.941,"asistencia":0.876,"abstencion":0.031,"oficialismo":0.657,"gmp":0.939},"rarezas":[]},{"id":"1143","camara":"D","nombre":"Cristóbal Martínez Ramírez","corto":"Cristóbal Martínez","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.684,"dim2":0.219,"foto":true,"m":{"lealtad":0.964,"asistencia":0.878,"abstencion":0.029,"oficialismo":0.733,"gmp":0.907},"rarezas":[{"fecha":"2026-06-08","que":"Aprueba el acuerdo de servicios aéreos con los Países Bajos","opcion":"votó en contra","si":127,"no":1,"abstencion":0}]},{"id":"1224","camara":"D","nombre":"Cristian Mella Andaur","corto":"Cristian Mella","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.369,"dim2":0.503,"foto":true,"m":{"lealtad":0.968,"asistencia":0.971,"abstencion":0.05,"oficialismo":0.768,"gmp":0.825},"rarezas":[]},{"id":"1225","camara":"D","nombre":"Cristian Menchaca Pinochet","corto":"Cristian Menchaca","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Independiente","dim1":0.937,"dim2":-0.197,"foto":true,"m":{"lealtad":0.598,"asistencia":0.962,"abstencion":0.029,"oficialismo":0.685,"gmp":0.974},"rarezas":[]},{"id":"1146","camara":"D","nombre":"José Carlos Meza Pereira","corto":"José Meza","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.899,"dim2":-0.24,"foto":true,"m":{"lealtad":0.998,"asistencia":0.836,"abstencion":0.031,"oficialismo":0.696,"gmp":0.948},"rarezas":[]},{"id":"1513","camara":"S","nombre":"Vlado Mirosevic Verdugo","corto":"Vlado Mirosevic","partido":"Partido Liberal de Chile","sigla":"PL","coalicion":"Oposición","region":"Región de Arica y Parinacota","dim1":-0.844,"dim2":-0.031,"foto":true,"m":{"gmp":0.93},"rarezas":[]},{"id":"1226","camara":"D","nombre":"José Montalva Feuerhake","corto":"José Montalva","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Independiente","dim1":-0.511,"dim2":0.178,"foto":true,"m":{"lealtad":0.795,"asistencia":0.928,"abstencion":0.039,"oficialismo":0.716,"gmp":0.859},"rarezas":[]},{"id":"1227","camara":"D","nombre":"Claudia Mora Vega","corto":"Claudia Mora","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.674,"dim2":0.301,"foto":true,"m":{"lealtad":0.969,"asistencia":0.95,"abstencion":0.053,"oficialismo":0.722,"gmp":0.906},"rarezas":[]},{"id":"1148","camara":"D","nombre":"Javiera Morales Alvarado","corto":"Javiera Morales","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.734,"dim2":-0.122,"foto":true,"m":{"lealtad":0.99,"asistencia":0.176,"abstencion":0.02,"oficialismo":0.44,"gmp":0.963},"rarezas":[]},{"id":"1117","camara":"S","nombre":"Iván Moreira Barros","corto":"Iván Moreira","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Oficialismo","region":"Región de Los Lagos","dim1":0.814,"dim2":-0.188,"foto":true,"m":{"gmp":0.96},"rarezas":[]},{"id":"1150","camara":"D","nombre":"Benjamín Moreno Bascur","corto":"Benjamín Moreno","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.937,"dim2":-0.222,"foto":true,"m":{"lealtad":0.998,"asistencia":0.981,"abstencion":0.032,"oficialismo":0.681,"gmp":0.971},"rarezas":[]},{"id":"872","camara":"D","nombre":"Jaime Mulet Martínez","corto":"Jaime Mulet","partido":"Federación Regionalista Verde Social","sigla":"FRVS","coalicion":"Apruebo Dignidad","dim1":-0.356,"dim2":0.85,"foto":true,"m":{"lealtad":0.724,"asistencia":0.778,"abstencion":0.038,"oficialismo":0.707,"gmp":0.741},"rarezas":[{"fecha":"2026-07-13","que":"Agiliza el procedimiento de expulsión administrativa de extranjeros","opcion":"votó en contra","si":138,"no":1,"abstencion":0}]},{"id":"1054","camara":"D","nombre":"Francesca Muñoz González","corto":"Francesca Muñoz","partido":"Partido Social Cristiano","sigla":"PSC","coalicion":"Republicanos","dim1":0.645,"dim2":0.047,"foto":true,"m":{"lealtad":0.956,"asistencia":0.834,"abstencion":0.058,"oficialismo":0.759,"gmp":0.925},"rarezas":[]},{"id":"1229","camara":"D","nombre":"Javier Muñoz Riquelme","corto":"Javier Muñoz","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.396,"dim2":0.73,"foto":true,"m":{"lealtad":0.964,"asistencia":0.96,"abstencion":0.038,"oficialismo":0.741,"gmp":0.829},"rarezas":[]},{"id":"1228","camara":"D","nombre":"Paulina Muñoz Minte","corto":"Paulina Muñoz","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.908,"dim2":0.42,"foto":true,"m":{"lealtad":0.945,"asistencia":0.962,"abstencion":0.025,"oficialismo":0.664,"gmp":0.929},"rarezas":[]},{"id":"1230","camara":"D","nombre":"Alex Nahuelquin Nahuelquin","corto":"Alex Nahuelquin","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.075,"dim2":-0.997,"foto":true,"m":{"lealtad":0.89,"asistencia":0.943,"abstencion":0.071,"oficialismo":0.78,"gmp":0.826},"rarezas":[]},{"id":"1153","camara":"D","nombre":"Coca Ericka Ñanco Vásquez","corto":"Coca Ñanco","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.855,"dim2":-0.082,"foto":true,"m":{"lealtad":0.993,"asistencia":0.484,"abstencion":0.036,"oficialismo":0.59,"gmp":0.937},"rarezas":[]},{"id":"1231","camara":"D","nombre":"Ximena Naranjo Pinto","corto":"Ximena Naranjo","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Independiente","dim1":0.641,"dim2":0.133,"foto":true,"m":{"lealtad":0.667,"asistencia":0.972,"abstencion":0.074,"oficialismo":0.757,"gmp":0.919},"rarezas":[]},{"id":"1152","camara":"D","nombre":"Gloria Naveillan Arriagada","corto":"Gloria Naveillan","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.777,"dim2":0.593,"foto":true,"m":{"lealtad":0.943,"asistencia":0.7,"abstencion":0.044,"oficialismo":0.675,"gmp":0.916},"rarezas":[]},{"id":"1232","camara":"D","nombre":"Cristian Neira Martínez","corto":"Cristian Neira","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.93,"dim2":-0.215,"foto":true,"m":{"lealtad":1.0,"asistencia":0.95,"abstencion":0.034,"oficialismo":0.677,"gmp":0.977},"rarezas":[]},{"id":"1233","camara":"D","nombre":"Ricardo Neumann Bertín","corto":"Ricardo Neumann","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.759,"dim2":0.253,"foto":true,"m":{"lealtad":0.988,"asistencia":0.916,"abstencion":0.077,"oficialismo":0.71,"gmp":0.943},"rarezas":[]},{"id":"1336","camara":"S","nombre":"Daniel Núñez Arancibia","corto":"Daniel Núñez","partido":"Partido Comunista","sigla":"PC","coalicion":"Oposición","region":"Región de Coquimbo","dim1":-0.908,"dim2":-0.379,"foto":true,"m":{"gmp":0.98},"rarezas":[]},{"id":"1337","camara":"S","nombre":"Paulina Núñez Urrutia","corto":"Paulina Núñez","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región de Antofagasta","dim1":0.791,"dim2":0.045,"foto":true,"m":{"gmp":0.957},"rarezas":[]},{"id":"1056","camara":"D","nombre":"Emilia Nuyado Ancapichun","corto":"Emilia Nuyado","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.768,"dim2":-0.081,"foto":true,"m":{"lealtad":0.955,"asistencia":0.979,"abstencion":0.03,"oficialismo":0.621,"gmp":0.877},"rarezas":[]},{"id":"1234","camara":"D","nombre":"Mario Olavarría Rodríguez","corto":"Mario Olavarría","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.754,"dim2":0.017,"foto":true,"m":{"lealtad":0.958,"asistencia":0.764,"abstencion":0.025,"oficialismo":0.688,"gmp":0.905},"rarezas":[]},{"id":"1235","camara":"D","nombre":"Javier Olivares Avendaño","corto":"Javier Olivares","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":0.206,"dim2":-0.644,"foto":true,"m":{"lealtad":0.798,"asistencia":0.933,"abstencion":0.039,"oficialismo":0.744,"gmp":0.799},"rarezas":[{"fecha":"2026-06-10","que":"Concede la nacionalidad por gracia a la deportista colombiana María Camila Valencia","opcion":"se abstuvo","si":142,"no":0,"abstencion":1}]},{"id":"1236","camara":"D","nombre":"Paula Olmos Contreras","corto":"Paula Olmos","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.158,"dim2":-0.987,"foto":true,"m":{"lealtad":0.929,"asistencia":0.731,"abstencion":0.064,"oficialismo":0.7,"gmp":0.837},"rarezas":[]},{"id":"1224","camara":"S","nombre":"Ximena Ordenes Neira","corto":"Ximena Ordenes","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Oposición","region":"Región de Aysén del General Carlos Ibáñez del Campo ","dim1":-0.828,"dim2":-0.265,"foto":true,"m":{"gmp":0.966},"rarezas":[]},{"id":"1237","camara":"D","nombre":"Francisco Orrego Gutiérrez","corto":"Francisco Orrego","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.79,"dim2":0.093,"foto":true,"m":{"lealtad":0.972,"asistencia":0.903,"abstencion":0.061,"oficialismo":0.711,"gmp":0.943},"rarezas":[]},{"id":"1238","camara":"D","nombre":"Álvaro Ortiz Vera","corto":"Álvaro Ortiz","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.442,"dim2":0.628,"foto":true,"m":{"lealtad":0.97,"asistencia":0.969,"abstencion":0.037,"oficialismo":0.736,"gmp":0.853},"rarezas":[]},{"id":"1239","camara":"D","nombre":"Fabián Ossandón Briceño","corto":"Fabián Ossandón","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.271,"dim2":-0.814,"foto":true,"m":{"lealtad":0.921,"asistencia":0.895,"abstencion":0.079,"oficialismo":0.688,"gmp":0.844},"rarezas":[]},{"id":"1120","camara":"S","nombre":"Manuel José Ossandón Irarrázabal","corto":"Manuel José Ossandón","partido":"Renovación Nacional","sigla":"RN","coalicion":"Oficialismo","region":"Región Metropolitana de Santiago","dim1":0.967,"dim2":-0.253,"foto":true,"m":{"gmp":0.941},"rarezas":[]},{"id":"1059","camara":"D","nombre":"Ximena Ossandón Irarrázabal","corto":"Ximena Ossandón","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.613,"dim2":0.445,"foto":true,"m":{"lealtad":0.948,"asistencia":0.964,"abstencion":0.088,"oficialismo":0.74,"gmp":0.872},"rarezas":[{"fecha":"2026-07-15","que":"Entrega un bono extraordinario de apoyo a la niñez","opcion":"votó en contra","si":120,"no":2,"abstencion":0}]},{"id":"1060","camara":"D","nombre":"Luis Pardo Sáinz","corto":"Luis Pardo","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.705,"dim2":0.234,"foto":true,"m":{"lealtad":0.984,"asistencia":0.919,"abstencion":0.043,"oficialismo":0.706,"gmp":0.927},"rarezas":[]},{"id":"1240","camara":"D","nombre":"Zandra Parisi Fernández","corto":"Zandra Parisi","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.045,"dim2":-0.999,"foto":true,"m":{"lealtad":0.87,"asistencia":0.743,"abstencion":0.07,"oficialismo":0.773,"gmp":0.826},"rarezas":[]},{"id":"1061","camara":"D","nombre":"Andrea Parra Sauterel","corto":"Andrea Parra","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Socialismo Democrático","dim1":-0.53,"dim2":0.202,"foto":true,"m":{"lealtad":0.914,"asistencia":0.917,"abstencion":0.062,"oficialismo":0.685,"gmp":0.835},"rarezas":[{"fecha":"2026-03-18","que":"Crea un delito específico para quien dañe instalaciones penitenciarias","opcion":"se abstuvo","si":142,"no":0,"abstencion":1}]},{"id":"1338","camara":"S","nombre":"Claudia Pascual Grau","corto":"Claudia Pascual","partido":"Partido Comunista","sigla":"PC","coalicion":"Oposición","region":"Región Metropolitana de Santiago","dim1":-0.954,"dim2":-0.045,"foto":true,"m":{"gmp":0.95},"rarezas":[]},{"id":"1062","camara":"D","nombre":"Joanna Pérez Olea","corto":"Joanna Pérez","partido":"Partido Demócratas Chile","sigla":"DEM","coalicion":"Centro","dim1":0.562,"dim2":-0.061,"foto":true,"m":{"lealtad":0.55,"asistencia":0.657,"abstencion":0.084,"oficialismo":0.785,"gmp":0.897},"rarezas":[]},{"id":"1157","camara":"D","nombre":"Marlene Pérez Cartes","corto":"Marlene Pérez","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Independiente","dim1":0.691,"dim2":0.078,"foto":true,"m":{"lealtad":0.645,"asistencia":0.714,"abstencion":0.075,"oficialismo":0.736,"gmp":0.946},"rarezas":[]},{"id":"1241","camara":"D","nombre":"Patricio Pinilla Valencia","corto":"Patricio Pinilla","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Centro","dim1":-0.477,"dim2":0.69,"foto":true,"m":{"lealtad":0.948,"asistencia":0.919,"abstencion":0.06,"oficialismo":0.701,"gmp":0.836},"rarezas":[{"fecha":"2026-07-08","que":"Protege las tarifas eléctricas de los hogares","opcion":"se abstuvo","si":130,"no":1,"abstencion":1}]},{"id":"1159","camara":"D","nombre":"Lorena Pizarro Sierra","corto":"Lorena Pizarro","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.961,"dim2":0.127,"foto":true,"m":{"lealtad":0.994,"asistencia":0.893,"abstencion":0.037,"oficialismo":0.559,"gmp":0.921},"rarezas":[{"fecha":"2026-04-08","que":"Aumenta las sanciones por evadir el pago en el transporte público","opcion":"se abstuvo","si":145,"no":0,"abstencion":2}]},{"id":"1215","camara":"S","nombre":"Yasna Provoste Campillay","corto":"Yasna Provoste","partido":"Partido Demócrata Cristiano","sigla":"DC","coalicion":"Oposición","region":"Región de Atacama","dim1":-0.954,"dim2":0.086,"foto":true,"m":{"gmp":0.93},"rarezas":[]},{"id":"1065","camara":"D","nombre":"Guillermo Ramírez Diez","corto":"Guillermo Ramírez","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.759,"dim2":0.103,"foto":true,"m":{"lealtad":0.992,"asistencia":0.695,"abstencion":0.047,"oficialismo":0.706,"gmp":0.963},"rarezas":[]},{"id":"1242","camara":"D","nombre":"Rodrigo Ramírez Parra","corto":"Rodrigo Ramírez","partido":"Renovación Nacional","sigla":"RN","coalicion":"Independiente","dim1":0.704,"dim2":0.298,"foto":true,"m":{"lealtad":0.626,"asistencia":0.952,"abstencion":0.036,"oficialismo":0.712,"gmp":0.909},"rarezas":[]},{"id":"1243","camara":"D","nombre":"Tamara Ramírez Ramírez","corto":"Tamara Ramírez","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.26,"dim2":-0.916,"foto":true,"m":{"lealtad":0.923,"asistencia":0.919,"abstencion":0.073,"oficialismo":0.674,"gmp":0.853},"rarezas":[]},{"id":"1025","camara":"D","nombre":"Catalina Del Real Mihovilovic","corto":"Catalina Del Real","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.929,"dim2":-0.252,"foto":true,"m":{"lealtad":0.998,"asistencia":0.729,"abstencion":0.026,"oficialismo":0.714,"gmp":0.97},"rarezas":[]},{"id":"1244","camara":"D","nombre":"Claudia Reyes Larenas","corto":"Claudia Reyes","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.91,"dim2":-0.243,"foto":true,"m":{"lealtad":0.998,"asistencia":0.897,"abstencion":0.025,"oficialismo":0.684,"gmp":0.972},"rarezas":[]},{"id":"1245","camara":"D","nombre":"Alejandro Riquelme Ducci","corto":"Alejandro Riquelme","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.934,"dim2":-0.217,"foto":true,"m":{"lealtad":1.0,"asistencia":0.984,"abstencion":0.033,"oficialismo":0.685,"gmp":0.974},"rarezas":[]},{"id":"1246","camara":"D","nombre":"José Antonio Rivas Villalobos","corto":"José Rivas","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.69,"dim2":-0.13,"foto":true,"m":{"lealtad":0.978,"asistencia":0.874,"abstencion":0.034,"oficialismo":0.651,"gmp":0.884},"rarezas":[]},{"id":"1247","camara":"D","nombre":"Javiera Rodríguez Pascual","corto":"Javiera Rodríguez","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.936,"dim2":-0.222,"foto":true,"m":{"lealtad":1.0,"asistencia":0.971,"abstencion":0.03,"oficialismo":0.681,"gmp":0.973},"rarezas":[]},{"id":"1165","camara":"D","nombre":"Agustín Romero Leiva","corto":"Agustín Romero","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.936,"dim2":-0.198,"foto":true,"m":{"lealtad":1.0,"asistencia":0.934,"abstencion":0.03,"oficialismo":0.684,"gmp":0.976},"rarezas":[]},{"id":"1166","camara":"D","nombre":"Natalia Romero Talguia","corto":"Natalia Romero","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Independiente","dim1":0.493,"dim2":0.369,"foto":true,"m":{"lealtad":0.693,"asistencia":0.893,"abstencion":0.014,"oficialismo":0.795,"gmp":0.851},"rarezas":[]},{"id":"1248","camara":"D","nombre":"Felipe Ross Correa","corto":"Felipe Ross","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.943,"dim2":-0.193,"foto":true,"m":{"lealtad":1.0,"asistencia":0.929,"abstencion":0.028,"oficialismo":0.679,"gmp":0.976},"rarezas":[{"fecha":"2026-04-22","que":"Crea el delito de robo cometido por una multitud o turba","opcion":"se abstuvo","si":149,"no":0,"abstencion":1}]},{"id":"1342","camara":"S","nombre":"Enrique Van Rysselberghe Herrera","corto":"Enrique Van Rysselberghe","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Oficialismo","region":"Región del Biobío","dim1":0.858,"dim2":-0.007,"foto":true,"m":{"gmp":0.959},"rarezas":[]},{"id":"1339","camara":"S","nombre":"Gastón Saavedra Chandía","corto":"Gastón Saavedra","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región del Biobío","dim1":-0.848,"dim2":-0.163,"foto":true,"m":{"gmp":0.979},"rarezas":[]},{"id":"1249","camara":"D","nombre":"Omar Sabat Guzmán","corto":"Omar Sabat","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Independiente","dim1":0.724,"dim2":0.243,"foto":true,"m":{"lealtad":0.622,"asistencia":0.857,"abstencion":0.064,"oficialismo":0.718,"gmp":0.928},"rarezas":[]},{"id":"1250","camara":"D","nombre":"Bernardo Salinas Maya","corto":"Bernardo Salinas","partido":"Partido Comunista","sigla":"PC","coalicion":"Independiente","dim1":-0.968,"dim2":0.113,"foto":true,"m":{"lealtad":0.69,"asistencia":0.816,"abstencion":0.032,"oficialismo":0.59,"gmp":0.917},"rarezas":[]},{"id":"1514","camara":"S","nombre":"Beatriz Sánchez Muñoz","corto":"Beatriz Sánchez","partido":"Frente Amplio","sigla":"FA","coalicion":"Oposición","region":"Región del Maule","dim1":-0.971,"dim2":-0.238,"foto":true,"m":{"gmp":0.963},"rarezas":[]},{"id":"1170","camara":"D","nombre":"Luis Sánchez Ossa","corto":"Luis Sánchez","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.939,"dim2":-0.229,"foto":true,"m":{"lealtad":0.998,"asistencia":0.931,"abstencion":0.028,"oficialismo":0.686,"gmp":0.973},"rarezas":[]},{"id":"1340","camara":"S","nombre":"Gustavo Sanhueza Dueñas","corto":"Gustavo Sanhueza","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Oficialismo","region":"Región de Ñuble","dim1":0.831,"dim2":0.037,"foto":true,"m":{"gmp":0.943},"rarezas":[]},{"id":"1073","camara":"D","nombre":"Juan Santana Castillo","corto":"Juan Santana","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.802,"dim2":-0.143,"foto":true,"m":{"lealtad":0.977,"asistencia":0.776,"abstencion":0.04,"oficialismo":0.593,"gmp":0.934},"rarezas":[]},{"id":"1251","camara":"D","nombre":"Macarena Santelices Cañas","corto":"Macarena Santelices","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.898,"dim2":-0.23,"foto":true,"m":{"lealtad":0.998,"asistencia":0.895,"abstencion":0.025,"oficialismo":0.682,"gmp":0.972},"rarezas":[]},{"id":"1074","camara":"D","nombre":"Marisela Santibáñez Novoa","corto":"Marisela Santibáñez","partido":"Partido Comunista","sigla":"PC","coalicion":"Independiente","dim1":-0.881,"dim2":-0.004,"foto":true,"m":{"lealtad":0.687,"asistencia":0.767,"abstencion":0.052,"oficialismo":0.573,"gmp":0.909},"rarezas":[]},{"id":"1075","camara":"D","nombre":"Diego Schalper Sepúlveda","corto":"Diego Schalper","partido":"Renovación Nacional","sigla":"RN","coalicion":"Chile Vamos","dim1":0.679,"dim2":0.437,"foto":true,"m":{"lealtad":0.972,"asistencia":0.781,"abstencion":0.051,"oficialismo":0.716,"gmp":0.934},"rarezas":[]},{"id":"1171","camara":"D","nombre":"Emilia Schneider Videla","corto":"Emilia Schneider","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.858,"dim2":-0.195,"foto":true,"m":{"lealtad":0.994,"asistencia":0.905,"abstencion":0.04,"oficialismo":0.595,"gmp":0.941},"rarezas":[]},{"id":"1252","camara":"D","nombre":"Constanza Schonhaut Soto","corto":"Constanza Schonhaut","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.844,"dim2":-0.242,"foto":true,"m":{"lealtad":0.996,"asistencia":0.907,"abstencion":0.046,"oficialismo":0.58,"gmp":0.933},"rarezas":[]},{"id":"1172","camara":"D","nombre":"Stephan Schubert Rubio","corto":"Stephan Schubert","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.919,"dim2":-0.219,"foto":true,"m":{"lealtad":1.0,"asistencia":0.848,"abstencion":0.035,"oficialismo":0.718,"gmp":0.972},"rarezas":[]},{"id":"1341","camara":"S","nombre":"Alejandra Sepúlveda Orbenes","corto":"Alejandra Sepúlveda","partido":"Federación Regionalista Verde Social","sigla":"FRVS","coalicion":"Oposición","region":"Región del Libertador General Bernardo O'Higgins","dim1":-0.874,"dim2":0.482,"foto":true,"m":{"gmp":0.951},"rarezas":[]},{"id":"1173","camara":"D","nombre":"Daniela Serrano Salazar","corto":"Daniela Serrano","partido":"Partido Comunista","sigla":"PC","coalicion":"Apruebo Dignidad","dim1":-0.999,"dim2":0.018,"foto":true,"m":{"lealtad":0.995,"asistencia":0.984,"abstencion":0.032,"oficialismo":0.575,"gmp":0.938},"rarezas":[{"fecha":"2026-05-20","que":"Dispone medidas para la reconstrucción nacional y el desarrollo económico y social","opcion":"votó en contra","si":153,"no":1,"abstencion":0}]},{"id":"1077","camara":"D","nombre":"Raúl Soto Mardones","corto":"Raúl Soto","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Socialismo Democrático","dim1":-0.521,"dim2":-0.16,"foto":true,"m":{"lealtad":0.925,"asistencia":0.8,"abstencion":0.047,"oficialismo":0.697,"gmp":0.854},"rarezas":[]},{"id":"1515","camara":"S","nombre":"Arturo Squella Ovalle","corto":"Arturo Squella","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Oficialismo","region":"Región de Valparaíso","dim1":0.993,"dim2":-0.037,"foto":true,"m":{"gmp":0.972},"rarezas":[]},{"id":"1174","camara":"D","nombre":"Marco Antonio Sulantay Olivares","corto":"Marco Sulantay","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.776,"dim2":0.103,"foto":true,"m":{"lealtad":0.98,"asistencia":0.909,"abstencion":0.034,"oficialismo":0.699,"gmp":0.936},"rarezas":[]},{"id":"1175","camara":"D","nombre":"Cristián Tapia Ramos","corto":"Cristián Tapia","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Independiente","dim1":-0.458,"dim2":-0.084,"foto":true,"m":{"lealtad":0.821,"asistencia":0.767,"abstencion":0.047,"oficialismo":0.759,"gmp":0.807},"rarezas":[]},{"id":"1176","camara":"D","nombre":"Hotuiti Teao Drago","corto":"Hotuiti Teao","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Independiente","dim1":0.694,"dim2":0.045,"foto":true,"m":{"lealtad":0.644,"asistencia":0.826,"abstencion":0.061,"oficialismo":0.722,"gmp":0.915},"rarezas":[]},{"id":"1177","camara":"D","nombre":"Carolina Tello Rojas","corto":"Carolina Tello","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.83,"dim2":-0.081,"foto":true,"m":{"lealtad":0.988,"asistencia":0.9,"abstencion":0.036,"oficialismo":0.612,"gmp":0.928},"rarezas":[]},{"id":"1516","camara":"S","nombre":"Renzo Trisotti Martínez","corto":"Renzo Trisotti","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Oficialismo","region":"Región de Tarapacá","dim1":0.981,"dim2":-0.034,"foto":true,"m":{"gmp":0.973},"rarezas":[]},{"id":"1253","camara":"D","nombre":"Fernando Ugarte Tejeda","corto":"Fernando Ugarte","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.935,"dim2":-0.208,"foto":true,"m":{"lealtad":0.996,"asistencia":0.983,"abstencion":0.03,"oficialismo":0.682,"gmp":0.972},"rarezas":[]},{"id":"1178","camara":"D","nombre":"Héctor Ulloa Aguilera","corto":"Héctor Ulloa","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Independiente","dim1":-0.484,"dim2":-0.012,"foto":true,"m":{"lealtad":0.809,"asistencia":0.771,"abstencion":0.054,"oficialismo":0.719,"gmp":0.842},"rarezas":[]},{"id":"1254","camara":"D","nombre":"Ignacio Urcullú Clèment-Lund","corto":"Ignacio Urcullú","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.918,"dim2":-0.207,"foto":true,"m":{"lealtad":0.998,"asistencia":0.974,"abstencion":0.023,"oficialismo":0.683,"gmp":0.973},"rarezas":[]},{"id":"1255","camara":"D","nombre":"Eileen Urqueta Rojas","corto":"Eileen Urqueta","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.207,"dim2":-0.931,"foto":true,"m":{"lealtad":0.915,"asistencia":0.979,"abstencion":0.065,"oficialismo":0.701,"gmp":0.813},"rarezas":[]},{"id":"1115","camara":"S","nombre":"Alfonso De Urresti Longton","corto":"Alfonso De Urresti","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región de Los Ríos","dim1":-0.847,"dim2":-0.178,"foto":true,"m":{"gmp":0.977},"rarezas":[]},{"id":"1517","camara":"S","nombre":"Ignacio Urrutia Bonilla","corto":"Ignacio Urrutia","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Oficialismo","region":"Región del Maule","dim1":0.965,"dim2":-0.026,"foto":true,"m":{"gmp":0.973},"rarezas":[]},{"id":"1256","camara":"D","nombre":"Tatiana Urrutia Herrera","corto":"Tatiana Urrutia","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.826,"dim2":-0.255,"foto":true,"m":{"lealtad":0.99,"asistencia":0.862,"abstencion":0.032,"oficialismo":0.583,"gmp":0.935},"rarezas":[]},{"id":"1082","camara":"D","nombre":"Cristóbal Urruticoechea Ríos","corto":"Cristóbal Urruticoechea","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.912,"dim2":0.411,"foto":true,"m":{"lealtad":0.956,"asistencia":0.676,"abstencion":0.015,"oficialismo":0.658,"gmp":0.952},"rarezas":[]},{"id":"1257","camara":"D","nombre":"Alejandra Valdebenito Torres","corto":"Alejandra Valdebenito","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.623,"dim2":0.242,"foto":true,"m":{"lealtad":0.943,"asistencia":0.926,"abstencion":0.026,"oficialismo":0.746,"gmp":0.862},"rarezas":[]},{"id":"1258","camara":"D","nombre":"Guillermo Valdés Carmona","corto":"Guillermo Valdés","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":-0.13,"dim2":-0.992,"foto":true,"m":{"lealtad":0.909,"asistencia":0.959,"abstencion":0.067,"oficialismo":0.748,"gmp":0.817},"rarezas":[]},{"id":"1260","camara":"D","nombre":"César Valenzuela Maass","corto":"César Valenzuela","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.7,"dim2":-0.178,"foto":true,"m":{"lealtad":0.99,"asistencia":0.957,"abstencion":0.056,"oficialismo":0.643,"gmp":0.927},"rarezas":[]},{"id":"1261","camara":"D","nombre":"Daniel Valenzuela Salazar","corto":"Daniel Valenzuela","partido":"Renovación Nacional","sigla":"RN","coalicion":"Independiente","dim1":0.797,"dim2":0.126,"foto":true,"m":{"lealtad":0.61,"asistencia":0.824,"abstencion":0.036,"oficialismo":0.698,"gmp":0.938},"rarezas":[]},{"id":"1259","camara":"D","nombre":"Juan Marcelo Valenzuela Henríquez","corto":"Juan Valenzuela","partido":"Partido de la Gente","sigla":"PDG","coalicion":"Independiente","dim1":0.038,"dim2":-0.955,"foto":true,"m":{"lealtad":0.871,"asistencia":0.924,"abstencion":0.071,"oficialismo":0.773,"gmp":0.879},"rarezas":[]},{"id":"1343","camara":"S","nombre":"Esteban Velásquez Núñez","corto":"Esteban Velásquez","partido":"Federación Regionalista Verde Social","sigla":"FRVS","coalicion":"Oposición","region":"Región de Antofagasta","dim1":-0.87,"dim2":0.046,"foto":true,"m":{"gmp":0.969},"rarezas":[]},{"id":"1180","camara":"D","nombre":"Consuelo Veloso Ávila","corto":"Consuelo Veloso","partido":"Partido Radical de Chile","sigla":"PR","coalicion":"Independiente","dim1":-0.815,"dim2":-0.049,"foto":true,"m":{"lealtad":0.711,"asistencia":0.893,"abstencion":0.05,"oficialismo":0.616,"gmp":0.932},"rarezas":[]},{"id":"1181","camara":"D","nombre":"Nelson Venegas Salazar","corto":"Nelson Venegas","partido":"Partido Socialista","sigla":"PS","coalicion":"Socialismo Democrático","dim1":-0.701,"dim2":-0.143,"foto":true,"m":{"lealtad":0.979,"asistencia":0.84,"abstencion":0.027,"oficialismo":0.612,"gmp":0.891},"rarezas":[{"fecha":"2026-07-22","que":"Cambia el Código de Minería en materia de amparo minero","opcion":"se abstuvo","si":126,"no":0,"abstencion":2}]},{"id":"915","camara":"D","nombre":"Germán Verdugo Soto","corto":"Germán Verdugo","partido":"Partido Nacional Libertario","sigla":"PNL","coalicion":"Republicanos","dim1":0.807,"dim2":0.184,"foto":true,"m":{"lealtad":0.962,"asistencia":0.945,"abstencion":0.029,"oficialismo":0.699,"gmp":0.906},"rarezas":[]},{"id":"1262","camara":"D","nombre":"Diego Vergara Rodríguez","corto":"Diego Vergara","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Republicanos","dim1":0.98,"dim2":-0.197,"foto":true,"m":{"lealtad":0.998,"asistencia":0.964,"abstencion":0.029,"oficialismo":0.68,"gmp":0.977},"rarezas":[]},{"id":"1518","camara":"S","nombre":"Cristian Vial Maceratta","corto":"Cristian Vial","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Oficialismo","region":"Región del Maule","dim1":0.895,"dim2":0.037,"foto":true,"m":{"gmp":0.967},"rarezas":[]},{"id":"1182","camara":"D","nombre":"Sebastián Videla Castillo","corto":"Sebastián Videla","partido":"Partido Liberal de Chile","sigla":"PL","coalicion":"Independiente","dim1":-0.415,"dim2":0.138,"foto":true,"m":{"lealtad":0.804,"asistencia":0.898,"abstencion":0.06,"oficialismo":0.806,"gmp":0.791},"rarezas":[]},{"id":"1450","camara":"S","nombre":"Paulina Vodanovic Rojas","corto":"Paulina Vodanovic","partido":"Partido Socialista","sigla":"PS","coalicion":"Oposición","region":"Región del Maule","dim1":-0.856,"dim2":-0.316,"foto":true,"m":{"gmp":0.948},"rarezas":[]},{"id":"1344","camara":"S","nombre":"Matías Walker Prieto","corto":"Matías Walker","partido":"Partido Demócratas Chile","sigla":"Demócratas","coalicion":"Oficialismo","region":"Región de Coquimbo","dim1":0.407,"dim2":0.913,"foto":true,"m":{"gmp":0.946},"rarezas":[]},{"id":"1183","camara":"D","nombre":"Flor Weisse Novoa","corto":"Flor Weisse","partido":"Unión Demócrata Independiente","sigla":"UDI","coalicion":"Chile Vamos","dim1":0.701,"dim2":0.141,"foto":true,"m":{"lealtad":0.969,"asistencia":0.764,"abstencion":0.038,"oficialismo":0.728,"gmp":0.903},"rarezas":[]},{"id":"1086","camara":"D","nombre":"Gonzalo Winter Etcheberry","corto":"Gonzalo Winter","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.817,"dim2":-0.009,"foto":true,"m":{"lealtad":0.978,"asistencia":0.826,"abstencion":0.05,"oficialismo":0.593,"gmp":0.873},"rarezas":[]},{"id":"1087","camara":"D","nombre":"Gael Yeomans Araya","corto":"Gael Yeomans","partido":"Frente Amplio","sigla":"FA","coalicion":"Frente Amplio","dim1":-0.831,"dim2":-0.147,"foto":true,"m":{"lealtad":0.992,"asistencia":0.869,"abstencion":0.046,"oficialismo":0.595,"gmp":0.925},"rarezas":[]},{"id":"1263","camara":"D","nombre":"Sebastián Zamora Soto","corto":"Sebastián Zamora","partido":"Partido Republicano","sigla":"PRCh","coalicion":"Independiente","dim1":0.93,"dim2":-0.222,"foto":true,"m":{"lealtad":0.6,"asistencia":0.941,"abstencion":0.035,"oficialismo":0.685,"gmp":0.975},"rarezas":[]},{"id":"1264","camara":"D","nombre":"Fernando Zamorano Peralta","corto":"Fernando Zamorano","partido":"Partido Por la Democracia","sigla":"PPD","coalicion":"Socialismo Democrático","dim1":-0.533,"dim2":0.119,"foto":true,"m":{"lealtad":0.93,"asistencia":0.905,"abstencion":0.046,"oficialismo":0.703,"gmp":0.883},"rarezas":[]}]</script>
+  <script src="../assets/paleta-partidos.js"></script>
+  <script>
+    (function () {
+      var P = window.LEGISLADORES || [];
+      var PAL = window.PALETA_PARTIDOS_OFICIAL || {};
+      var el = function (id) { return document.getElementById(id); };
+      var esc = function (s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      };
+      var color = function (p) { return PAL[p] || '#9E9E9E'; };
+      var pct = function (x) { return x == null ? null : Math.round(x * 100) + '%'; };
+      var norm = function (s) {
+        return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      };
+      var iniciales = function (n) {
+        var p = (n || '').split(' ').filter(Boolean);
+        return ((p[0] || '')[0] || '') + ((p[1] || '')[0] || '');
+      };
+      var carpeta = function (f) { return f.camara === 'S' ? 'senadores' : 'diputados'; };
+
+      var sello = function (f) { return (window.SELLOS_PARTIDOS || {})[f.sigla]; };
+      var colorTexto = function (f) { var t = sello(f); return t ? t.c : '#566C70'; };
+      function chapa(f) {
+        var t = sello(f);
+        return t ? '<span class="chapa"><img src="../assets/partidos-sello/' + t.a +
+                   '" alt="" loading="lazy"></span>' : '';
+      }
+
+      function cara(f, clase) {
+        return '<span class="retrato ret-' + clase + '">' + retrato(f, clase) + chapa(f) + '</span>';
+      }
+
+      function retrato(f, clase) {
+        if (f.foto) {
+
+          return '<img class="' + clase + '" loading="lazy" decoding="async" src="../assets/' +
+            carpeta(f) + '/' + f.id + '.jpg" alt="' + esc(f.nombre) + '">';
+        }
+        return '<span class="' + clase.replace('cara', 'ini') + '" style="background:' +
+          color(f.partido) + '">' + esc(iniciales(f.nombre).toUpperCase()) + '</span>';
+      }
+
+      var estado = { q: '', camara: '', partido: '' };
+
+      function filtrar() {
+        var q = norm(estado.q);
+        return P.filter(function (f) {
+          if (estado.camara && f.camara !== estado.camara) return false;
+          if (estado.partido && f.partido !== estado.partido) return false;
+          if (!q) return true;
+          return norm(f.nombre).indexOf(q) >= 0 || norm(f.partido).indexOf(q) >= 0 ||
+            norm(f.sigla).indexOf(q) >= 0;
+        });
+      }
+
+      function pintarLista() {
+        var res = filtrar();
+        el('conteo').textContent = res.length + (res.length === 1 ? ' persona' : ' personas');
+        if (!res.length) {
+          el('grilla').innerHTML = '<div class="vacio">No encontramos a nadie con esa búsqueda.</div>';
+          return;
+        }
+        el('grilla').innerHTML = res.map(function (f) {
+          return '<a class="p-card" href="#' + f.camara + f.id + '">' +
+            cara(f, 'cara') +
+            '<div class="nom">' + esc(f.corto) + '</div>' +
+            '<div class="meta"><span class="badge" style="color:' + colorTexto(f) + '">' +
+            esc(f.sigla) + '</span>' +
+            '<span class="camara-tag">' + (f.camara === 'S' ? 'Senado' : 'Cámara') + '</span></div>' +
+            '</a>';
+        }).join('');
+      }
+
+      var partidos = {};
+      P.forEach(function (f) { partidos[f.partido] = (partidos[f.partido] || 0) + 1; });
+      Object.keys(partidos).sort().forEach(function (p) {
+        var o = document.createElement('option');
+        o.value = p; o.textContent = p + ' (' + partidos[p] + ')';
+        el('fPartido').appendChild(o);
+      });
+
+      el('q').addEventListener('input', function (e) { estado.q = e.target.value; pintarLista(); });
+      el('fPartido').addEventListener('change', function (e) { estado.partido = e.target.value; pintarLista(); });
+      Array.prototype.forEach.call(document.querySelectorAll('.chip-f'), function (b) {
+        b.addEventListener('click', function () {
+          estado.camara = b.dataset.camara;
+          document.querySelectorAll('.chip-f').forEach(function (o) {
+            o.setAttribute('aria-pressed', String(o === b));
+          });
+          pintarLista();
+        });
+      });
+
+      var ROJO = [200, 10, 40], NARANJA = [244, 116, 32], AMARILLO = [224, 158, 20],
+          CELESTE = [79, 163, 220], AZUL = [12, 78, 158];
+      var CENTRO = 0.12;  
+      function mezclar(a, b, t) {
+        return 'rgb(' + a.map(function (c, i) {
+          return Math.round(c + (b[i] - c) * t);
+        }).join(',') + ')';
+      }
+      function colorEje(v) {
+        var t = Math.max(-1, Math.min(1, v));
+        if (Math.abs(t) < CENTRO) return 'rgb(' + AMARILLO.join(',') + ')';
+        var fuerza = (Math.abs(t) - CENTRO) / (1 - CENTRO);
+        return t < 0 ? mezclar(NARANJA, ROJO, fuerza) : mezclar(CELESTE, AZUL, fuerza);
+      }
+
+      function medidor(rot, valor, texto, nota, tipo) {
+        if (valor == null) return '';
+        var barra, estiloVal = '';
+        if (tipo === 'pos') {
+          
+          var x = Math.max(0, Math.min(100, (valor + 1) / 2 * 100));
+          barra = '<div class="pista eje"><span class="marca" style="left:' + x + '%"></span></div>' +
+            '<div class="extremos"><span>Izquierda</span><span>Derecha</span></div>';
+          estiloVal = ' style="color:' + colorEje(valor) + '"';
+        } else {
+          barra = '<div class="pista"><span class="relleno" style="width:' +
+            Math.max(0, Math.min(100, valor * 100)) + '%"></span></div>';
+        }
+        return '<div class="met"><div class="rot">' + rot + '</div>' +
+          '<div class="val"' + estiloVal + '>' + texto + '</div>' + barra +
+          (nota ? '<div class="nota">' + nota + '</div>' : '') + '</div>';
+      }
+
+      function pintarFicha(f) {
+        var m = f.m || {};
+        var mets = [
+          medidor('Izquierda → derecha', f.dim1, (f.dim1 == null ? '—' : f.dim1.toFixed(2)),
+            'Posición estimada con W-NOMINATE, de -1 (izquierda) a 1 (derecha).', 'pos'),
+          medidor('Lealtad a su bloque', m.lealtad, pct(m.lealtad) || '—',
+            'Cuántas veces votó igual que la mayoría de su coalición.'),
+          medidor('Asistencia', m.asistencia, pct(m.asistencia) || '—',
+            'Votaciones en que estuvo presente.'),
+          medidor('Oficialista ↔ opositor', m.oficialismo, pct(m.oficialismo) || '—',
+            'Proporción de votos a favor sobre el total que emitió.'),
+          medidor('Se abstiene', m.abstencion, pct(m.abstencion) || '—',
+            'Abstenciones sobre las votaciones en que estuvo presente.'),
+          medidor('Predecibilidad', m.gmp, pct(m.gmp) || '—',
+            'Qué tan bien el modelo acierta sus votos a partir de su posición.')
+        ].filter(Boolean).join('');
+
+        var rar = f.rarezas && f.rarezas.length
+          ? f.rarezas.map(function (r) {
+            return '<div class="f-rareza"><span class="op">' + esc(r.opcion) + '</span>' +
+              '<span class="txt">' + esc(r.que) + '</span>' +
+              '<span class="num">' + r.si + '-' + r.no +
+              (r.abstencion ? ' · ' + r.abstencion + ' abst.' : '') + '</span></div>';
+          }).join('')
+          : '<div class="sin-datos">No registra votos contra una Sala casi unánime en este período.</div>';
+
+        el('fichaCuerpo').innerHTML =
+          '<div class="f-top">' + cara(f, 'cara') +
+          '<div class="datos"><h2>' + esc(f.nombre) + '</h2>' +
+          '<div class="linea">' +
+          '<span class="badge" style="color:' + colorTexto(f) + '">' +
+          esc((sello(f) || {}).n || f.partido) + '</span></div>' +
+          '<div class="linea">' +
+          '<span class="dato"><b>' + (f.camara === 'S' ? 'Senado' : 'Cámara de Diputados') + '</b></span>' +
+          (f.coalicion && f.coalicion !== f.partido
+            ? '<span class="dato">· ' + esc(f.coalicion) + '</span>' : '') +
+          (f.region ? '<span class="dato">· ' + esc(f.region) + '</span>' : '') +
+          '</div></div></div>' +
+          '<div class="f-metricas">' + mets + '</div>' +
+          '<div class="f-seccion">Votos que llamaron la atención</div>' + rar;
+      }
+
+      function ruta() {
+        var h = (location.hash || '').replace('#', '');
+        var f = h && P.filter(function (x) { return x.camara + x.id === h; })[0];
+        if (f) {
+          pintarFicha(f);
+          el('vistaLista').hidden = true;
+          el('vistaFicha').hidden = false;
+          document.title = f.corto + ' · Monitor Legislativo C22-CEP';
+        } else {
+          el('vistaFicha').hidden = true;
+          el('vistaLista').hidden = false;
+          document.title = 'Legisladores · Monitor Legislativo C22-CEP';
+        }
+        window.scrollTo(0, 0);
+      }
+
+      el('volverLista').addEventListener('click', function () {
+        history.pushState('', document.title, location.pathname);
+        ruta();
+      });
+      window.addEventListener('hashchange', ruta);
+
+      pintarLista();
+      ruta();
+    })();
+  </script>
+
+    <footer class="c22skin-foot">
+      <div class="c22skin-grid">
+        <div class="c22skin-marcas">
+          <img class="c22" src="../assets/logo-blanco.svg" alt="C22">
+          <img class="cep" src="../assets/logo-cep-blanco.svg" alt="Centro de Estudios Públicos">
+          <div class="c22skin-apoyo">
+            <span class="rot">Con el apoyo de</span>
+            <a href="https://sodas.cl" target="_blank" rel="noopener"
+               title="Núcleo Milenio para la Ciencia de Datos Sociales"><img
+               src="../assets/logo-sodas.png"
+               alt="SODAS · Núcleo Milenio para la Ciencia de Datos Sociales"></a>
+          </div>
+        </div>
+        <div class="c22skin-menu">
+          <h3>C22</h3>
+          <ul>
+          <li><a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a></li>
+          <li><a href="https://c22cepchile.cl/personas/">Personas</a></li>
+          <li><a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a></li>
+          <li><a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a></li>
+          <li><a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a></li>
+          <li><a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a></li>
+            <li><a href="https://c22cepchile.cl/contacto/">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Encuéntranos</h3>
+          <div class="c22skin-dir">
+            Centro de Estudios Públicos,<br>Monseñor Sótero Sanz 162, Providencia,<br>Santiago de Chile. 7500011<br><br>
+            +56 22 328 2400<br><a href="mailto:c22@cepchile.cl">c22@cepchile.cl</a>
+          </div>
+          <h3 style="margin-top:26px">Síguenos</h3>
+          <div class="c22skin-redes">
+          <a href="https://twitter.com/cepchile" target="_blank" rel="noopener">X / Twitter</a>
+          <a href="https://www.instagram.com/cepchile" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.linkedin.com/company/centro-de-estudios-p%C3%BAblicos" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.youtube.com/channel/UCBNm3ldq_kNdQexDGJDWOeQ" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div class="c22skin-menu">
+          <h3>Sitios asociados</h3>
+          <ul>
+          <li><a href="https://www.cepchile.cl">Centro de Estudios Públicos</a></li>
+          <li><a href="https://estudiospublicos.cl/index.php/cep/index">Revista Estudios Públicos</a></li>
+          <li><a href="https://c22cepchile.cl">Monitor Constitucional</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="c22skin-legal">
+        <span>Monitor Legislativo · C22 — Centro de Estudios Públicos</span>
+        <span>Datos de la API de datos abiertos del Congreso Nacional</span>
+      </div>
+    </footer>
+  <script>
+   
+  (function () {
+    var MINIMO = 11;    
+    var DENSO = 0.55;   
+
+    function base(t) {
+      if (!t.getAttribute('data-fs-base')) {
+        t.setAttribute('data-fs-base', t.getAttribute('font-size') || '12');
+      }
+      return parseFloat(t.getAttribute('data-fs-base')) || 12;
+    }
+
+    function ajustar(svg) {
+      var vb = (svg.getAttribute('viewBox') || '').trim().split(/[ ,]+/).map(Number);
+      var ancho = svg.getBoundingClientRect().width;
+      if (!vb[2] || !ancho) return;
+      var esc = ancho / vb[2];
+      if (esc > 1) esc = 1;
+      var apretado = esc < DENSO;
+      svg.querySelectorAll('text').forEach(function (t) {
+        var b = base(t);
+        var clase = t.getAttribute('class') || '';
+         
+        var suelto = /extreme|punto|etiqueta-dato/.test(clase);
+        if (suelto && apretado) { t.style.display = 'none'; return; }
+         
+        var eje = /axis-label/.test(clase);
+        t.style.display = '';
+        var meta = Math.max(b, (eje && apretado ? MINIMO * 0.8 : MINIMO) / esc);
+        t.setAttribute('font-size', meta.toFixed(1));
+        var largo = 0;
+        try { largo = t.getComputedTextLength(); } catch (e) { largo = 0; }
+        var cabe = vb[2] * 0.94;
+        if (largo > cabe) {
+          t.setAttribute('font-size', Math.max(b, meta * cabe / largo).toFixed(1));
+        }
+      });
+      encajar(svg, vb);
+      descontar(svg);
+    }
+
+    function encajar(svg, vb) {
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var previa = t.getAttribute('transform') || '';
+        if (previa && !/^translate\(-?[\d.]+ 0\)$/.test(previa)) return;
+        t.removeAttribute('transform');
+        var c;
+        try { c = t.getBBox(); } catch (e) { return; }
+        if (!c || !c.width) return;
+        var dx = 0;
+        if (c.x < vb[0] + 1) dx = vb[0] + 1 - c.x;
+        else if (c.x + c.width > vb[0] + vb[2] - 1) dx = vb[0] + vb[2] - 1 - (c.x + c.width);
+        if (Math.abs(dx) > 0.5) t.setAttribute('transform', 'translate(' + dx.toFixed(1) + ' 0)');
+      });
+    }
+
+    function descontar(svg) {
+      var visibles = [];
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var caja = t.getBoundingClientRect();
+        if (!caja.width) return;
+        var clase = t.getAttribute('class') || '';
+        visibles.push({
+          el: t, caja: caja,
+          eje: /axis-label/.test(clase),
+          suelto: /extreme|punto|etiqueta-dato/.test(clase)
+        });
+      });
+      function choca(a, o) {
+        return a.caja.left < o.caja.right - 1 && o.caja.left < a.caja.right - 1 &&
+               a.caja.top < o.caja.bottom - 1 && o.caja.top < a.caja.bottom - 1;
+      }
+      var firmes = visibles.filter(function (v) { return !v.eje && !v.suelto; });
+      function acomodar(lista) {
+        lista.forEach(function (a) {
+          var i;
+          for (i = 0; i < firmes.length; i++) {
+            if (choca(a, firmes[i])) { a.el.style.display = 'none'; return; }
+          }
+          firmes.push(a);
+        });
+      }
+      acomodar(visibles.filter(function (v) { return v.eje; }));
+      acomodar(visibles.filter(function (v) { return v.suelto; }));
+    }
+
+    function pasada() {
+      document.querySelectorAll('svg[viewBox]').forEach(ajustar);
+    }
+    var t;
+    function agendar() { clearTimeout(t); t = setTimeout(pasada, 120); }
+    window.addEventListener('load', agendar);
+    window.addEventListener('resize', agendar);
+    if (window.MutationObserver) {
+      try {
+        new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
+      } catch (e) {}
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', agendar);
+    } else { agendar(); }
+  })();
+  </script>
+
+</body>
+
+</html>
