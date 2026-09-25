@@ -1257,7 +1257,13 @@
       position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
       overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
     }
-  </style>
+
+    .rd-ext { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px;
+      font-family: var(--mont); font-size: 12px; font-weight: 600; }
+    .rank-restcol { padding-bottom: 36px;
+      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent);
+      mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent); }
+</style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
   <script src="../assets/c22-anim.js" defer></script>
@@ -1544,10 +1550,13 @@
       svg += '<circle cx="' + cx(o.d).toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="' + col(o.d.pacto) + '" fill-opacity="0.92"><title>' + o.d.nombre + ' (' + o.d.partido + ')</title></circle>';
     });
     var iz = F.facts.mas_izquierda, de = F.facts.mas_derecha;
-    if (iz) svg += '<text x="30" y="' + (H-8) + '" font-family="var(--mont)" font-size="12" fill="' + col('Apruebo Dignidad') + '" font-weight="600">' + (iz.corto || nombreCorto(iz.nombre)) + ' (' + iz.partido + ')</text>';
-    if (de) svg += '<text x="' + (W-30) + '" y="' + (H-8) + '" text-anchor="end" font-family="var(--mont)" font-size="12" fill="' + col('Republicanos') + '" font-weight="600">' + (de.corto || nombreCorto(de.nombre)) + ' (' + de.partido + ')</text>';
+    var ext = '';
+    if (iz) ext += '<span style="color:' + col('Apruebo Dignidad') + '">' + (iz.corto || nombreCorto(iz.nombre)) + ' (' + iz.partido + ')</span>';
+    if (de) ext += '<span style="color:' + col('Republicanos') + '">' + (de.corto || nombreCorto(de.nombre)) + ' (' + de.partido + ')</span>';
+    if (false) svg += '<text x="30" y="' + (H-8) + '" font-family="var(--mont)" font-size="12" fill="' + col('Apruebo Dignidad') + '" font-weight="600">' + (iz.corto || nombreCorto(iz.nombre)) + ' (' + iz.partido + ')</text>';
+    if (false) svg += '<text x="' + (W-30) + '" y="' + (H-8) + '" text-anchor="end" font-family="var(--mont)" font-size="12" fill="' + col('Republicanos') + '" font-weight="600">' + (de.corto || nombreCorto(de.nombre)) + ' (' + de.partido + ')</text>';
     svg += '</svg>';
-    rd.innerHTML = svg;
+    rd.innerHTML = svg + '<div class="rd-ext">' + ext + '</div>';
     var t = el('rankDipTitle'); if (t) t.textContent = 'Los ' + dips.length + ' diputados, ordenados por su voto';
   }
 
@@ -1755,7 +1764,7 @@
       varsEl = document.getElementById('rankVars'), lista = document.getElementById('rankLista');
     if (!R || !toggle || !varsEl || !lista) return;
     var state = { tipo: 'diputados', vi: 0 };
-    function fmtVal(x, esPos) { return esPos ? ((x >= 0 ? '+' : '') + x.toFixed(2)) : Math.round(x * 100) + '%'; }
+    function fmtVal(x, esPos) { return esPos ? ((x >= 0 ? '+' : '') + x.toFixed(2).replace('.', ',')) : Math.round(x * 100) + '%'; }
     function pintaLista() {
       var v = R[state.tipo][state.vi], datos = v.datos, esPos = v.fmt === 'pos';
       if (state.tipo !== 'diputados') {                 
