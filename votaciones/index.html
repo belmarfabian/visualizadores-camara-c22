@@ -450,8 +450,8 @@ function render() {
     { val: nPartidos, lab: "Partidos", color: "var(--text-2)" },
     { val: totalVotosEmitidos.toLocaleString("es-CL"), lab: "Votos emitidos", color: "var(--yellow)" },
     chamberMode === 'senado'
-      ? { val: '—', lab: "Var. Dim 1", color: "var(--text-m)" }
-      : { val: `${DATA.explainedVariance.dim1}%`, lab: "Var. Dim 1", color: "var(--purple)" },
+      ? { val: '—', lab: "Varianza eje 1", color: "var(--text-m)" }
+      : { val: `${DATA.explainedVariance.dim1}%`, lab: "Varianza eje 1", color: "var(--purple)" },
     { val: periodoStr, lab: `Período · ${fechas.length} fechas`, color: "var(--green)", small: true },
   ];
   document.getElementById("metricsBand").innerHTML = metrics.map(m =>
@@ -756,7 +756,7 @@ function renderMap(el) {
   
   if (state.filterCoal === 'all' && !is1D) {
     const xVal = d => d.wnDim1;
-    const lastName = d => (d.nombre.split(' ').slice(-2).join(' '));
+    const lastName = d => { const w = d.nombre.split(' '); const k = /^(y|de|del|la|las|los)$/i.test(w[w.length-2] || '') ? 3 : 2; return w.slice(-k).join(' '); };
     const sortedX = [...active].filter(d => next[d.id]).sort((a,b) => xVal(a) - xVal(b));
     const extremes = new Map();
     sortedX.slice(0, 4).forEach(d => extremes.set(d.id, { d, anchor: 'end' }));
@@ -767,11 +767,14 @@ function renderMap(el) {
     if (state.selected) extremes.set(state.selected.id, { d: state.selected, anchor: 'middle', vshift: -10, isSel: true });
     for (const { d, anchor, vshift, isSel } of extremes.values()) {
       const t = next[d.id]; if (!t) continue;
-      const xPx = t.cx + (anchor === 'start' ? 9 : anchor === 'end' ? -9 : 0);
+      let anc = anchor;
+      if (anc === 'end' && t.cx < 120) anc = 'start';
+      if (anc === 'start' && t.cx > W - 120) anc = 'end';
+      const xPx = t.cx + (anc === 'start' ? 9 : anc === 'end' ? -9 : 0);
       const yPx = t.cy + (vshift != null ? vshift : 4);
       const col = isSel ? 'var(--dark)' : 'var(--text-m)';
       const w = isSel ? 700 : 500;
-      svg += `<text class="map-extreme-label" x="${xPx}" y="${yPx}" fill="${col}" font-size="10" text-anchor="${anchor}" font-family="var(--sans)" font-weight="${w}" pointer-events="none">${lastName(d)}</text>`;
+      svg += `<text class="map-extreme-label" x="${xPx}" y="${yPx}" fill="${col}" font-size="10" text-anchor="${anc}" font-family="var(--sans)" font-weight="${w}" pointer-events="none">${lastName(d)}</text>`;
     }
   }
 
