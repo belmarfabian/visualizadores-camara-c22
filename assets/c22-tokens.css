@@ -1,0 +1,28 @@
+
+:root {
+  
+  --bg:           #F3F5F5;                    
+  --bg-white:     #FFFFFF;                    
+  --dark:         #1B1C1E;                    
+  --text:         #303030;                    
+  --text-2:       #657D81;                    
+  --text-m:       rgba(101,125,129,0.7);      
+  --border:       rgba(101,125,129,0.2);      
+  --border-light: rgba(101,125,129,0.1);      
+
+  
+  --green:  #4CCAA5;   
+  --yellow: #FFB923;   
+  --red:    #F20231;   
+  --purple: #A10856;   
+
+  
+  --dm:    'DM Sans', sans-serif;        
+  --mont:  'Montserrat', sans-serif;     
+  --serif: 'STIX Two Text', serif;       
+  --mono:  'IBM Plex Mono', monospace;   
+}
+
+
+
+
