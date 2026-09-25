@@ -118,7 +118,17 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
   .bancada-col { min-width: auto; }
 }
 @media (max-width: 500px) {
-  #metricsBand { grid-template-columns: repeat(2, 1fr) !important; }
+  
+  #metricsBand { grid-template-columns: repeat(3, 1fr) !important; }
+  #metricsBand > div:not(:first-child) { padding: 14px 6px !important; }
+  #metricsBand > div:not(:first-child) > div:first-child { font-size: 22px !important; }
+}
+@media (max-width: 800px) {
+  
+  #metricsBand > div:first-child { height: auto !important; }
+}
+@media (max-width: 500px) {
+  #metricsBand > div[style*="min-width:130px"] { grid-column: auto !important; }
 }
 
 .smooth-fade { animation: smoothFadeIn 280ms cubic-bezier(.4,0,.2,1); }
