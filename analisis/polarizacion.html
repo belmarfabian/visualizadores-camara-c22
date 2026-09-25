@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  
+  <script>
+   
+  (function () {
+    var enMarco = false;
+    try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
+    if (!enMarco) return;
+    var ultimo = 0;
+    function avisar() {
+      var h = Math.max(
+        document.documentElement.scrollHeight,
+        document.body ? document.body.scrollHeight : 0);
+      if (Math.abs(h - ultimo) < 3) return;
+      ultimo = h;
+      try { parent.postMessage({ c22monitor: 'alto', alto: h }, '*'); } catch (e) {}
+    }
+    window.addEventListener('load', avisar);
+    window.addEventListener('resize', avisar);
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(avisar).observe(document.documentElement); } catch (e) {}
+    }
+    setInterval(avisar, 1200);
+     
+    [0, 60, 160, 320, 700, 1500, 3000].forEach(function (ms) { setTimeout(avisar, ms); });
+    if (window.requestAnimationFrame) { requestAnimationFrame(avisar); }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', avisar);
+    } else { avisar(); }
+
+    var raiz = document.documentElement;
+    var altoInicial = window.innerHeight;
+    var desde = Date.now();
+    raiz.style.overflowY = 'hidden';
+    function barra() {
+      var cont = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      var respondio = window.innerHeight !== altoInicial;
+      var calza = Math.abs(window.innerHeight - cont) < 40;
+      var margen = Date.now() - desde < 3000;
+      raiz.style.overflowY = (calza || respondio || margen) ? 'hidden' : '';
+    }
+    setInterval(barra, 400);
+    window.addEventListener('resize', barra);
+  })();
+  </script>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La polarización de la Cámara, dos décadas · Monitor Legislativo</title>
+  <meta name="description"
+    content="Cómo se ha movido el eje izquierda-derecha de la Cámara de Diputadas y Diputados entre 2002 y 2026, estimado con W-NOMINATE sobre las votaciones de Sala de siete legislaturas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Montserrat:wght@300;400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg: #F3F5F5;
+      --bg-white: #fff;
+      --border: rgba(101, 125, 129, 0.2);
+      --border-light: rgba(101, 125, 129, 0.1);
+      --text: #303030;
+      --text-2: #566C70;
+      --text-m: rgba(86, 108, 112, 0.92);
+      --green: #4CCAA5;
+      
+      --green-txt: #0E7A5F;
+      --yellow: #FFB923;
+      --red: #F20231;
+      --purple: #A10856;
+      --dark: #1B1C1E;
+      --dm: 'DM Sans', sans-serif;
+      --mont: 'Montserrat', sans-serif;
+      --ancho: 1180px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--dm);
+      background: var(--bg-white);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; }
+
+    .art-cab { background: var(--bg-white); padding: 56px 6% 8px; }
+    .art-cab .inner { max-width: 820px; margin: 0 auto; }
+    .art-tag { display: inline-block; font-family: var(--mont); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.6px; color: #fff; background: var(--purple);
+      border-radius: 4px; padding: 5px 11px; margin-bottom: 18px; }
+    .art-tit { font-family: var(--dm); font-size: clamp(30px, 4.4vw, 46px); font-weight: 700;
+      letter-spacing: -1px; line-height: 1.08; color: var(--dark); margin-bottom: 16px; }
+    .art-firma { font-family: var(--mont); font-size: 14px; font-weight: 600; color: var(--text-2); }
+    .art-fecha { font-family: var(--mont); font-size: 13px; color: var(--text-m); margin-top: 3px; }
+    .art-baj { font-family: var(--mont); font-size: 17px; line-height: 1.7; color: var(--text-2);
+      margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+
+    .art-pie { background: var(--bg-white); padding: 8px 6% 64px; }
+    .art-pie .inner { max-width: 820px; margin: 0 auto; }
+    .art-metodo { font-family: var(--mont); font-size: 13px; line-height: 1.7; color: var(--text-2);
+      background: var(--bg); border: 1px solid var(--border-light); border-radius: 15px; padding: 22px 24px; }
+    .art-metodo b { color: var(--dark); }
+    .art-volver { display: inline-block; margin-top: 26px; font-family: var(--mont); font-size: 13px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--green-txt); }
+    .art-volver:hover { color: var(--dark); }
+
+    .historico { background: var(--bg); padding: 56px 6% 64px; }
+    .historico .inner { max-width: var(--ancho); margin: 0 auto; }
+    
+    #curvaPolar { max-width: 940px; margin: 0 auto; }
+    .hist-nota { font-family: var(--mont); font-size: 14px; line-height: 1.6; color: var(--text-2); max-width: 720px; margin-top: 18px; }
+    .hist-maps { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+    .hist-maps a { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--text-2);
+      border: 1px solid var(--border); border-radius: 20px; padding: 7px 15px; transition: all .2s; }
+    .hist-maps a:hover { color: var(--dark); border-color: var(--green); }
+
+    .mapa-nominate { margin-top: 44px; }
+    .mapa-nom-title { font-family: var(--dm); font-size: clamp(20px, 2.4vw, 26px); font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .mapa-nom-sub { font-family: var(--mont); font-size: 14px; line-height: 1.5; color: var(--text-2); margin-bottom: 18px; max-width: 660px; }
+    .periodo-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .periodo-tab { font-family: var(--mont); font-size: 12px; font-weight: 600; color: var(--text-2);
+      background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; cursor: pointer; transition: all .18s; }
+    .periodo-tab:hover { border-color: var(--green); color: var(--dark); }
+    .periodo-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .periodo-tab-sen { border-color: var(--purple); color: var(--purple); margin-left: 6px; }
+    .periodo-tab-sen:hover { border-color: var(--purple); color: var(--purple); }
+    .periodo-tab-sen.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+    
+    .mapas-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .mapas-nav button {
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg-white); color: var(--text-2); font-size: 16px; cursor: pointer;
+      transition: border-color .18s, color .18s;
+    }
+    .mapas-nav button:hover { border-color: var(--green); color: var(--dark); }
+    .mapas-cuenta { font-family: var(--mont); font-size: 12px; font-weight: 600;
+      letter-spacing: 1px; color: var(--text-m); margin-left: 4px; }
+    .mapas-pista {
+      display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 16px) / 2);
+      gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+      padding-bottom: 6px; scrollbar-width: none;
+    }
+    .mapas-pista::-webkit-scrollbar { display: none; }
+    .mapas-pista > .mapa-par { scroll-snap-align: start; }
+    @media (max-width: 900px) { .mapas-pista { grid-auto-columns: 92%; } }
+    .mapa-par { margin: 0; background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: 14px; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 8px; }
+    .mapa-par .mp-cab { font-family: var(--mont); font-size: 12px; font-weight: 700;
+      letter-spacing: 1.2px; color: var(--dark); padding-bottom: 2px;
+      display: flex; align-items: baseline; gap: 9px; }
+    .mapa-par .mp-cab i { font-style: normal; font-size: 12px; font-weight: 600;
+      letter-spacing: .8px; text-transform: uppercase; color: var(--text-m); }
+    
+    .mapa-par .mp-fila { display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; align-items: start; }
+    .mapa-par .mp-vacio { display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 14px; font-family: var(--mont); font-size: 12px;
+      line-height: 1.6; color: var(--text-m); border-radius: 10px;
+      border: 1px dashed var(--border-light); align-self: stretch; }
+    .mapa-par .mp-uno { position: relative; border-radius: 10px; background: var(--bg);
+      padding: 4px; display: flex; align-items: center; justify-content: center; }
+    .mapa-par .mp-uno svg { width: 100%; height: auto; }
+    .mapa-par .mp-uno.es-senado { box-shadow: inset 0 0 0 1px rgba(161, 8, 86, .22); }
+    .mapa-par .mp-rot { position: absolute; top: 7px; left: 9px; z-index: 2;
+      font-family: var(--mont); font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-m); display: flex; gap: 6px; }
+    .mapa-par .mp-rot b { color: var(--text-2); }
+    .mapa-par .mp-sin { display: flex; align-items: center; justify-content: center;
+      min-height: 74px; font-family: var(--mont); font-size: 12px; color: var(--text-m);
+      text-align: center; padding: 10px; }
+    .mapa-par svg { display: block; }
+    .mapa-mini { margin: 0; background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: 14px; padding: 10px 10px 4px; }
+    .mapa-mini.es-senado { border-color: rgba(161, 8, 86, .28); }
+    .mapa-mini svg { background: transparent; border: none; display: block; }
+    .mapa-mini figcaption { font-family: var(--mont); font-size: 12px; font-weight: 700;
+      letter-spacing: .6px; color: var(--text-2); display: flex; justify-content: space-between;
+      padding: 2px 4px 8px; }
+    .mapa-mini figcaption span { font-weight: 600; color: var(--text-m); }
+    #mapaNominate svg { background: var(--bg); border-radius: 14px; border: 1px solid var(--border-light); display: block; }
+    #mapaNominate circle { transition: r .12s; }
+    #mapaNominate circle:hover { stroke: var(--dark); stroke-width: 1.5; }
+  </style>
+  
+  <link rel="stylesheet" href="../assets/c22-skin.css">
+  <script src="../assets/c22-anim.js" defer></script>
+</head>
+
+<body>
+
+    <header class="c22skin-head">
+      <a class="c22skin-logo" href="https://c22cepchile.cl"><img src="../assets/logo-color.svg" alt="C22"></a>
+      <nav class="c22skin-nav" aria-label="Secciones de C22">
+        <a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a>
+        <a href="https://c22cepchile.cl/personas/">Personas</a>
+        <a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a>
+        <a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a>
+        <a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a>
+        <a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a>
+        <a href="../" class="c22skin-aqui" aria-current="page">Monitor</a>
+      </nav>
+      <a class="c22skin-contacto" href="https://c22cepchile.cl/contacto/">Contacto</a>
+      <a class="c22skin-buscar" href="https://c22cepchile.cl/?s=" aria-label="Buscar en el sitio de C22">Buscar</a>
+      <a class="c22skin-cep" href="https://www.cepchile.cl" target="_blank" rel="noopener"><img src="../assets/logo-cep-color.svg" alt="Centro de Estudios Públicos"></a>
+    </header>
+    <nav class="c22skin-sub" aria-label="Secciones del Monitor Legislativo">
+      <div class="c22skin-pastilla">
+        <a href="../" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9.5 20v-5.5h5V20"/></svg><span>Portada</span></a>
+        <a href="../hemiciclo/" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 18a8.5 8.5 0 0 1 17 0"/><circle cx="7" cy="14.4" r="1.1"/><circle cx="12" cy="12.6" r="1.1"/><circle cx="17" cy="14.4" r="1.1"/></svg><span>Hemiciclo</span></a>
+        <a href="../votaciones/" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V5"/><path d="M16 20v-7"/><path d="M3 20h18"/></svg><span>Votaciones</span></a>
+        <a href="../discurso/" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5a2.5 2.5 0 0 1-2.5 2.5H9l-4.5 3.5V6.5A2.5 2.5 0 0 1 7 4h10.5A2.5 2.5 0 0 1 20 6.5z"/><path d="M8.5 9h7"/><path d="M8.5 12.5h4.5"/></svg><span>Discurso</span></a>
+        <a href="../legisladores/" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.3"/><path d="M15 19a4.6 4.6 0 0 1 5.8-3.6"/></svg><span>Legisladores</span></a>
+        <a href="../rankings/" class=""><svg class="c22skin-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"/><path d="M7 19V9.5"/><path d="M12 19V5"/><path d="M17 19v-6.5"/></svg><span>Rankings</span></a>
+      </div>
+    </nav>
+
+  <header class="art-cab">
+    <div class="inner">
+      <span class="art-tag">W-NOMINATE · 2002-2026</span>
+      <h1 class="art-tit">La polarización de la Cámara, dos décadas</h1>
+      <p class="art-firma">Fabián Belmar</p>
+      <p class="art-fecha">Serie abierta · se actualiza con cada votación de Sala</p>
+      <p class="art-baj">Siete legislaturas, estimadas una por una con el mismo método sobre las
+        votaciones nominales de Sala. La pregunta no es si la Cámara está dividida —siempre lo
+        está, para eso vota— sino cuánto se separan los dos bloques y con qué nitidez se
+        distinguen entre sí. La curva mide esa distancia; los mapas muestran de dónde sale.</p>
+    </div>
+  </header>
+
+<section class="historico" aria-label="La polarización de la Cámara">
+    <div class="inner">
+      <div id="curvaPolar"></div>
+      <p class="hist-nota" id="histNota"></p>
+
+      <div class="mapa-nominate">
+        <h3 class="mapa-nom-title">El mapa de cada legislatura</h3>
+        <p class="mapa-nom-sub">Cada punto es un legislador, ubicado según cómo votó. Cada período trae la Cámara a la izquierda y, cuando hay datos, el Senado a la derecha. La API del Senado no guarda votaciones anteriores a 2021: los cinco primeros períodos van solo con la Cámara.</p>
+        <div class="periodo-tabs" id="periodoTabs"></div>
+        <div id="mapaNominate"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="art-pie">
+    <div class="inner">
+      <p class="art-metodo">
+        <b>Cómo está hecho.</b> Cada legislatura se estima por separado con W-NOMINATE
+        (Poole y Rosenthal, 1985) sobre la matriz de votaciones nominales de Sala del período,
+        en R. Las dos dimensiones no traen etiqueta puesta: la primera reproduce en todos los
+        períodos el eje izquierda-derecha y la segunda, cuando separa algo, suele separar
+        gobierno de oposición. Los datos vienen de las API de datos abiertos de la Cámara de
+        Diputadas y Diputados y del Senado, y se actualizan a diario. La API del Senado no
+        guarda votaciones anteriores a 2021: los cinco primeros períodos van solo con la Cámara.
+      </p>
+      <a class="art-volver" href="../">&larr; Volver al Monitor</a>
+    </div>
+  </div>
+
+  <script>window.LANDING_FACTS={"build": "2026-08-26", "facts": {"n_votaciones": 580, "pct_divididas": 77, "mas_izquierda": {"nombre": "Daniela Serrano Salazar", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.999, "corto": "Daniela Serrano", "id": "1173", "foto": true}, "mas_derecha": {"nombre": "Diego Vergara Rodríguez", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.98, "corto": "Diego Vergara", "id": "1262", "foto": true}, "mas_disciplinado": {"partido": "PRCh", "pacto": "Republicanos", "pos": 0.932, "sd": 0.018, "n": 31}, "polarizacion_actual": 0.848, "polarizacion_min_historico": false, "n_partidos": 18, "senado": {"bimodalidad": 0.961, "n": 50, "izq": 24, "centro": 0, "der": 26}}, "votacion_vivo": {"fecha": "2026-08-19", "descripcion": "Boletín N° 17324-33", "proyecto": "Modifica el Código de Aguas para garantizar la participación de comités y cooperativas de agua potable rural, prestadoras de servicios sanitarios rurales, en los directorios de las comunidades de agua", "corto": "", "si": 62, "no": 18, "abstencion": 42, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, "ultimas": [{"fecha": "2026-08-19", "descripcion": "Boletín N° 17324-33", "proyecto": "Modifica el Código de Aguas para garantizar la participación de comités y cooperativas de agua potable rural, prestadoras de servicios sanitarios rurales, en los directorios de las comunidades de agua", "corto": "", "si": 62, "no": 18, "abstencion": 42, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-19", "descripcion": "Boletín N° 16397-15", "proyecto": "Modifica la ley N° 18.290, de Tránsito, para aumentar las sanciones por no usar sistemas de retención infantil y por trasladar menores de 12 años en asientos delanteros", "corto": "", "si": 123, "no": 0, "abstencion": 1, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-19", "descripcion": "Boletín N° 18189-14", "proyecto": "Modifica la ley N° 20.898, con el objeto de ampliar el régimen excepcional de regularización de viviendas y actualizar la fecha de su aplicación", "corto": "", "si": 67, "no": 49, "abstencion": 8, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-19", "descripcion": "Boletín N° 18429-10", "proyecto": "Aprueba el Tratado entre la República de Chile y la República Federativa de Brasil sobre Asistencia Jurídica Mutua en Materia Penal, hecho en Brasilia, el 22 de abril de 2025", "corto": "", "si": 124, "no": 0, "abstencion": 0, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-18", "descripcion": "Boletín N° 12786-12", "proyecto": "Modifica la ley N°20.380, sobre Protección de los animales, para regular las carreras de perros", "corto": "", "si": 54, "no": 65, "abstencion": 7, "resultado": "Rechazado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-18", "descripcion": "Boletín N° 15387-12", "proyecto": "Modifica la ley N°21.020, sobre tenencia responsable de mascotas y animales de compañía, para prohibir y sancionar las carreras de perros", "corto": "", "si": 80, "no": 41, "abstencion": 7, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-18", "descripcion": "Boletín N° 18525-06", "proyecto": "Modifica la ley N° 21.802, que fortalece la institucionalidad municipal en materia de seguridad pública y prevención del delito", "corto": "", "si": 77, "no": 51, "abstencion": 7, "resultado": "Rechazado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-17", "descripcion": "Boletín N° 17837-13", "proyecto": "Modifica el Código del Trabajo y otros cuerpos legales para fortalecer la protección de la salud y seguridad de las personas trabajadoras", "corto": "", "si": 79, "no": 45, "abstencion": 8, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-17", "descripcion": "Boletín N° 17451-15", "proyecto": "Autoriza la circulación en el país de vehículos que participen en competiciones de carácter internacional o federadas, en las formas y condiciones que señala", "corto": "", "si": 127, "no": 0, "abstencion": 3, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}, {"fecha": "2026-08-17", "descripcion": "Boletín N° 17912-25", "proyecto": "Modifica la ley N° 19.913 para incorporar los delitos contra la propiedad industrial al catálogo de precedentes de lavado de activos", "corto": "", "si": 130, "no": 0, "abstencion": 0, "resultado": "Aprobado", "tipo": "Proyecto de Ley"}], "ranking_diputados": [{"nombre": "Daniela Serrano Salazar", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.999, "corto": "Daniela Serrano", "id": "1173", "foto": true}, {"nombre": "Boris Barrera Moreno", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.996}, {"nombre": "Sofía González Cortés", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.992}, {"nombre": "Luis Alberto Cuello Peña y Lillo", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.991}, {"nombre": "Nathalie Castillo Rojas", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.975}, {"nombre": "Gustavo Gatica Villarroel", "partido": "PC", "pacto": "Independiente", "dim1": -0.972}, {"nombre": "Bernardo Salinas Maya", "partido": "PC", "pacto": "Independiente", "dim1": -0.968}, {"nombre": "Marcos Barraza Gómez", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.964}, {"nombre": "Lorena Pizarro Sierra", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.961}, {"nombre": "Irací Hassler Jacob", "partido": "PC", "pacto": "Apruebo Dignidad", "dim1": -0.961}, {"nombre": "Ana María Gazmuri Vieira", "partido": "AH", "pacto": "Apruebo Dignidad", "dim1": -0.945}, {"nombre": "Marisela Santibáñez Novoa", "partido": "PC", "pacto": "Independiente", "dim1": -0.881}, {"nombre": "Jaime Bassa Mercado", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.866}, {"nombre": "Emilia Schneider Videla", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.858}, {"nombre": "Coca Ericka Ñanco Vásquez", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.855}, {"nombre": "Constanza Schonhaut Soto", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.844}, {"nombre": "Matías Fernández Hartwig", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.839}, {"nombre": "Lorena Fries Monleón", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.831}, {"nombre": "Gael Yeomans Araya", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.831}, {"nombre": "Carolina Tello Rojas", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.83}, {"nombre": "Tatiana Urrutia Herrera", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.826}, {"nombre": "Ignacio Achurra Díaz", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.822}, {"nombre": "Jorge Brito Hasbún", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.819}, {"nombre": "Gonzalo Winter Etcheberry", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.817}, {"nombre": "Consuelo Veloso Ávila", "partido": "PR", "pacto": "Independiente", "dim1": -0.815}, {"nombre": "Andrea Macías Palma", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.803}, {"nombre": "Juan Santana Castillo", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.802}, {"nombre": "Roberto Celedón Fernández", "partido": "FA", "pacto": "Independiente", "dim1": -0.794}, {"nombre": "Valentina Cáceres Monsálvez", "partido": "FA", "pacto": "Independiente", "dim1": -0.784}, {"nombre": "Emilia Nuyado Ancapichun", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.768}, {"nombre": "Félix Bugueño Sotelo", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.761}, {"nombre": "Javiera Morales Alvarado", "partido": "FA", "pacto": "Frente Amplio", "dim1": -0.734}, {"nombre": "Nelson Venegas Salazar", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.701}, {"nombre": "Carolina Cucumides Calderón", "partido": "PS", "pacto": "Independiente", "dim1": -0.701}, {"nombre": "César Valenzuela Maass", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.7}, {"nombre": "Francisco Crisóstomo Llanos", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.695}, {"nombre": "José Antonio Rivas Villalobos", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.69}, {"nombre": "Daniel Manouchehri Lobos", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.679}, {"nombre": "Marcos Ilabaca Cerda", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.665}, {"nombre": "Raúl Leiva Carvajal", "partido": "PS", "pacto": "Socialismo Democrático", "dim1": -0.622}, {"nombre": "Carlos Cuadrado Prats", "partido": "PPD", "pacto": "Socialismo Democrático", "dim1": -0.601}, {"nombre": "Jaime Araya Guerrero", "partido": "PPD", "pacto": "Independiente", "dim1": -0.553}, {"nombre": "Fernando Zamorano Peralta", "partido": "PPD", "pacto": "Socialismo Democrático", "dim1": -0.533}, {"nombre": "Andrea Parra Sauterel", "partido": "PPD", "pacto": "Socialismo Democrático", "dim1": -0.53}, {"nombre": "Raúl Soto Mardones", "partido": "PPD", "pacto": "Socialismo Democrático", "dim1": -0.521}, {"nombre": "José Montalva Feuerhake", "partido": "PPD", "pacto": "Independiente", "dim1": -0.511}, {"nombre": "Carlos Carvajal Gallardo", "partido": "PPD", "pacto": "Independiente", "dim1": -0.499}, {"nombre": "Héctor Ulloa Aguilera", "partido": "PPD", "pacto": "Independiente", "dim1": -0.484}, {"nombre": "Patricio Pinilla Valencia", "partido": "DC", "pacto": "Centro", "dim1": -0.477}, {"nombre": "Marcela Hernando Pérez", "partido": "PR", "pacto": "Socialismo Democrático", "dim1": -0.475}, {"nombre": "Carlos Bianchi Chelech", "partido": "IND", "pacto": "Independiente", "dim1": -0.467}, {"nombre": "Luis Malla Valenzuela", "partido": "PL", "pacto": "Centro", "dim1": -0.458}, {"nombre": "Cristián Tapia Ramos", "partido": "PPD", "pacto": "Independiente", "dim1": -0.458}, {"nombre": "Álvaro Ortiz Vera", "partido": "DC", "pacto": "Centro", "dim1": -0.442}, {"nombre": "Héctor Barría Angulo", "partido": "DC", "pacto": "Centro", "dim1": -0.415}, {"nombre": "Sebastián Videla Castillo", "partido": "PL", "pacto": "Independiente", "dim1": -0.415}, {"nombre": "Jorge Díaz Ibarra", "partido": "DC", "pacto": "Centro", "dim1": -0.405}, {"nombre": "René Alinco Bustos", "partido": "FRVS", "pacto": "Independiente", "dim1": -0.4}, {"nombre": "Javier Muñoz Riquelme", "partido": "DC", "pacto": "Centro", "dim1": -0.396}, {"nombre": "Alejandro Bernales Maldonado", "partido": "PL", "pacto": "Centro", "dim1": -0.389}, {"nombre": "Priscilla Castillo Gerli", "partido": "DC", "pacto": "Centro", "dim1": -0.376}, {"nombre": "Cristian Mella Andaur", "partido": "DC", "pacto": "Centro", "dim1": -0.369}, {"nombre": "Jaime Mulet Martínez", "partido": "FRVS", "pacto": "Apruebo Dignidad", "dim1": -0.356}, {"nombre": "Felipe Camaño Cárdenas", "partido": "DC", "pacto": "Independiente", "dim1": -0.34}, {"nombre": "Pamela Jiles Moreno", "partido": "PdG", "pacto": "Independiente", "dim1": -0.316}, {"nombre": "Fabián Ossandón Briceño", "partido": "PdG", "pacto": "Independiente", "dim1": -0.271}, {"nombre": "Tamara Ramírez Ramírez", "partido": "PdG", "pacto": "Independiente", "dim1": -0.26}, {"nombre": "Eileen Urqueta Rojas", "partido": "PdG", "pacto": "Independiente", "dim1": -0.207}, {"nombre": "Paula Olmos Contreras", "partido": "PdG", "pacto": "Independiente", "dim1": -0.158}, {"nombre": "Guillermo Valdés Carmona", "partido": "PdG", "pacto": "Independiente", "dim1": -0.13}, {"nombre": "Flor Contreras Vivallo", "partido": "PdG", "pacto": "Independiente", "dim1": -0.08}, {"nombre": "Alex Nahuelquin Nahuelquin", "partido": "PdG", "pacto": "Independiente", "dim1": -0.075}, {"nombre": "Patricio Briones Moller", "partido": "PdG", "pacto": "Independiente", "dim1": -0.071}, {"nombre": "Lilian Betancurt Delgado", "partido": "PdG", "pacto": "Independiente", "dim1": -0.058}, {"nombre": "Zandra Parisi Fernández", "partido": "PdG", "pacto": "Independiente", "dim1": -0.045}, {"nombre": "Juan Marcelo Valenzuela Henríquez", "partido": "PdG", "pacto": "Independiente", "dim1": 0.038}, {"nombre": "Javier Olivares Avendaño", "partido": "PdG", "pacto": "Independiente", "dim1": 0.206}, {"nombre": "Cristian Contreras Radovic", "partido": "PdG", "pacto": "Independiente", "dim1": 0.372}, {"nombre": "Natalia Romero Talguia", "partido": "UDI", "pacto": "Independiente", "dim1": 0.493}, {"nombre": "Joanna Pérez Olea", "partido": "Dem", "pacto": "Centro", "dim1": 0.562}, {"nombre": "Carlos Chandía Alarcón", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.596}, {"nombre": "Sara Concha Smith", "partido": "PSC", "pacto": "Republicanos", "dim1": 0.609}, {"nombre": "Juan Carlos Beltrán Silva", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.61}, {"nombre": "Ximena Ossandón Irarrázabal", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.613}, {"nombre": "Jorge Guzmán Zepeda", "partido": "Evópoli", "pacto": "Chile Vamos", "dim1": 0.622}, {"nombre": "Alejandra Valdebenito Torres", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.623}, {"nombre": "Roberto Arroyo Muñoz", "partido": "PSC", "pacto": "Republicanos", "dim1": 0.624}, {"nombre": "Ximena Naranjo Pinto", "partido": "UDI", "pacto": "Independiente", "dim1": 0.641}, {"nombre": "Francesca Muñoz González", "partido": "PSC", "pacto": "Republicanos", "dim1": 0.645}, {"nombre": "Mauro González Villarroel", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.668}, {"nombre": "Eduardo Durán Salinas", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.668}, {"nombre": "Claudia Mora Vega", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.674}, {"nombre": "Diego Schalper Sepúlveda", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.679}, {"nombre": "Tomás Kast Sommerhoff", "partido": "Evópoli", "pacto": "Chile Vamos", "dim1": 0.68}, {"nombre": "René Manuel García García", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.682}, {"nombre": "Cristóbal Martínez Ramírez", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.684}, {"nombre": "Marlene Pérez Cartes", "partido": "UDI", "pacto": "Independiente", "dim1": 0.691}, {"nombre": "Hotuiti Teao Drago", "partido": "UDI", "pacto": "Independiente", "dim1": 0.694}, {"nombre": "Flor Weisse Novoa", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.701}, {"nombre": "Rodrigo Ramírez Parra", "partido": "RN", "pacto": "Independiente", "dim1": 0.704}, {"nombre": "Andrés Celis Montt", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.704}, {"nombre": "Luis Pardo Sáinz", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.705}, {"nombre": "Omar Sabat Guzmán", "partido": "UDI", "pacto": "Independiente", "dim1": 0.724}, {"nombre": "Mario Olavarría Rodríguez", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.754}, {"nombre": "Guillermo Ramírez Diez", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.759}, {"nombre": "Ricardo Neumann Bertín", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.759}, {"nombre": "Jaime Coloma Álamos", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.77}, {"nombre": "Marco Antonio Sulantay Olivares", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.776}, {"nombre": "Gloria Naveillan Arriagada", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.777}, {"nombre": "Jorge Alessandri Vergara", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.777}, {"nombre": "Daniel Lilayu Vivanco", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.781}, {"nombre": "Constanza Hube Portus", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.787}, {"nombre": "Sergio Bobadilla Muñoz", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.789}, {"nombre": "Francisco Orrego Gutiérrez", "partido": "RN", "pacto": "Chile Vamos", "dim1": 0.79}, {"nombre": "Daniel Valenzuela Salazar", "partido": "RN", "pacto": "Independiente", "dim1": 0.797}, {"nombre": "Germán Verdugo Soto", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.807}, {"nombre": "Eduardo Cretton Rebolledo", "partido": "UDI", "pacto": "Chile Vamos", "dim1": 0.814}, {"nombre": "Erich Grohs Marín", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.895}, {"nombre": "Álvaro Jofré Cáceres", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.896}, {"nombre": "Macarena Santelices Cañas", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.898}, {"nombre": "José Carlos Meza Pereira", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.899}, {"nombre": "Hans Marowski Cuevas", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.907}, {"nombre": "Paulina Muñoz Minte", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.908}, {"nombre": "Leandro Kunstmann Collado", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.909}, {"nombre": "Claudia Reyes Larenas", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.91}, {"nombre": "Cristóbal Urruticoechea Ríos", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.912}, {"nombre": "Pier Karlezi Hazleby", "partido": "PNL", "pacto": "Republicanos", "dim1": 0.912}, {"nombre": "Chiara Barchiesi Chávez", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.912}, {"nombre": "Daniel Bustos Leal", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.913}, {"nombre": "Ignacio Urcullú Clèment-Lund", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.918}, {"nombre": "Stephan Schubert Rubio", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.919}, {"nombre": "Sebastián Cristoffanini Jaraquemada", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.925}, {"nombre": "Valentina Becerra Peña", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.929}, {"nombre": "Catalina Del Real Mihovilovic", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.929}, {"nombre": "Sebastián Zamora Soto", "partido": "PRCh", "pacto": "Independiente", "dim1": 0.93}, {"nombre": "Cristian Neira Martínez", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.93}, {"nombre": "Álvaro Carter Fernández", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.931}, {"nombre": "Juan Irarrázaval Rossel", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.932}, {"nombre": "Alejandro Riquelme Ducci", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.934}, {"nombre": "Carlo Arqueros Pizarro", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.935}, {"nombre": "Fernando Ugarte Tejeda", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.935}, {"nombre": "Agustín Romero Leiva", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.936}, {"nombre": "Javiera Rodríguez Pascual", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.936}, {"nombre": "José Antonio Kast Adriasola", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.937}, {"nombre": "Benjamín Moreno Bascur", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.937}, {"nombre": "Cristian Menchaca Pinochet", "partido": "PRCh", "pacto": "Independiente", "dim1": 0.937}, {"nombre": "Cristián Araya Lerdo de Tejada", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.938}, {"nombre": "Luis Sánchez Ossa", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.939}, {"nombre": "Benjamín Lorca Inzunza", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.941}, {"nombre": "Felipe Ross Correa", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.943}, {"nombre": "Enrique Bassaletti Riess", "partido": "PRCh", "pacto": "Independiente", "dim1": 0.955}, {"nombre": "Paz Charpentier Rajcevich", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.956}, {"nombre": "Stephanie Jéldrez Ortiz", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.968}, {"nombre": "Diego Vergara Rodríguez", "partido": "PRCh", "pacto": "Republicanos", "dim1": 0.98, "corto": "Diego Vergara", "id": "1262", "foto": true}], "ranking_partidos": [{"partido": "PC", "pacto": "Apruebo Dignidad", "pos": -0.969, "sd": 0.031, "n": 11}, {"partido": "AH", "pacto": "Apruebo Dignidad", "pos": -0.945, "sd": 0.0, "n": 1}, {"partido": "FA", "pacto": "Frente Amplio", "pos": -0.819, "sd": 0.034, "n": 16}, {"partido": "PS", "pacto": "Socialismo Democrático", "pos": -0.712, "sd": 0.054, "n": 11}, {"partido": "PR", "pacto": "Socialismo Democrático", "pos": -0.645, "sd": 0.17, "n": 2}, {"partido": "PPD", "pacto": "Independiente", "pos": -0.521, "sd": 0.039, "n": 9}, {"partido": "IND", "pacto": "Independiente", "pos": -0.467, "sd": 0.0, "n": 1}, {"partido": "PL", "pacto": "Centro", "pos": -0.421, "sd": 0.028, "n": 3}, {"partido": "DC", "pacto": "Centro", "pos": -0.402, "sd": 0.04, "n": 8}, {"partido": "FRVS", "pacto": "Independiente", "pos": -0.378, "sd": 0.022, "n": 2}, {"partido": "PdG", "pacto": "Independiente", "pos": -0.075, "sd": 0.179, "n": 14}, {"partido": "Dem", "pacto": "Centro", "pos": 0.562, "sd": 0.0, "n": 1}, {"partido": "PSC", "pacto": "Republicanos", "pos": 0.626, "sd": 0.015, "n": 3}, {"partido": "Evópoli", "pacto": "Chile Vamos", "pos": 0.651, "sd": 0.029, "n": 2}, {"partido": "RN", "pacto": "Chile Vamos", "pos": 0.684, "sd": 0.058, "n": 13}, {"partido": "UDI", "pacto": "Chile Vamos", "pos": 0.723, "sd": 0.076, "n": 18}, {"partido": "PNL", "pacto": "Republicanos", "pos": 0.877, "sd": 0.05, "n": 8}, {"partido": "PRCh", "pacto": "Republicanos", "pos": 0.932, "sd": 0.018, "n": 31}], "historico": [{"periodo": "2002-2006", "bimodalidad": 0.935, "sin_pdg": 0.935}, {"periodo": "2006-2010", "bimodalidad": 0.904, "sin_pdg": 0.904}, {"periodo": "2010-2014", "bimodalidad": 0.876, "sin_pdg": 0.876}, {"periodo": "2014-2018", "bimodalidad": 0.957, "sin_pdg": 0.957}, {"periodo": "2018-2022", "bimodalidad": 0.917, "sin_pdg": 0.917}, {"periodo": "2022-2026", "bimodalidad": 0.791, "sin_pdg": 0.792}, {"periodo": "2026-2030", "bimodalidad": 0.848, "sin_pdg": 0.857}]};</script>
+  <script>window.NOMINATE_PERIODOS={"2002-2006": [["Francisco Bayo", "RN", 0.536, -0.845], ["Eliana Caraball", "DC", -0.813, -0.359], ["Patricio Cornejo", "DC", -0.77, -0.341], ["Camilo Escalona", "PS", -0.936, 0.32], ["Mario Escobar", "UDI", 0.805, 0.594], ["José Antonio Galilea", "RN", 0.615, -0.788], ["Guido Girardi", "PPD", -0.959, 0.242], ["Rosa González", "UDI", 0.776, 0.279], ["María Pía Guzmán", "RN", 0.554, -0.813], ["Carlos Hidalgo", "IND", 0.605, -0.705], ["Gonzalo Ibáñez", "UDI", 0.917, 0.246], ["Carmen Ibáñez", "RN", 0.356, -0.448], ["Víctor Jeame", "PPD", -0.894, 0.207], ["Jaime Jiménez", "IND", -0.744, 0.093], ["Carlos Kuschel", "RN", 0.755, -0.656], ["Eduardo Lagos", "PR", -0.86, 0.236], ["Cristián Leay", "UDI", 0.837, 0.547], ["Juan Pablo Letelier", "PS", -0.945, 0.283], ["Felipe Letelier", "PPD", -0.875, 0.226], ["Arturo Longton", "RN", 0.197, -0.669], ["Pablo Longueira", "UDI", 0.822, 0.539], ["Zarko Luksic", "DC", -0.76, -0.161], ["María Eugenia Mella", "DC", -0.808, -0.346], ["Darío Molina", "UDI", 0.787, 0.587], ["Waldo Mora", "DC", -0.632, -0.201], ["Pedro Muñoz", "PS", -0.922, 0.386], ["Alejandro Navarro", "PS", -0.941, 0.338], ["Cristián Pareto", "IND", -0.778, -0.012], ["Aníbal Pérez", "PPD", -0.88, 0.12], ["Ramón Pérez", "IND", 0.829, 0.183], ["Víctor Pérez", "UDI", 0.804, 0.595], ["Pablo Prieto", "UDI", 0.925, 0.248], ["Víctor Manuel Rebolledo", "PPD", -0.758, 0.159], ["Edgardo Riveros", "DC", -0.817, -0.302], ["Edmundo Salas", "DC", -0.763, -0.15], ["Leopoldo Sánchez", "PPD", -0.877, 0.315], ["Rodolfo Seguel", "DC", -0.831, -0.397], ["Exequiel Silva", "DC", -0.829, -0.274], ["Boris Tapia", "DC", -0.781, -0.242], ["Mario Varela", "UDI", 0.92, 0.333], ["Edmundo Villouta", "DC", -0.792, -0.16], ["Néstor Jofré", "RN", 0.61, -0.654], ["Enrique Accorsi", "PPD", -0.931, 0.132], ["Sergio Aguiló", "IC", -0.917, 0.398], ["Isabel Allende", "PS", -0.948, 0.252], ["Claudio Alvarado", "UDI", 0.83, 0.398], ["Pedro Pablo Alvarez-Salamanca", "RN", 0.586, -0.749], ["Rodrigo Alvarez", "UDI", 0.856, 0.518], ["Pedro Araya", "DC", -0.796, -0.122], ["Gabriel Ascencio", "DC", -0.829, -0.206], ["Ramón Barros", "UDI", 0.864, 0.372], ["Eugenio Bauer", "UDI", 0.872, 0.4], ["Germán Becker", "RN", 0.406, -0.861], ["Mario Bertolino", "RN", 0.589, -0.808], ["Jorge Burgos", "DC", -0.797, -0.334], ["Juan Bustos", "PS", -0.968, 0.252], ["Alberto Cardemil", "RN", 0.676, -0.702], ["Guillermo Ceroni", "PPD", -0.885, 0.1], ["Sergio Correa", "UDI", 0.862, 0.262], ["María Angélica Cristi", "UDI", 0.89, 0.293], ["Marcela Cubillos", "UDI", 0.878, 0.432], ["Roberto Delmastro", "RN", 0.649, -0.761], ["Eduardo Díaz", "IND", 0.577, 0.817], ["Julio Dittborn", "UDI", 0.86, 0.167], ["Andrés Egaña", "UDI", 0.83, 0.454], ["Francisco Encina", "PS", -0.927, 0.267], ["Maximiano Errázuriz", "IND", 0.696, -0.23], ["Fidel Espinoza", "PS", -0.911, 0.376], ["Marcelo Forni", "UDI", 0.923, 0.336], ["Pablo Galilea", "RN", 0.607, -0.795], ["René Manuel García", "RN", 0.642, -0.586], ["Alejandro García-Huidobro", "UDI", 0.874, 0.408], ["Rodrigo González", "PPD", -0.889, 0.38], ["Patricio Hales", "PPD", -0.911, 0.194], ["Javier Hernández", "UDI", 0.9, 0.231], ["Enrique Jaramillo", "PPD", -0.857, 0.097], ["Carlos Abel Jarpa", "PR", -0.886, 0.04], ["José Antonio Kast", "UDI", 0.889, 0.317], ["Antonio Leal", "PPD", -0.908, 0.186], ["Pablo Lorenzini", "DC", -0.758, -0.13], ["Rosauro Martínez", "RN", 0.627, -0.744], ["Juan Masferrer", "UDI", 0.814, 0.555], ["Patricio Melero", "UDI", 0.826, 0.428], ["Fernando Meza", "PR", -0.886, 0.219], ["Nicolás Monckeberg", "RN", 0.707, -0.707], ["Carlos Montes", "PS", -0.956, 0.294], ["Iván Moreira", "UDI", 0.764, 0.501], ["Jaime Mulet", "FRVS", -0.764, -0.218], ["Adriana Muñoz", "PPD", -0.913, 0.108], ["Iván Norambuena", "UDI", 0.871, 0.461], ["Sergio Ojeda", "DC", -0.804, -0.181], ["Carlos Olivares", "PRI", -0.814, -0.385], ["José Miguel Ortiz", "DC", -0.832, -0.325], ["Osvaldo Palma", "RN", 0.431, -0.875], ["Iván Paredes", "IND", -0.937, 0.35], ["Darío Paya", "UDI", 0.918, 0.313], ["José Pérez", "PR", -0.87, 0.14], ["Jaime Quintana", "PPD", -0.887, 0.281], ["Carlos Recondo", "UDI", 0.867, 0.487], ["Alberto Robles", "PR", -0.893, 0.28], ["Manuel Rojas", "UDI", 0.757, 0.653], ["Fulvio Rossi", "IND", -0.966, 0.258], ["María Antonieta Saa", "PPD", -0.919, 0.14], ["Eduardo Saffirio", "DC", -0.819, -0.233], ["Felipe Salaberry", "UDI", 0.813, 0.552], ["Alejandra Sepúlveda", "IND", -0.786, -0.23], ["Laura Soto", "PPD", -0.871, 0.198], ["Jorge Tarud", "PPD", -0.872, 0.122], ["Carolina Tohá", "PPD", -0.911, 0.257], ["Eugenio Tuma", "PPD", -0.885, 0.15], ["Jorge Ulloa", "UDI", 0.911, 0.413], ["Gonzalo Uriarte", "UDI", 0.904, 0.427], ["Ignacio Urrutia", "UDI", 0.94, 0.34], ["Esteban Valenzuela", "IND", -0.884, 0.211], ["Alfonso Vargas", "RN", 0.556, -0.831], ["Samuel Venegas", "IND", -0.897, 0.117], ["Ximena Vidal", "PPD", -0.872, 0.045], ["Gastón Von Mühlenbrock", "UDI", 0.82, 0.367], ["Patricio Walker", "DC", -0.772, -0.295], ["Lily Pérez", "RN", 0.442, -0.874], ["Carlos Vilches", "RN", 0.477, -0.861]], "2006-2010": [["Enrique Accorsi", "PPD", -0.939, -0.265], ["René Aedo", "RN", 0.351, -0.261], ["Sergio Aguiló", "IC", -0.972, -0.123], ["René Alinco", "IND", -0.873, -0.394], ["Isabel Allende", "PS", -0.986, 0.03], ["Claudio Alvarado", "UDI", 0.788, 0.358], ["Pedro Pablo Alvarez-Salamanca", "RN", 0.377, -0.609], ["Rodrigo Alvarez", "UDI", 0.777, 0.629], ["Pedro Araya", "DC", -0.684, -0.729], ["Gonzalo Arenas", "UDI", 0.789, 0.244], ["Gabriel Ascencio", "DC", -0.755, -0.381], ["Ramón Barros", "UDI", 0.754, 0.177], ["Eugenio Bauer", "UDI", 0.803, 0.354], ["Germán Becker", "RN", 0.437, -0.384], ["Mario Bertolino", "RN", 0.608, -0.508], ["Sergio Bobadilla", "UDI", 0.839, 0.088], ["Jorge Burgos", "DC", -0.819, 0.574], ["Juan Bustos", "PS", -0.992, 0.126], ["Alberto Cardemil", "RN", 0.663, -0.139], ["Guillermo Ceroni", "PPD", -0.797, 0.346], ["Francisco Chahuán", "RN", 0.386, -0.478], ["Sergio Correa", "UDI", 0.842, 0.18], ["María Angélica Cristi", "UDI", 0.822, -0.067], ["Marcela Cubillos", "UDI", 0.881, 0.382], ["Alfonso De Urresti", "PS", -0.963, -0.114], ["Roberto Delmastro", "RN", 0.523, -0.461], ["Eduardo Díaz", "IND", -0.514, -0.858], ["Marcelo Díaz", "PS", -0.953, 0.058], ["Julio Dittborn", "UDI", 0.839, 0.391], ["Gonzalo Duarte", "DC", -0.816, 0.418], ["Andrés Egaña", "UDI", 0.813, 0.533], ["Edmundo Eluchans", "UDI", 0.736, 0.547], ["Francisco Encina", "PS", -0.935, 0.028], ["Marco Enríquez-Ominami", "IND", -0.93, -0.272], ["Maximiano Errázuriz", "IND", 0.524, -0.263], ["Alvaro Escobar", "IND", -0.734, -0.624], ["Marcos Espinosa", "PR", -0.91, -0.35], ["Fidel Espinoza", "PS", -0.959, 0.064], ["Enrique Estay", "UDI", 0.786, 0.115], ["Ramón Farías", "PPD", -0.914, -0.064], ["Marcelo Forni", "UDI", 0.801, 0.361], ["Renán Fuentealba", "DC", -0.743, 0.522], ["Pablo Galilea", "RN", 0.579, -0.385], ["René Manuel García", "RN", 0.5, -0.284], ["Alejandro García-Huidobro", "UDI", 0.785, 0.209], ["Guido Girardi", "PPD", -0.892, -0.174], ["Joaquín Godoy", "RN", 0.454, -0.396], ["Carolina Goic", "DC", -0.825, 0.104], ["Rodrigo González", "PPD", -0.864, -0.369], ["Patricio Hales", "PPD", -0.91, 0.159], ["Javier Hernández", "UDI", 0.782, 0.081], ["Amelia Herrera", "RN", 0.534, -0.624], ["Jorge Insunza", "PPD", -0.932, 0.058], ["Marta Isasi", "IND", 0.471, -0.464], ["Enrique Jaramillo", "PPD", -0.868, 0.056], ["Carlos Abel Jarpa", "PR", -0.897, -0.304], ["Tucapel Jiménez", "PPD", -0.957, -0.256], ["José Antonio Kast", "UDI", 0.904, -0.025], ["Juan Carlos Latorre", "DC", -0.755, 0.534], ["Antonio Leal", "PPD", -0.9, 0.049], ["Roberto León", "DC", -0.781, 0.424], ["Juan Lobos", "UDI", 0.754, -0.111], ["Pablo Lorenzini", "DC", -0.822, 0.372], ["Rosauro Martínez", "RN", 0.57, -0.485], ["Juan Masferrer", "UDI", 0.775, 0.267], ["Patricio Melero", "UDI", 0.808, 0.456], ["Fernando Meza", "PR", -0.895, -0.267], ["Cristián Monckeberg", "RN", 0.507, -0.429], ["Nicolás Monckeberg", "RN", 0.551, -0.271], ["Manuel Monsalve", "PS", -0.945, 0.046], ["Carlos Montes", "PS", -0.954, 0.13], ["Iván Moreira", "UDI", 0.791, 0.567], ["Jaime Mulet", "FRVS", -0.625, -0.781], ["Adriana Muñoz", "PPD", -0.971, -0.123], ["Claudia Nogueira", "UDI", 0.759, 0.508], ["Iván Norambuena", "UDI", 0.942, 0.133], ["Marco Antonio Núñez", "PPD", -0.889, -0.071], ["Sergio Ojeda", "DC", -0.757, 0.265], ["Carlos Olivares", "PRI", -0.64, -0.768], ["José Miguel Ortiz", "DC", -0.79, 0.586], ["Clemira Pacheco", "PS", -0.971, 0.025], ["Osvaldo Palma", "RN", 0.474, -0.637], ["Iván Paredes", "IND", -0.915, -0.037], ["Denise Pascal", "PS", -0.989, -0.057], ["Darío Paya", "UDI", 0.979, 0.175], ["José Pérez", "PR", -0.862, -0.182], ["Jaime Quintana", "PPD", -0.928, 0.019], ["Carlos Recondo", "UDI", 0.839, 0.13], ["Alberto Robles", "PR", -0.921, -0.39], ["Manuel Rojas", "UDI", 0.743, -0.019], ["Fulvio Rossi", "IND", -0.896, 0.165], ["Karla Rubilar", "IND", 0.445, -0.407], ["María Antonieta Saa", "PPD", -0.881, 0.25], ["Jorge Sabag", "DC", -0.721, 0.617], ["Eduardo Saffirio", "DC", -0.872, 0.421], ["Felipe Salaberry", "UDI", 0.797, 0.41], ["Roberto Sepúlveda", "RN", 0.507, -0.333], ["Alejandra Sepúlveda", "IND", -0.663, -0.748], ["Gabriel Silber", "DC", -0.827, 0.23], ["Laura Soto", "PPD", -0.854, -0.165], ["Alejandro Sule", "PR", -0.913, -0.408], ["Raúl Sunico", "PS", -0.966, 0.17], ["Jorge Tarud", "PPD", -0.854, 0.128], ["Carolina Tohá", "PPD", -0.926, 0.115], ["Eugenio Tuma", "PPD", -0.883, 0.006], ["Marisol Turres", "UDI", 0.758, 0.199], ["Jorge Ulloa", "UDI", 0.755, 0.022], ["Gonzalo Uriarte", "UDI", 0.776, 0.356], ["Ignacio Urrutia", "UDI", 0.836, 0.261], ["Ximena Valcarce", "RN", 0.443, -0.605], ["Esteban Valenzuela", "IND", -0.764, -0.645], ["Patricio Vallespín", "DC", -0.831, 0.263], ["Alfonso Vargas", "RN", 0.509, -0.206], ["Mario Venegas", "DC", -0.768, 0.464], ["Samuel Venegas", "IND", -0.861, -0.014], ["Germán Verdugo", "RN", 0.359, -0.229], ["Ximena Vidal", "PPD", -0.879, 0.193], ["Gastón Von Mühlenbrock", "UDI", 0.753, 0.152], ["Patricio Walker", "DC", -0.697, 0.471], ["Felipe Ward", "UDI", 0.81, 0.151], ["Marcelo Schilling", "PS", -0.917, 0.218], ["Lily Pérez", "RN", 0.279, -0.534], ["Felipe Harboe", "PPD", -0.785, 0.336]], "2010-2014": [["Enrique Accorsi", "PPD", -0.668, 0.308], ["Sergio Aguiló", "IC", -0.889, -0.108], ["René Alinco", "IND", -0.553, 0.833], ["Pedro Araya", "DC", -0.255, 0.295], ["Gonzalo Arenas", "UDI", 0.791, 0.165], ["Gabriel Ascencio", "DC", -0.533, -0.468], ["Ramón Barros", "UDI", 0.791, 0.25], ["Eugenio Bauer", "UDI", 0.842, 0.303], ["Germán Becker", "RN", 0.662, 0.108], ["Mario Bertolino", "RN", 0.71, -0.109], ["Sergio Bobadilla", "UDI", 0.768, -0.289], ["Jorge Burgos", "DC", -0.336, -0.313], ["Alberto Cardemil", "RN", 0.739, -0.05], ["Guillermo Ceroni", "PPD", -0.509, 0.327], ["María Angélica Cristi", "UDI", 0.787, 0.018], ["Alfonso De Urresti", "PS", -0.744, 0.16], ["Roberto Delmastro", "RN", 0.576, -0.454], ["Marcelo Díaz", "PS", -0.752, 0.024], ["Edmundo Eluchans", "UDI", 0.808, 0.221], ["Marcos Espinosa", "PR", -0.659, 0.287], ["Fidel Espinoza", "PS", -0.706, 0.131], ["Enrique Estay", "UDI", 0.796, 0.204], ["Ramón Farías", "PPD", -0.575, 0.233], ["René Manuel García", "RN", 0.619, 0.047], ["Alejandro García-Huidobro", "UDI", 0.802, 0.053], ["Joaquín Godoy", "RN", 0.636, 0.091], ["Carolina Goic", "DC", -0.49, -0.451], ["Rodrigo González", "PPD", -0.689, 0.662], ["Patricio Hales", "PPD", -0.553, 0.533], ["Javier Hernández", "UDI", 0.757, 0.134], ["Marta Isasi", "IND", -0.061, -0.442], ["Enrique Jaramillo", "PPD", -0.477, 0.125], ["Carlos Abel Jarpa", "PR", -0.617, 0.318], ["Tucapel Jiménez", "PPD", -0.544, 0.257], ["José Antonio Kast", "UDI", 0.879, 0.031], ["Juan Carlos Latorre", "DC", -0.505, -0.487], ["Roberto León", "DC", -0.564, -0.435], ["Juan Lobos", "UDI", 0.803, -0.091], ["Pablo Lorenzini", "DC", -0.568, -0.769], ["Rosauro Martínez", "RN", 0.666, 0.244], ["Patricio Melero", "UDI", 0.83, 0.219], ["Fernando Meza", "PR", -0.448, 0.557], ["Cristián Monckeberg", "RN", 0.651, -0.075], ["Nicolás Monckeberg", "RN", 0.684, 0.033], ["Manuel Monsalve", "PS", -0.684, 0.163], ["Carlos Montes", "PS", -0.608, -0.032], ["Iván Moreira", "UDI", 0.768, -0.029], ["Adriana Muñoz", "PPD", -0.64, 0.185], ["Claudia Nogueira", "UDI", 0.804, 0.109], ["Iván Norambuena", "UDI", 0.647, -0.67], ["Marco Antonio Núñez", "PPD", -0.545, 0.302], ["Sergio Ojeda", "DC", -0.49, -0.271], ["José Miguel Ortiz", "DC", -0.385, -0.148], ["Clemira Pacheco", "PS", -0.784, 0.185], ["Denise Pascal", "PS", -0.686, -0.039], ["José Pérez", "PR", -0.522, 0.291], ["Carlos Recondo", "UDI", 0.798, -0.013], ["Alberto Robles", "PR", -0.65, 0.397], ["Manuel Rojas", "UDI", 0.744, 0.266], ["Karla Rubilar", "IND", 0.617, 0.155], ["María Antonieta Saa", "PPD", -0.568, 0.35], ["Jorge Sabag", "DC", -0.242, -0.355], ["Felipe Salaberry", "UDI", 0.87, 0.053], ["Alejandra Sepúlveda", "IND", -0.271, -0.576], ["Gabriel Silber", "DC", -0.477, -0.543], ["Jorge Tarud", "PPD", -0.502, 0.208], ["Marisol Turres", "UDI", 0.829, 0.064], ["Jorge Ulloa", "UDI", 0.797, -0.459], ["Gonzalo Uriarte", "UDI", 0.8, -0.005], ["Ignacio Urrutia", "UDI", 0.809, -0.244], ["Patricio Vallespín", "DC", -0.438, -0.442], ["Mario Venegas", "DC", -0.463, -0.444], ["Germán Verdugo", "RN", 0.666, 0.281], ["Ximena Vidal", "PPD", -0.525, 0.078], ["Gastón Von Mühlenbrock", "UDI", 0.773, 0.067], ["Felipe Ward", "UDI", 0.85, 0.095], ["Marcelo Schilling", "PS", -0.707, -0.006], ["Felipe Harboe", "PPD", -0.507, 0.293], ["Pedro Pablo Álvarez-Salamanca", "UDI", 0.767, 0.192], ["Osvaldo Andrade", "PS", -0.675, 0.03], ["Pepe Auth", "IND", -0.414, 0.353], ["Nino Baltolu", "UDI", 0.757, 0.216], ["Pedro Browne", "RN", 0.63, 0.116], ["Giovanni Calderón", "UDI", 0.797, 0.223], ["Cristián Campos", "PPD", -0.485, 0.275], ["Lautaro Carmona", "PC", -0.936, 0.197], ["Juan Luis Castro", "PS", -0.691, 0.226], ["Eduardo Cerda", "DC", -0.383, -0.305], ["Aldo Cornejo", "DC", -0.458, -0.41], ["Fuad Chahin", "DC", -0.492, -0.388], ["Rojo Edwards", "RN", 0.695, 0.11], ["Cristina Girardi", "PPD", -0.719, -0.044], ["Hugo Gutiérrez", "PC", -0.996, 0.09], ["Romilio Gutiérrez", "UDI", 0.786, 0.192], ["Gustavo Hasbún", "UDI", 0.844, -0.101], ["María José Hoffmann", "UDI", 0.911, -0.087], ["Luis Lemus", "PS", -0.691, 0.079], ["Javier Macaya", "UDI", 0.879, 0.116], ["Miodrag Marinovic", "IND", 0.109, -0.994], ["Andrea Molina", "UDI", 0.763, 0.402], ["Celso Morales", "UDI", 0.778, 0.032], ["Leopoldo Pérez", "RN", 0.691, 0.034], ["Ricardo Rincón", "DC", -0.544, -0.673], ["Gaspar Rivas", "RN", 0.657, 0.117], ["Marcela Sabat", "RN", 0.645, 0.284], ["René Saffirio", "IND", -0.458, -0.546], ["David Sandoval", "UDI", 0.742, 0.062], ["Alejandro Santana", "RN", 0.64, 0.035], ["Frank Sauerbaum", "RN", 0.683, 0.263], ["Ernesto Silva", "UDI", 0.982, -0.055], ["Arturo Squella", "UDI", 0.987, -0.162], ["Guillermo Teillier", "PC", -0.887, 0.199], ["Víctor Torres", "DC", -0.506, -0.394], ["Joaquín Tuma", "PPD", -0.423, 0.357], ["Enrique Van Rysselberghe", "UDI", 0.78, -0.247], ["Orlando Vargas", "PPD", -0.471, 0.331], ["Pedro Velásquez", "IND", 0.125, -0.561], ["Carlos Vilches", "RN", 0.767, 0.108], ["Matías Walker", "DC", -0.302, -0.256], ["Mónica Zalaquett", "UDI", 0.798, 0.139], ["Cristian Letelier", "IND", 0.822, -0.108], ["Joel Rosales", "UDI", 0.828, 0.14], ["Issa Kort", "UDI", 0.824, 0.475]], "2014-2018": [["Felipe Letelier", "PPD", -0.82, 0.152], ["Sergio Aguiló", "IC", -0.891, 0.322], ["Ramón Barros", "UDI", 0.837, -0.068], ["Germán Becker", "RN", 0.704, -0.547], ["Guillermo Ceroni", "PPD", -0.749, 0.447], ["Marcos Espinosa", "PR", -0.806, 0.224], ["Fidel Espinoza", "PS", -0.758, 0.261], ["Ramón Farías", "PPD", -0.721, 0.452], ["René Manuel García", "RN", 0.694, -0.524], ["Joaquín Godoy", "RN", -0.25, -0.968], ["Rodrigo González", "PPD", -0.861, -0.133], ["Javier Hernández", "UDI", 0.767, 0.363], ["Jorge Insunza", "PPD", -0.826, 0.109], ["Enrique Jaramillo", "PPD", -0.709, 0.227], ["Carlos Abel Jarpa", "PR", -0.786, 0.15], ["Tucapel Jiménez", "PPD", -0.819, 0.123], ["José Antonio Kast", "UDI", 0.971, 0.092], ["Roberto León", "DC", -0.762, -0.327], ["Pablo Lorenzini", "DC", -0.735, -0.337], ["Rosauro Martínez", "RN", 0.641, -0.445], ["Patricio Melero", "UDI", 0.804, 0.532], ["Fernando Meza", "PR", -0.812, 0.228], ["Cristián Monckeberg", "RN", 0.663, -0.481], ["Nicolás Monckeberg", "RN", 0.722, -0.674], ["Manuel Monsalve", "PS", -0.831, 0.367], ["Claudia Nogueira", "UDI", 0.79, 0.398], ["Iván Norambuena", "UDI", 0.844, 0.09], ["Marco Antonio Núñez", "PPD", -0.686, 0.373], ["Sergio Ojeda", "DC", -0.78, -0.261], ["José Miguel Ortiz", "DC", -0.706, 0.119], ["Clemira Pacheco", "PS", -0.885, 0.393], ["Denise Pascal", "PS", -0.888, 0.244], ["José Pérez", "PR", -0.803, 0.145], ["Alberto Robles", "PR", -0.816, -0.004], ["Karla Rubilar", "IND", -0.099, -0.818], ["Jorge Sabag", "DC", -0.635, -0.05], ["Alejandra Sepúlveda", "IND", -0.882, -0.47], ["Gabriel Silber", "DC", -0.745, -0.204], ["Jorge Tarud", "PPD", -0.788, 0.147], ["Marisol Turres", "UDI", 0.805, 0.483], ["Jorge Ulloa", "UDI", 0.956, 0.167], ["Ignacio Urrutia", "UDI", 0.938, 0.12], ["Patricio Vallespín", "DC", -0.783, -0.144], ["Mario Venegas", "DC", -0.724, -0.068], ["Germán Verdugo", "RN", 0.538, -0.228], ["Felipe Ward", "UDI", 0.859, 0.401], ["Marcelo Schilling", "PS", -0.813, 0.409], ["Pedro Pablo Álvarez-Salamanca", "UDI", 0.793, 0.153], ["Osvaldo Andrade", "PS", -0.823, 0.465], ["Pepe Auth", "IND", -0.679, 0.27], ["Pedro Browne", "RN", -0.256, -0.967], ["Cristián Campos", "PPD", -0.785, 0.001], ["Lautaro Carmona", "PC", -0.939, 0.292], ["Juan Luis Castro", "PS", -0.783, 0.308], ["Aldo Cornejo", "DC", -0.769, -0.294], ["Fuad Chahin", "DC", -0.756, -0.297], ["Rojo Edwards", "RN", 0.762, -0.647], ["Cristina Girardi", "PPD", -0.941, -0.338], ["Hugo Gutiérrez", "PC", -0.964, 0.183], ["Romilio Gutiérrez", "UDI", 0.791, 0.339], ["Gustavo Hasbún", "UDI", 0.884, 0.467], ["María José Hoffmann", "UDI", 0.889, 0.457], ["Luis Lemus", "PS", -0.874, 0.24], ["Javier Macaya", "UDI", 0.812, 0.516], ["Andrea Molina", "UDI", 0.86, 0.42], ["Celso Morales", "UDI", 0.819, 0.242], ["Leopoldo Pérez", "RN", 0.715, -0.549], ["Ricardo Rincón", "DC", -0.779, -0.359], ["Gaspar Rivas", "RN", -0.742, -0.671], ["Marcela Sabat", "RN", 0.632, -0.678], ["René Saffirio", "IND", -0.855, -0.475], ["David Sandoval", "UDI", 0.772, 0.16], ["Alejandro Santana", "RN", 0.685, -0.504], ["Ernesto Silva", "UDI", 0.88, 0.474], ["Arturo Squella", "UDI", 0.887, 0.461], ["Guillermo Teillier", "PC", -0.928, 0.299], ["Víctor Torres", "DC", -0.871, -0.454], ["Joaquín Tuma", "PPD", -0.649, 0.326], ["Enrique Van Rysselberghe", "UDI", 0.923, 0.12], ["Matías Walker", "DC", -0.703, -0.116], ["Issa Kort", "UDI", 0.829, 0.432], ["Jenny Álvarez", "PS", -0.831, 0.492], ["Claudio Arriagada", "DC", -0.838, -0.355], ["Jaime Bellolio", "UDI", 0.799, 0.337], ["Bernardo Berger", "RN", 0.711, -0.573], ["Gabriel Boric", "IND", -0.852, -0.523], ["Karol Cariola", "PC", -0.947, 0.255], ["Loreto Carvajal", "PPD", -0.841, 0.021], ["Daniella Cicardini", "PS", -0.884, 0.184], ["Juan Antonio Coloma", "UDI", 0.902, 0.338], ["Marcelo Chávez", "DC", -0.75, -0.351], ["Felipe De Mussy", "UDI", 0.792, 0.374], ["Sergio Espejo", "DC", -0.711, -0.117], ["Daniel Farcas", "PPD", -0.687, 0.434], ["Maya Fernández", "PS", -0.877, 0.16], ["Iván Flores", "DC", -0.746, -0.39], ["Iván Fuentes", "IND", -0.774, -0.326], ["Gonzalo Fuenzalida", "RN", 0.754, -0.651], ["Sergio Gahona", "UDI", 0.806, 0.367], ["Marcela Hernando", "PR", -0.791, 0.094], ["Giorgio Jackson", "RD", -0.903, -0.43], ["Felipe Kast", "EVOP", 0.608, -0.749], ["Joaquín Lavín", "UDI", 0.821, 0.394], ["Daniel Melo", "PS", -0.869, 0.282], ["Vlado Mirosevic", "LIBERAL", -0.867, -0.498], ["Juan Enrique Morano", "DC", -0.773, -0.421], ["Daniel Núñez", "PC", -0.938, 0.289], ["Paulina Núñez", "RN", 0.673, -0.494], ["Diego Paulsen", "RN", 0.744, -0.644], ["Jaime Pilowsky", "DC", -0.707, -0.116], ["Roberto Poblete", "IND", -0.887, 0.261], ["Yasna Provoste", "DC", -0.819, -0.42], ["Jorge Rathgeb", "RN", 0.684, -0.679], ["Luis Rocafull", "PS", -0.873, 0.222], ["Raúl Saldívar", "PS", -0.812, 0.343], ["Leonardo Soto", "PS", -0.848, 0.286], ["Renzo Trisotti", "UDI", 0.837, 0.547], ["Christian Urízar", "PS", -0.836, 0.24], ["Osvaldo Urrutia", "UDI", 0.836, 0.499], ["Camila Vallejo", "PC", -0.941, 0.163], ["Miguel Ángel Alvarado", "PPD", -0.796, 0.055]], "2018-2022": [["Jaime Naranjo", "PS", -0.693, -0.359], ["Carlos Kuschel", "RN", 0.899, -0.28], ["Manuel Matta", "DC", -0.061, -0.169], ["René Alinco", "IND", -0.57, -0.499], ["Gabriel Ascencio", "DC", -0.298, -0.455], ["Ramón Barros", "UDI", 0.935, 0.277], ["Sergio Bobadilla", "UDI", 0.791, 0.612], ["Marcelo Díaz", "PS", -0.793, 0.043], ["Fidel Espinoza", "PS", -0.595, -0.166], ["René Manuel García", "RN", 0.779, -0.063], ["Rodrigo González", "PPD", -0.744, 0.188], ["Javier Hernández", "UDI", 0.764, 0.495], ["Carlos Abel Jarpa", "PR", -0.242, -0.094], ["Tucapel Jiménez", "PPD", -0.62, -0.175], ["Pablo Lorenzini", "DC", 0.0, -0.312], ["Patricio Melero", "UDI", 0.954, 0.298], ["Fernando Meza", "PR", -0.106, -0.12], ["Manuel Monsalve", "PS", -0.655, -0.263], ["Jaime Mulet", "FRVS", -0.684, 0.241], ["Iván Norambuena", "UDI", 0.734, 0.679], ["José Miguel Ortiz", "DC", -0.053, -0.308], ["José Pérez", "PR", -0.207, 0.102], ["Jorge Sabag", "DC", 0.042, 0.141], ["Alejandra Sepúlveda", "IND", -0.75, 0.13], ["Gabriel Silber", "DC", -0.264, -0.519], ["Ignacio Urrutia", "UDI", 0.97, 0.241], ["Mario Venegas", "DC", -0.304, -0.19], ["Gastón Von Mühlenbrock", "UDI", 0.859, 0.381], ["Marcelo Schilling", "PS", -0.643, -0.332], ["Pedro Pablo Álvarez-Salamanca", "UDI", 0.646, 0.123], ["Pepe Auth", "IND", -0.162, 0.084], ["Nino Baltolu", "UDI", 0.839, 0.422], ["Juan Luis Castro", "PS", -0.675, -0.222], ["Cristina Girardi", "PPD", -0.873, 0.068], ["Hugo Gutiérrez", "PC", -0.885, -0.466], ["María José Hoffmann", "UDI", 0.945, 0.328], ["Javier Macaya", "UDI", 0.957, 0.292], ["Celso Morales", "UDI", 0.789, 0.541], ["Leopoldo Pérez", "RN", 0.92, -0.258], ["Marcela Sabat", "RN", 0.653, -0.539], ["René Saffirio", "IND", -0.627, 0.539], ["Alejandro Santana", "RN", 0.78, -0.209], ["Frank Sauerbaum", "RN", 0.802, -0.193], ["Guillermo Teillier", "PC", -0.852, -0.524], ["Víctor Torres", "DC", -0.554, -0.315], ["Enrique Van Rysselberghe", "UDI", 0.824, 0.567], ["Pedro Velásquez", "IND", -0.206, 0.911], ["Matías Walker", "DC", -0.114, -0.443], ["Issa Kort", "UDI", 0.903, 0.268], ["Jenny Álvarez", "PS", -0.68, -0.282], ["Jaime Bellolio", "UDI", 0.729, -0.128], ["Bernardo Berger", "RN", 0.78, -0.149], ["Gabriel Boric", "IND", -0.91, 0.415], ["Karol Cariola", "PC", -0.861, -0.508], ["Loreto Carvajal", "PPD", -0.643, -0.177], ["Daniella Cicardini", "PS", -0.727, -0.264], ["Juan Antonio Coloma", "UDI", 0.915, 0.404], ["Maya Fernández", "PS", -0.737, -0.295], ["Iván Flores", "DC", -0.23, -0.329], ["Gonzalo Fuenzalida", "RN", 0.736, -0.433], ["Sergio Gahona", "UDI", 0.782, 0.515], ["Marcela Hernando", "PR", -0.5, -0.229], ["Giorgio Jackson", "RD", -0.856, 0.41], ["Joaquín Lavín", "UDI", 0.764, 0.348], ["Vlado Mirosevic", "LIBERAL", -0.758, 0.43], ["Daniel Núñez", "PC", -0.866, -0.5], ["Paulina Núñez", "RN", 0.751, -0.253], ["Diego Paulsen", "RN", 0.911, -0.186], ["Jorge Rathgeb", "RN", 0.839, -0.098], ["Luis Rocafull", "PS", -0.743, -0.14], ["Raúl Saldívar", "PS", -0.707, -0.168], ["Leonardo Soto", "PS", -0.656, -0.327], ["Renzo Trisotti", "UDI", 0.792, 0.355], ["Osvaldo Urrutia", "UDI", 0.869, 0.33], ["Camila Vallejo", "PC", -0.848, -0.52], ["Florcita Alarcón", "PH", -0.951, 0.309], ["Jorge Alessandri", "UDI", 0.938, 0.172], ["Sebastián Álvarez", "EVOP", 0.767, -0.503], ["Sandra Amar", "UDI", 0.721, 0.229], ["Boris Barrera", "PC", -0.857, -0.516], ["Alejandro Bernales", "PL", -0.693, 0.481], ["Karim Bianchi", "IND", -0.468, 0.025], ["Jorge Brito", "FA", -0.85, 0.413], ["Miguel Ángel Calisto", "DC", -0.035, 0.064], ["Álvaro Carter", "UDI", 0.717, 0.148], ["Natalia Castillo", "RD", -0.85, 0.397], ["José Miguel Castro", "RN", 0.816, -0.141], ["Ricardo Celis", "PPD", -0.607, -0.13], ["Andrés Celis", "RN", 0.699, -0.114], ["Sofía Cid", "RN", 0.768, -0.115], ["Miguel Crispi", "RD", -0.85, 0.415], ["Luciano Cruz-Coke", "EVOP", 0.88, -0.475], ["Catalina Del Real", "PREP", 0.837, -0.127], ["Mario Desbordes", "RN", 0.817, -0.166], ["Jorge Durán", "RN", 0.635, -0.265], ["Eduardo Durán", "RN", 0.78, 0.007], ["Francisco Eguiguren", "RN", 0.795, -0.08], ["Camila Flores", "RN", 0.832, -0.098], ["Juan Fuenzalida", "UDI", 0.923, 0.384], ["Ramón Galleguillos", "RN", 0.745, -0.184], ["Renato Garín", "IND", -0.847, 0.517], ["Félix González", "PEV", -0.956, 0.293], ["Carmen Hertz", "PC", -0.861, -0.508], ["Tomás Hirsch", "PAH", -0.971, 0.24], ["Diego Ibáñez", "PCS", -0.908, 0.418], ["Marcos Ilabaca", "PS", -0.669, -0.176], ["Pamela Jiles", "PDG", -0.964, 0.265], ["Harry Jürgensen", "IND", 0.944, -0.015], ["Pablo Kast", "EVOP", 0.799, -0.601], ["Sebastián Keitel", "EVOP", 0.646, -0.578], ["Amaro Labra", "PC", -0.902, -0.432], ["Raúl Leiva", "PS", -0.678, -0.194], ["Aracely Leuquén", "RN", 0.752, -0.177], ["Andrés Longton", "RN", 0.681, -0.529], ["Karin Luck", "RN", 0.836, -0.378], ["Carolina Marzán", "PPD", -0.677, -0.193], ["Cosme Mellado", "PR", -0.532, -0.313], ["Miguel Mellado", "RN", 0.802, -0.223], ["Claudia Mix", "COMUNES", -0.966, 0.257], ["Andrés Molina", "EVOP", 0.857, -0.515], ["Cristhian Moreira", "UDI", 0.763, 0.359], ["Francesca Muñoz", "PSC", 0.656, -0.124], ["Nicolás Noman", "UDI", 0.765, 0.614], ["Emilia Nuyado", "PS", -0.783, -0.201], ["Erika Olivera", "IND", 0.489, -0.465], ["Maite Orsini", "RD", -0.849, 0.404], ["Ximena Ossandón", "RN", 0.655, -0.281], ["Luis Pardo", "RN", 0.892, -0.174], ["Andrea Parra", "PPD", -0.64, -0.078], ["Joanna Pérez", "DEM", -0.201, -0.174], ["Catalina Pérez", "RD", -0.865, 0.411], ["Pablo Prieto", "IND", 0.698, 0.122], ["Guillermo Ramírez", "UDI", 0.954, 0.298], ["Rolando Rentería", "UDI", 0.772, 0.548], ["Hugo Rey", "RN", 0.72, -0.081], ["Camila Rojas", "COMUNES", -0.937, 0.35], ["Leonidas Romero", "RN", 0.746, -0.001], ["Patricio Rosas", "IND", -0.725, 0.092], ["Gastón Saavedra", "PS", -0.718, -0.322], ["Gustavo Sanhueza", "UDI", 0.874, 0.486], ["Juan Santana", "PS", -0.747, -0.354], ["Marisela Santibáñez", "IND", -0.862, -0.507], ["Diego Schalper", "RN", 0.814, -0.154], ["Alexis Sepúlveda", "PR", -0.543, -0.263], ["Raúl Soto", "PPD", -0.583, -0.076], ["Jaime Tohá", "PS", -0.567, -0.046], ["Sebastián Torrealba", "RN", 0.812, -0.443], ["Virginia Troncoso", "UDI", 0.636, 0.26], ["Francisco Undurraga", "EVOP", 0.836, -0.549], ["Cristóbal Urruticoechea", "PNL", 0.862, -0.133], ["Esteban Velásquez", "FRVS", -0.756, 0.27], ["Daniel Verdessi", "DC", -0.167, -0.264], ["Pablo Vidal", "RD", -0.837, 0.376], ["Gonzalo Winter", "FA", -0.906, 0.423], ["Gael Yeomans", "FA", -0.916, 0.401], ["Camilo Morán", "RN", 0.794, -0.302], ["Nora Cuevas", "UDI", 0.751, 0.153], ["Tomás Andrés Fuentes", "RN", 0.765, -0.123], ["Rubén Moraga", "PC", -0.829, -0.56], ["Marcela Sandoval", "RD", -0.862, 0.233], ["Patricia Rubio", "PPD", -0.775, -0.263], ["Cristian Labbé", "UDI", 0.962, 0.273], ["Juan Manuel Masferrer", "UDI", 0.877, 0.444]], "2022-2026": [["Jaime Naranjo", "PS", -0.63, -0.129], ["René Alinco", "IND", -0.535, 0.17], ["Sergio Bobadilla", "UDI", 0.686, -0.016], ["Jaime Mulet", "FRVS", -0.677, -0.079], ["Gastón Von Mühlenbrock", "UDI", 0.604, -0.065], ["Gaspar Rivas", "RN", 0.028, -0.164], ["Frank Sauerbaum", "RN", 0.491, 0.544], ["Bernardo Berger", "RN", 0.487, 0.545], ["Karol Cariola", "PC", -0.797, -0.109], ["Daniella Cicardini", "PS", -0.638, 0.058], ["Juan Antonio Coloma", "UDI", 0.593, -0.057], ["Joaquín Lavín", "UDI", 0.57, -0.105], ["Daniel Melo", "PS", -0.642, 0.158], ["Vlado Mirosevic", "LIBERAL", -0.574, -0.301], ["Jorge Rathgeb", "RN", 0.509, 0.552], ["Leonardo Soto", "PS", -0.609, 0.079], ["Renzo Trisotti", "UDI", 0.77, -0.158], ["Jorge Alessandri", "UDI", 0.648, -0.11], ["Boris Barrera", "PC", -0.91, -0.039], ["Alejandro Bernales", "PL", -0.432, -0.103], ["Jorge Brito", "FA", -0.793, -0.228], ["Miguel Ángel Calisto", "DC", -0.063, 0.47], ["Álvaro Carter", "UDI", 0.682, -0.047], ["José Miguel Castro", "RN", 0.499, 0.542], ["Andrés Celis", "RN", 0.459, 0.57], ["Sofía Cid", "RN", 0.701, 0.072], ["Catalina Del Real", "PREP", 0.792, -0.167], ["Jorge Durán", "RN", 0.545, 0.427], ["Eduardo Durán", "RN", 0.501, 0.505], ["Camila Flores", "RN", 0.611, 0.38], ["Juan Fuenzalida", "UDI", 0.584, -0.106], ["Félix González", "PEV", -0.712, 0.181], ["Carmen Hertz", "PC", -0.915, -0.14], ["Tomás Hirsch", "PAH", -0.924, -0.001], ["Diego Ibáñez", "PCS", -0.807, -0.489], ["Marcos Ilabaca", "PS", -0.571, 0.157], ["Pamela Jiles", "PDG", -0.495, 0.822], ["Harry Jürgensen", "IND", 0.908, -0.419], ["Raúl Leiva", "PS", -0.556, -0.027], ["Andrés Longton", "RN", 0.464, 0.539], ["Carolina Marzán", "PPD", -0.587, -0.039], ["Cosme Mellado", "PR", -0.524, 0.036], ["Miguel Mellado", "RN", 0.51, 0.468], ["Claudia Mix", "COMUNES", -0.89, -0.358], ["Cristhian Moreira", "UDI", 0.536, -0.001], ["Francesca Muñoz", "PSC", 0.518, 0.701], ["Emilia Nuyado", "PS", -0.697, 0.302], ["Erika Olivera", "IND", -0.133, 0.453], ["Maite Orsini", "RD", -0.849, -0.243], ["Ximena Ossandón", "RN", 0.441, 0.55], ["Joanna Pérez", "DEM", -0.114, 0.432], ["Catalina Pérez", "RD", -0.764, -0.34], ["Guillermo Ramírez", "UDI", 0.624, -0.136], ["Hugo Rey", "RN", 0.446, 0.652], ["Camila Rojas", "COMUNES", -0.835, -0.533], ["Leonidas Romero", "RN", 0.843, 0.001], ["Patricio Rosas", "IND", -0.722, -0.239], ["Juan Santana", "PS", -0.693, -0.071], ["Marisela Santibáñez", "IND", -0.887, 0.103], ["Diego Schalper", "RN", 0.489, 0.363], ["Alexis Sepúlveda", "PR", -0.463, 0.155], ["Raúl Soto", "PPD", -0.484, -0.177], ["Francisco Undurraga", "EVOP", 0.461, -0.093], ["Cristóbal Urruticoechea", "PNL", 0.907, -0.291], ["Gonzalo Winter", "FA", -0.796, -0.596], ["Gael Yeomans", "FA", -0.812, -0.546], ["Cristian Labbé", "UDI", 0.71, -0.06], ["María Candelaria Acevedo", "PC", -0.956, 0.058], ["Eric Aedo", "DC", -0.305, -0.141], ["Yovana Ahumada", "IND", 0.32, 0.659], ["Jaime Araya", "IND", -0.491, -0.191], ["Cristián Araya", "PREP", 0.893, -0.451], ["Mónica Arce", "IND", -0.653, 0.305], ["Roberto Arroyo", "PSC", 0.406, 0.691], ["Danisa Astudillo", "PS", -0.626, 0.038], ["Chiara Barchiesi", "PREP", 0.908, -0.419], ["Héctor Barría", "DC", -0.369, -0.061], ["Miguel Ángel Becker", "RN", 0.519, 0.488], ["María Francisca Bello", "FA", -0.845, -0.424], ["Juan Carlos Beltrán", "RN", 0.451, 0.477], ["Gustavo Benavente", "UDI", 0.626, -0.093], ["Carlos Bianchi", "IND", -0.439, 0.008], ["Fernando Bórquez", "UDI", 0.505, 0.113], ["Ana María Bravo", "PS", -0.62, 0.127], ["Marta Bravo", "UDI", 0.552, 0.009], ["Félix Bugueño", "FA", -0.696, -0.169], ["Mercedes Bulnes", "IND", -0.815, -0.42], ["Felipe Camaño", "IND", -0.22, -0.055], ["Nathalie Castillo", "PC", -0.964, 0.06], ["Ricardo Cifuentes", "DC", -0.375, -0.311], ["Sara Concha", "PSC", 0.514, 0.642], ["María Luisa Cordero", "IND", 0.402, 0.499], ["Eduardo Cornejo", "UDI", 0.582, -0.017], ["Luis Alberto Cuello", "PC", -0.905, -0.048], ["Gonzalo De la Carrera", "IND", 0.941, -0.151], ["Tomás De Rementería", "PS", -0.62, -0.088], ["Viviana Delgado", "IND", -0.674, 0.26], ["Felipe Donoso", "UDI", 0.605, -0.051], ["Lorena Fries", "FA", -0.834, -0.552], ["Ana María Gazmuri", "PAH", -0.961, 0.044], ["Andrés Giordano", "IND", -0.829, -0.319], ["Marta González", "IND", -0.56, 0.164], ["Mauro González", "RN", 0.486, 0.572], ["Jorge Guzmán", "EVOP", 0.448, -0.034], ["Juan Irarrázaval", "PREP", 0.904, -0.427], ["Andrés Jouannet", "AMA", -0.132, 0.217], ["Johannes Kaiser", "PREP", 0.942, -0.271], ["Paula Labra", "IND", 0.578, 0.488], ["Tomás Lagomarsino", "IND", -0.349, 0.235], ["Henry Leal", "UDI", 0.553, 0.005], ["Enrique Lee", "PRI", 0.395, 0.137], ["Daniel Lilayu", "UDI", 0.549, 0.113], ["Luis Malla", "PL", -0.551, -0.153], ["Daniel Manouchehri", "PS", -0.613, 0.227], ["Cristóbal Martínez", "UDI", 0.605, -0.025], ["Christian Matheson", "IND", 0.581, 0.171], ["Karen Medina", "PDG", -0.012, 0.091], ["José Carlos Meza", "PREP", 0.912, -0.41], ["Helia Molina", "PPD", -0.627, -0.145], ["Javiera Morales", "FA", -0.778, -0.527], ["Carla Morales", "RN", 0.427, 0.481], ["Benjamín Moreno", "PREP", 0.914, -0.407], ["Camila Musante", "IND", -0.629, 0.076], ["Gloria Naveillan", "PNL", 0.8, 0.042], ["Coca Ericka Ñanco", "FA", -0.876, -0.217], ["Mauricio Ojeda", "IND", 0.918, -0.398], ["Rubén Darío Oyarzo", "PDG", -0.136, 0.222], ["Hernán Palma", "IND", -0.914, 0.024], ["Marlene Pérez", "IND", 0.521, 0.061], ["Víctor Alejandro Pino", "DEM", 0.297, 0.367], ["Lorena Pizarro", "PC", -0.987, 0.054], ["Alejandra Placencia", "PC", -0.914, -0.032], ["Francisco Pulgar", "IND", -0.021, 0.18], ["Matías Ramírez", "PC", -0.999, 0.052], ["Marcia Raphael", "RN", 0.498, 0.558], ["Marcela Riquelme", "IND", -0.766, -0.333], ["Agustín Romero", "PREP", 0.915, -0.403], ["Natalia Romero", "IND", 0.442, 0.045], ["Jaime Sáez", "RD", -0.814, -0.572], ["Jorge Saffirio", "DEM", -0.119, 0.401], ["Clara Sagardía", "IND", -0.776, -0.501], ["Luis Sánchez", "PREP", 0.915, -0.403], ["Emilia Schneider", "FA", -0.833, -0.504], ["Stephan Schubert", "PREP", 0.921, -0.388], ["Daniela Serrano", "PC", -0.912, -0.051], ["Marco Antonio Sulantay", "UDI", 0.6, 0.016], ["Cristián Tapia", "IND", -0.541, -0.11], ["Hotuiti Teao", "IND", 0.475, 0.128], ["Carolina Tello", "FA", -0.858, -0.147], ["Héctor Ulloa", "IND", -0.466, -0.212], ["Alberto Undurraga", "DC", -0.379, -0.258], ["Consuelo Veloso", "FA", -0.764, -0.333], ["Nelson Venegas", "PS", -0.605, 0.0], ["Sebastián Videla", "IND", -0.473, -0.012], ["Flor Weisse", "UDI", 0.656, -0.018], ["Roberto Celedón", "IND", -0.845, -0.318], ["Arturo Barrios", "PS", -0.563, -0.304]], "2026-2030": [["René Alinco Bustos", "FRVS", -0.4, 0.818], ["Sergio Bobadilla Muñoz", "UDI", 0.789, 0.102], ["René Manuel García García", "RN", 0.682, 0.062], ["Jaime Mulet Martínez", "FRVS", -0.356, 0.85], ["Germán Verdugo Soto", "PNL", 0.807, 0.184], ["Marcela Hernando Pérez", "PR", -0.475, 0.004], ["Jorge Alessandri Vergara", "UDI", 0.777, 0.029], ["Boris Barrera Moreno", "PC", -0.996, 0.062], ["Alejandro Bernales Maldonado", "PL", -0.389, 0.07], ["Jorge Brito Hasbún", "FA", -0.819, -0.035], ["Álvaro Carter Fernández", "PRCh", 0.931, -0.222], ["Andrés Celis Montt", "RN", 0.704, 0.33], ["Catalina Del Real Mihovilovic", "PRCh", 0.929, -0.252], ["Eduardo Durán Salinas", "RN", 0.668, 0.022], ["Marcos Ilabaca Cerda", "PS", -0.665, -0.189], ["Pamela Jiles Moreno", "PdG", -0.316, -0.949], ["Raúl Leiva Carvajal", "PS", -0.622, -0.217], ["Francesca Muñoz González", "PSC", 0.645, 0.047], ["Emilia Nuyado Ancapichun", "PS", -0.768, -0.081], ["Ximena Ossandón Irarrázabal", "RN", 0.613, 0.445], ["Luis Pardo Sáinz", "RN", 0.705, 0.234], ["Andrea Parra Sauterel", "PPD", -0.53, 0.202], ["Joanna Pérez Olea", "Dem", 0.562, -0.061], ["Guillermo Ramírez Diez", "UDI", 0.759, 0.103], ["Juan Santana Castillo", "PS", -0.802, -0.143], ["Marisela Santibáñez Novoa", "PC", -0.881, -0.004], ["Diego Schalper Sepúlveda", "RN", 0.679, 0.437], ["Raúl Soto Mardones", "PPD", -0.521, -0.16], ["Cristóbal Urruticoechea Ríos", "PNL", 0.912, 0.411], ["Gonzalo Winter Etcheberry", "FA", -0.817, -0.009], ["Gael Yeomans Araya", "FA", -0.831, -0.147], ["Jaime Araya Guerrero", "PPD", -0.553, 0.054], ["Cristián Araya Lerdo de Tejada", "PRCh", 0.938, -0.231], ["Roberto Arroyo Muñoz", "PSC", 0.624, -0.058], ["Chiara Barchiesi Chávez", "PRCh", 0.912, -0.238], ["Héctor Barría Angulo", "DC", -0.415, 0.735], ["Juan Carlos Beltrán Silva", "RN", 0.61, -0.092], ["Carlos Bianchi Chelech", "IND", -0.467, -0.107], ["Félix Bugueño Sotelo", "FA", -0.761, 0.012], ["Felipe Camaño Cárdenas", "DC", -0.34, 0.37], ["Nathalie Castillo Rojas", "PC", -0.975, 0.063], ["Sara Concha Smith", "PSC", 0.609, 0.041], ["Luis Alberto Cuello Peña y Lillo", "PC", -0.991, 0.073], ["Lorena Fries Monleón", "FA", -0.831, -0.254], ["Ana María Gazmuri Vieira", "AH", -0.945, 0.092], ["Mauro González Villarroel", "RN", 0.668, 0.072], ["Jorge Guzmán Zepeda", "Evópoli", 0.622, 0.321], ["Juan Irarrázaval Rossel", "PRCh", 0.932, -0.23], ["Daniel Lilayu Vivanco", "UDI", 0.781, 0.219], ["Luis Malla Valenzuela", "PL", -0.458, -0.021], ["Daniel Manouchehri Lobos", "PS", -0.679, -0.167], ["Cristóbal Martínez Ramírez", "UDI", 0.684, 0.219], ["José Carlos Meza Pereira", "PRCh", 0.899, -0.24], ["Javiera Morales Alvarado", "FA", -0.734, -0.122], ["Benjamín Moreno Bascur", "PRCh", 0.937, -0.222], ["Gloria Naveillan Arriagada", "PNL", 0.777, 0.593], ["Coca Ericka Ñanco Vásquez", "FA", -0.855, -0.082], ["Marlene Pérez Cartes", "UDI", 0.691, 0.078], ["Lorena Pizarro Sierra", "PC", -0.961, 0.127], ["Agustín Romero Leiva", "PRCh", 0.936, -0.198], ["Natalia Romero Talguia", "UDI", 0.493, 0.369], ["Luis Sánchez Ossa", "PRCh", 0.939, -0.229], ["Emilia Schneider Videla", "FA", -0.858, -0.195], ["Stephan Schubert Rubio", "PRCh", 0.919, -0.219], ["Daniela Serrano Salazar", "PC", -0.999, 0.018], ["Marco Antonio Sulantay Olivares", "UDI", 0.776, 0.103], ["Cristián Tapia Ramos", "PPD", -0.458, -0.084], ["Hotuiti Teao Drago", "UDI", 0.694, 0.045], ["Carolina Tello Rojas", "FA", -0.83, -0.081], ["Héctor Ulloa Aguilera", "PPD", -0.484, -0.012], ["Consuelo Veloso Ávila", "PR", -0.815, -0.049], ["Nelson Venegas Salazar", "PS", -0.701, -0.143], ["Sebastián Videla Castillo", "PL", -0.415, 0.138], ["Flor Weisse Novoa", "UDI", 0.701, 0.141], ["Roberto Celedón Fernández", "FA", -0.794, -0.062], ["Ignacio Achurra Díaz", "FA", -0.822, -0.156], ["Carlo Arqueros Pizarro", "PRCh", 0.935, -0.245], ["Marcos Barraza Gómez", "PC", -0.964, 0.087], ["Jaime Bassa Mercado", "FA", -0.866, -0.138], ["Enrique Bassaletti Riess", "PRCh", 0.955, -0.226], ["Valentina Becerra Peña", "PRCh", 0.929, -0.217], ["Lilian Betancurt Delgado", "PdG", -0.058, -0.998], ["Patricio Briones Moller", "PdG", -0.071, -0.992], ["Daniel Bustos Leal", "PRCh", 0.913, -0.219], ["Carlos Carvajal Gallardo", "PPD", -0.499, 0.004], ["Priscilla Castillo Gerli", "DC", -0.376, 0.605], ["Carlos Chandía Alarcón", "RN", 0.596, 0.105], ["Paz Charpentier Rajcevich", "PRCh", 0.956, -0.251], ["Jaime Coloma Álamos", "UDI", 0.77, 0.216], ["Cristian Contreras Radovic", "PdG", 0.372, 0.016], ["Flor Contreras Vivallo", "PdG", -0.08, -0.827], ["Eduardo Cretton Rebolledo", "UDI", 0.814, 0.304], ["Sebastián Cristoffanini Jaraquemada", "PRCh", 0.925, -0.199], ["Francisco Crisóstomo Llanos", "PS", -0.695, -0.14], ["Carlos Cuadrado Prats", "PPD", -0.601, 0.097], ["Carolina Cucumides Calderón", "PS", -0.701, -0.183], ["Valentina Cáceres Monsálvez", "FA", -0.784, -0.063], ["Jorge Díaz Ibarra", "DC", -0.405, 0.691], ["Matías Fernández Hartwig", "FA", -0.839, -0.158], ["Gustavo Gatica Villarroel", "PC", -0.972, 0.029], ["Sofía González Cortés", "PC", -0.992, 0.061], ["Erich Grohs Marín", "PNL", 0.895, 0.447], ["Irací Hassler Jacob", "PC", -0.961, 0.072], ["Constanza Hube Portus", "UDI", 0.787, 0.226], ["Álvaro Jofré Cáceres", "PNL", 0.896, 0.444], ["Stephanie Jéldrez Ortiz", "PRCh", 0.968, -0.214], ["Pier Karlezi Hazleby", "PNL", 0.912, 0.41], ["José Antonio Kast Adriasola", "PRCh", 0.937, -0.211], ["Tomás Kast Sommerhoff", "Evópoli", 0.68, 0.12], ["Leandro Kunstmann Collado", "PRCh", 0.909, -0.261], ["Benjamín Lorca Inzunza", "PRCh", 0.941, -0.211], ["Andrea Macías Palma", "PS", -0.803, -0.167], ["Hans Marowski Cuevas", "PNL", 0.907, 0.421], ["Cristian Mella Andaur", "DC", -0.369, 0.503], ["Cristian Menchaca Pinochet", "PRCh", 0.937, -0.197], ["José Montalva Feuerhake", "PPD", -0.511, 0.178], ["Claudia Mora Vega", "RN", 0.674, 0.301], ["Paulina Muñoz Minte", "PNL", 0.908, 0.42], ["Javier Muñoz Riquelme", "DC", -0.396, 0.73], ["Alex Nahuelquin Nahuelquin", "PdG", -0.075, -0.997], ["Ximena Naranjo Pinto", "UDI", 0.641, 0.133], ["Cristian Neira Martínez", "PRCh", 0.93, -0.215], ["Ricardo Neumann Bertín", "UDI", 0.759, 0.253], ["Mario Olavarría Rodríguez", "UDI", 0.754, 0.017], ["Javier Olivares Avendaño", "PdG", 0.206, -0.644], ["Paula Olmos Contreras", "PdG", -0.158, -0.987], ["Francisco Orrego Gutiérrez", "RN", 0.79, 0.093], ["Álvaro Ortiz Vera", "DC", -0.442, 0.628], ["Fabián Ossandón Briceño", "PdG", -0.271, -0.814], ["Zandra Parisi Fernández", "PdG", -0.045, -0.999], ["Patricio Pinilla Valencia", "DC", -0.477, 0.69], ["Rodrigo Ramírez Parra", "RN", 0.704, 0.298], ["Tamara Ramírez Ramírez", "PdG", -0.26, -0.916], ["Claudia Reyes Larenas", "PRCh", 0.91, -0.243], ["Alejandro Riquelme Ducci", "PRCh", 0.934, -0.217], ["José Antonio Rivas Villalobos", "PS", -0.69, -0.13], ["Javiera Rodríguez Pascual", "PRCh", 0.936, -0.222], ["Felipe Ross Correa", "PRCh", 0.943, -0.193], ["Omar Sabat Guzmán", "UDI", 0.724, 0.243], ["Bernardo Salinas Maya", "PC", -0.968, 0.113], ["Macarena Santelices Cañas", "PRCh", 0.898, -0.23], ["Constanza Schonhaut Soto", "FA", -0.844, -0.242], ["Fernando Ugarte Tejeda", "PRCh", 0.935, -0.208], ["Ignacio Urcullú Clèment-Lund", "PRCh", 0.918, -0.207], ["Eileen Urqueta Rojas", "PdG", -0.207, -0.931], ["Tatiana Urrutia Herrera", "FA", -0.826, -0.255], ["Alejandra Valdebenito Torres", "UDI", 0.623, 0.242], ["Guillermo Valdés Carmona", "PdG", -0.13, -0.992], ["Juan Marcelo Valenzuela Henríquez", "PdG", 0.038, -0.955], ["César Valenzuela Maass", "PS", -0.7, -0.178], ["Daniel Valenzuela Salazar", "RN", 0.797, 0.126], ["Diego Vergara Rodríguez", "PRCh", 0.98, -0.197], ["Sebastián Zamora Soto", "PRCh", 0.93, -0.222], ["Fernando Zamorano Peralta", "PPD", -0.533, 0.119]], "Senado 2026-2030": [["Karol Cariola Oliva", "PC", -0.939, 0.055], ["Daniel Núñez Arancibia", "PC", -0.908, -0.379], ["Claudia Pascual Grau", "PC", -0.954, -0.045], ["Diego Ibáñez Cotroneo", "FA", -0.94, -0.341], ["Beatriz Sánchez Muñoz", "FA", -0.971, -0.238], ["Alejandra Sepúlveda Orbenes", "FRVS", -0.874, 0.482], ["Esteban Velásquez Núñez", "FRVS", -0.87, 0.046], ["Danisa Astudillo Peiretti", "PS", -0.85, -0.172], ["Juan Luis Castro González", "PS", -0.841, -0.175], ["Daniella Cicardini Milla", "PS", -0.85, -0.131], ["Alfonso De Urresti Longton", "PS", -0.847, -0.178], ["Fidel Espinoza Sandoval", "PS", -0.84, -0.172], ["Gastón Saavedra Chandía", "PS", -0.848, -0.163], ["Paulina Vodanovic Rojas", "PS", -0.856, -0.316], ["Pedro Araya Guerrero", "PPD", -0.724, 0.245], ["Loreto Carvajal Ambiado", "PPD", -0.825, 0.072], ["Ricardo Celis Araya", "PPD", -0.814, 0.055], ["Ximena Ordenes Neira", "PPD", -0.828, -0.265], ["Vlado Mirosevic Verdugo", "PL", -0.844, -0.031], ["Iván Flores García", "DC", -0.772, 0.158], ["Francisco Huenchumilla Jaramillo", "DC", -0.933, 0.225], ["Yasna Provoste Campillay", "DC", -0.954, 0.086], ["Karim Bianchi Retamales", "IND", -0.642, 0.542], ["Fabiola Campillai Rojas", "IND", -0.981, 0.04], ["Matías Walker Prieto", "Dem", 0.407, 0.913], ["Miguel Ángel Calisto Águila", "Evo", 0.689, -0.291], ["Luciano Cruz-Coke Carvallo", "Evo", 0.846, -0.218], ["Sebastián Keitel Bianchi", "Evo", 0.836, -0.274], ["Andrea Balladares Letelier", "RN", 0.858, 0.077], ["Miguel Ángel Becker Alvear", "RN", 0.9, -0.141], ["Rojo Edwards Silva", "RN", 0.802, 0.11], ["Camila Flores Oporto", "RN", 0.911, -0.02], ["María José Gatica Bertin", "RN", 0.849, -0.198], ["Alejandro Kusanovic Glusevic", "RN", 0.936, -0.351], ["Carlos Ignacio Kuschel Silva", "RN", 0.973, -0.04], ["Enrique Lee Flores", "RN", 0.854, 0.521], ["Andrés Longton Herrera", "RN", 0.843, 0.172], ["Paulina Núñez Urrutia", "RN", 0.791, 0.045], ["Manuel José Ossandón Irarrázabal", "RN", 0.967, -0.253], ["Sergio Gahona Salazar", "UDI", 0.82, 0.033], ["Javier Macaya Danús", "UDI", 0.843, 0.066], ["Iván Moreira Barros", "UDI", 0.814, -0.188], ["Gustavo Sanhueza Dueñas", "UDI", 0.831, 0.037], ["Enrique Van Rysselberghe Herrera", "UDI", 0.858, -0.007], ["Rodolfo Carter Fernández", "PRCh", 0.819, -0.019], ["Arturo Squella Ovalle", "PRCh", 0.993, -0.037], ["Renzo Trisotti Martínez", "PRCh", 0.981, -0.034], ["Ignacio Urrutia Bonilla", "PRCh", 0.965, -0.026], ["Cristian Vial Maceratta", "PRCh", 0.895, 0.037], ["Vanessa Kaiser Barents-Von Hohenhagen", "PNL", 0.942, 0.335]], "Senado 2022-2026": [["Alejandra Sepulveda Orbenes", "IND", 0.761, 0.329], ["Alejandro Kusanovic Glusevic", "IND", -0.925, -0.379], ["Alfonso De Urresti Longton", "PS", 0.877, -0.076], ["Alvaro Elizalde Soto", "IND", 0.688, -0.137], ["Carlos Ignacio Kuschel Silva", "RN", -0.928, 0.075], ["Carmen Gloria Aravena Acuna", "IND", -0.861, 0.47], ["Claudia Pascual Grau", "PC", 0.996, 0.084], ["Daniel Nunez Arancibia", "PC", 0.987, -0.093], ["David Sandoval Plaza", "IND", -0.767, -0.238], ["Enrique Van Rysselberghe Herrera", "UDI", -0.871, -0.329], ["Esteban Velasquez Nunez", "FRVS", 0.801, 0.33], ["Fabiola Campillai Rojas", "IND", 0.938, 0.347], ["Felipe Kast Sommerhoff", "IND", -0.657, -0.215], ["Fidel Espinoza Sandoval", "PS", 0.742, -0.429], ["Francisco Chahuan Chahuan", "IND", -0.74, 0.201], ["Francisco Huenchumilla Jaramillo", "DC", 0.907, 0.212], ["Gaston Saavedra Chandia", "PS", 0.762, -0.307], ["Gustavo Sanhueza Duenas", "UDI", -0.866, -0.21], ["Isabel Allende Bussi", "IND", 0.767, -0.13], ["Ivan Flores Garcia", "DC", 0.522, 0.354], ["Ivan Moreira Barros", "UDI", -0.795, -0.279], ["Jaime Quintana Leal", "IND", 0.79, -0.286], ["Javier Macaya Danus", "UDI", -0.857, -0.309], ["Jorge Soria Quiroga", "IND", 0.808, -0.336], ["Jose Garcia Ruminot", "IND", -0.71, 0.146], ["Jose Miguel Durana Semir", "IND", -0.921, -0.159], ["Jose Miguel Insulza Salinas", "IND", 0.765, -0.342], ["Juan Antonio Coloma Correa", "IND", -0.868, -0.313], ["Juan Castro Prieto", "IND", -0.877, 0.481], ["Juan Ignacio Latorre Riveros", "IND", 0.823, -0.209], ["Juan Luis Castro Gonzalez", "PS", 0.794, -0.257], ["Karim Bianchi Retamales", "IND", 0.498, 0.867], ["Kenneth Pugh Olavarria", "IND", -0.9, 0.215], ["Loreto Carvajal Ambiado", "PPD", 0.8, -0.056], ["Luciano Cruz-Coke Carvallo", "Evo", -0.65, 0.015], ["Luz Eliana Ebensperger Orrego", "IND", -0.894, -0.354], ["Manuel Jose Ossandon Irarrazabal", "RN", -0.656, 0.327], ["Maria Jose Gatica Bertin", "RN", -0.683, 0.083], ["Matias Walker Prieto", "Dem", 0.204, -0.118], ["Paulina Nunez Urrutia", "RN", -0.574, 0.174], ["Paulina Vodanovic Rojas", "PS", 0.796, -0.268], ["Pedro Araya Guerrero", "PPD", 0.633, -0.414], ["Rafael Prohens Espinosa", "IND", -0.789, 0.246], ["Ricardo Lagos Weber", "IND", 0.722, -0.306], ["Rodrigo Galilea Vial", "IND", -0.75, 0.046], ["Rojo Edwards", "IND", -0.945, 0.326], ["Sebastian Keitel Bianchi", "Evo", -0.53, -0.162], ["Sergio Gahona Salazar", "UDI", -0.797, -0.209], ["Tomas De Rementeria Venegas", "IND", 0.784, -0.172], ["Ximena Ordenes Neira", "IND", 0.793, -0.19], ["Ximena Rincon Gonzalez", "IND", -0.104, -0.214], ["Yasna Provoste Campillay", "DC", 0.934, 0.354]]};</script>
+  <script>
+   
+  (function () {
+    var F = window.LANDING_FACTS;
+    if (!F) return;
+    var el = function (id) { return document.getElementById(id); };
+    var PACTO_COL = {
+      'Apruebo Dignidad': '#A10856', 'Frente Amplio': '#4CCAA5',
+      'Socialismo Democrático': '#F20231', 'Centro': '#FFB923',
+      'Chile Vamos': '#2D7DD2', 'Republicanos': '#1B4B8A', 'Independiente': '#9E9E9E'
+    };
+    var col = function (p) { return PACTO_COL[p] || '#9E9E9E'; };
+
+  var PART_COL = {
+    PC:'#8B0000', PS:'#E53935', PPD:'#FF9800', PR:'#795548', PRSD:'#795548',
+    FA:'#1B5E20', FRVS:'#4CAF50', PAH:'#FFC107', DC:'#03A9F4', DEM:'#9C27B0',
+    PL:'#E91E63', LIBERAL:'#E91E63', PDG:'#D500F9', PREP:'#1B4B8A', RN:'#4FC3F7',
+    EVOP:'#26A69A', UDI:'#EF5350', PRCh:'#1B4B8A', IC:'#00695C', PRI:'#9CCC65',
+    RD:'#2E7D32', COMUNES:'#66BB6A', PCS:'#AD1457', PEV:'#8BC34A', PH:'#7E57C2',
+    AMA:'#FFA726', PSC:'#FF5722', PNL:'#FFEB3B', IND:'#9E9E9E'
+  };
+
+  function ptxt(hex) {
+    var h = String(hex || '').replace('#', '');
+    if (h.length !== 6) return '#fff';
+    var c = [0, 2, 4].map(function (i) {
+      var v = parseInt(h.slice(i, i + 2), 16) / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    var L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    
+    return L > 0.179 ? '#1B1C1E' : '#fff';
+  }
+
+  function pcol(p) {
+    if (!p) return '#9E9E9E';
+    if (PART_COL[p]) return PART_COL[p];
+    var u = p.toUpperCase();
+    if (u.slice(0, 2) === 'EV') return '#26A69A';   
+    return PART_COL[u] || '#9E9E9E';                 
+  }
+
+  function initMapaNominate() {
+    var NP = window.NOMINATE_PERIODOS, tabs = document.getElementById('periodoTabs'), cont = document.getElementById('mapaNominate');
+    if (!NP || !tabs || !cont) return;
+    var pers = Object.keys(NP);
+    var W = 900, H = 560, pad = 46;
+    var sx = function (x) { return pad + (x + 1) / 2 * (W - 2 * pad); };
+    var sy = function (y) { return (H - pad) - (y + 1) / 2 * (H - 2 * pad); };
+     
+    function svgPeriodo(per, ancho, alto) {
+      var arr = NP[per] || [], p2 = 26;
+      var x2 = function (x) { return p2 + (x + 1) / 2 * (ancho - 2 * p2); };
+      var y2 = function (y) { return (alto - p2) - (y + 1) / 2 * (alto - 2 * p2); };
+      var s = '<svg viewBox="0 0 ' + ancho + ' ' + alto + '" width="100%" role="img" aria-label="Mapa ' + per + '">';
+      s += '<line x1="' + x2(0) + '" y1="' + p2 + '" x2="' + x2(0) + '" y2="' + (alto - p2) + '" stroke="#dfe4e4" stroke-dasharray="3 3"/>';
+      s += '<line x1="' + p2 + '" y1="' + y2(0) + '" x2="' + (ancho - p2) + '" y2="' + y2(0) + '" stroke="#dfe4e4" stroke-dasharray="3 3"/>';
+      var cen = {};
+      arr.forEach(function (d) { var q = d[1]; cen[q] = cen[q] || { x: 0, y: 0, n: 0 };
+        cen[q].x += d[2]; cen[q].y += d[3]; cen[q].n++; });
+      Object.keys(cen).forEach(function (q) {
+        var c = cen[q];
+        if (c.n >= 6) s += '<text x="' + x2(c.x / c.n).toFixed(1) + '" y="' + y2(c.y / c.n).toFixed(1) +
+          '" text-anchor="middle" font-family="var(--dm)" font-size="15" font-weight="700" fill="' +
+          pcol(q) + '" fill-opacity="0.22">' + q + '</text>';
+      });
+      arr.forEach(function (d) {
+        s += '<circle cx="' + x2(d[2]).toFixed(1) + '" cy="' + y2(d[3]).toFixed(1) +
+          '" r="3.4" fill="' + pcol(d[1]) + '" fill-opacity="0.62"><title>' + d[0] + ' (' + d[1] + ')</title></circle>';
+      });
+      s += '</svg>';
+      return s;
+    }
+
+    var camaras = pers.filter(function (x) { return x.indexOf('Senado') !== 0; });
+    cont.innerHTML = '<div class="mapas-nav">' +
+      '<button type="button" data-d="-1" aria-label="Períodos anteriores">←</button>' +
+      '<button type="button" data-d="1" aria-label="Períodos siguientes">→</button>' +
+      '<span class="mapas-cuenta"></span></div>' +
+      '<div class="mapas-pista">' + camaras.map(function (per) {
+      var sen = 'Senado ' + per;
+      var haySen = !!NP[sen];
+      return '<figure class="mapa-par">' +
+        '<div class="mp-cab">' + per +
+          (haySen ? '' : '<i>solo Cámara</i>') + '</div>' +
+        '<div class="mp-fila">' +
+          '<div class="mp-uno"><span class="mp-rot">Cámara<b>' +
+            (NP[per] || []).length + '</b></span>' + svgPeriodo(per, 360, 300) + '</div>' +
+          (haySen
+            ? '<div class="mp-uno es-senado"><span class="mp-rot">Senado<b>' +
+              NP[sen].length + '</b></span>' + svgPeriodo(sen, 360, 300) + '</div>'
+            : '<div class="mp-vacio">Sin votaciones<br>del Senado<br>antes de 2021</div>') +
+        '</div></figure>';
+    }).join('') + '</div>';
+    if (tabs) tabs.hidden = true;
+
+    var pista = cont.querySelector('.mapas-pista');
+    var cuenta = cont.querySelector('.mapas-cuenta');
+
+    function paso() {
+      var u = pista.firstElementChild;
+      return (u ? u.getBoundingClientRect().width : 420) + 16;
+    }
+    function porVista() {
+      return Math.max(1, Math.round(pista.clientWidth / paso()));
+    }
+    function marcar() {
+      if (!cuenta || !pista.firstElementChild) return;
+      var i = Math.round(pista.scrollLeft / paso());
+      var hasta = Math.min(i + porVista(), camaras.length);
+      cuenta.textContent = (i + 1) + (hasta > i + 1 ? ' – ' + hasta : '') +
+        ' de ' + camaras.length;
+    }
+    cont.querySelector('.mapas-nav').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if (!b) return;
+      var tope = Math.max(0, camaras.length - porVista());
+      var i = Math.round(pista.scrollLeft / paso()) + (+b.getAttribute('data-d'));
+      if (i > tope) i = 0;          
+      if (i < 0) i = tope;
+      pista.scrollTo({ left: i * paso(), behavior: 'smooth' });
+    });
+    pista.addEventListener('scroll', marcar);
+    marcar();
+  }
+
+  window.slideCards = function (dir) {
+    var c = document.getElementById('tourCards');
+    if (!c) return;
+    var paso = (c.firstElementChild ? c.firstElementChild.getBoundingClientRect().width : 306) + 16;
+    var fin = c.scrollWidth - c.clientWidth - 4;
+    
+    var destino = c.scrollLeft + dir * paso;
+    if (destino > fin) destino = 0;
+    if (destino < 0) destino = fin;
+    c.scrollTo({ left: destino, behavior: 'smooth' });
+  };
+
+  (function () {
+    var c = document.getElementById('tourCards');
+    if (!c) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var reloj = null;
+    function partir() { if (!reloj) reloj = setInterval(function () { window.slideCards(1); }, 5200); }
+    function parar() { if (reloj) { clearInterval(reloj); reloj = null; } }
+    ['mouseenter', 'focusin', 'touchstart'].forEach(function (e) { c.addEventListener(e, parar); });
+    ['mouseleave', 'focusout'].forEach(function (e) { c.addEventListener(e, partir); });
+    document.addEventListener('visibilitychange', function () {
+      document.hidden ? parar() : partir();
+    });
+    partir();
+  })();
+
+  var cp = el('curvaPolar');
+  function dibujarCurva() {
+    var f = F.facts, h = F.historico;
+    if (!cp || !h || !h.length) return;
+    var ancho = cp.clientWidth || 1000;
+    var angosto = ancho < 700;
+    var W2 = angosto ? Math.max(320, Math.round(ancho)) : 1000;
+    var H2 = angosto ? 300 : 300;
+    var mL = angosto ? 30 : 40, mB = angosto ? 46 : 40, mT = angosto ? 44 : 20;
+    var tipoChica = angosto ? 11 : 11, tipoCifra = angosto ? 12 : 13;
+    var xw = (W2 - mL - 20) / (h.length - 1);
+
+    var vals = [];
+    h.forEach(function (d) {
+      vals.push(d.bimodalidad);
+      if (d.sin_pdg != null) vals.push(d.sin_pdg);
+    });
+    if (f.senado && f.senado.bimodalidad) vals.push(f.senado.bimodalidad);
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var aire = Math.max(0.04, (hi - lo) * 0.45);
+    var y0 = Math.max(0, lo - aire), y1 = Math.min(1, hi + aire * 0.7);
+    if (y1 - y0 < 0.08) { y0 = Math.max(0, y0 - 0.04); y1 = Math.min(1, y1 + 0.04); }
+
+    var yOf = function (b) { return mT + (1 - (b - y0) / (y1 - y0)) * (H2 - mT - mB); };
+    var xOf = function (i) { return mL + i * xw; };
+    var UMBRAL = 0.555;
+    var s = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Curva de polarización 2002-2026">';
+
+    if (UMBRAL > y0 && UMBRAL < y1) {
+      s += '<line x1="' + mL + '" y1="' + yOf(UMBRAL) + '" x2="' + (W2-20) + '" y2="' + yOf(UMBRAL) + '" stroke="#c8cccc" stroke-dasharray="4 4"/>';
+      s += '<text x="' + mL + '" y="' + (yOf(UMBRAL)-6) + '" font-family="var(--mont)" font-size="' + tipoChica + '" fill="#9aa">umbral bimodal (0,555)</text>';
+    }
+    
+    var pts2 = h.map(function (d, i) { return xOf(i) + ',' + yOf(d.sin_pdg != null ? d.sin_pdg : d.bimodalidad); }).join(' ');
+    s += '<polyline points="' + pts2 + '" fill="none" stroke="#657D81" stroke-width="2" stroke-dasharray="5 4" opacity="0.85"/>';
+    h.forEach(function (d, i) { s += '<circle cx="' + xOf(i) + '" cy="' + yOf(d.sin_pdg != null ? d.sin_pdg : d.bimodalidad) + '" r="3.5" fill="#657D81"/>'; });
+    
+    var pts = h.map(function (d, i) { return xOf(i) + ',' + yOf(d.bimodalidad); }).join(' ');
+    s += '<polyline points="' + pts + '" fill="none" stroke="#A10856" stroke-width="2.5"/>';
+    h.forEach(function (d, i) {
+      s += '<circle cx="' + xOf(i) + '" cy="' + yOf(d.bimodalidad) + '" r="5" fill="#A10856"/>';
+      s += '<text x="' + xOf(i) + '" y="' + (yOf(d.bimodalidad)-12) + '" text-anchor="middle" font-family="var(--dm)" font-size="' + tipoCifra + '" font-weight="700" fill="#1B1C1E">' + d.bimodalidad.toFixed(2).replace('.', ',') + '</text>';
+
+      var mostrar = !angosto || i === 0 || i === h.length - 1;
+      if (mostrar) {
+        var ax = i === 0 ? 'start' : (i === h.length - 1 ? 'end' : 'middle');
+        s += '<text x="' + xOf(i) + '" y="' + (H2-14) + '" text-anchor="' + ax + '" font-family="var(--mont)" font-size="' + tipoChica + '" fill="#657D81">' + d.periodo + '</text>';
+      }
+    });
+    
+    if (f.senado && f.senado.bimodalidad) {
+      var sxx = xOf(h.length - 1), syy = yOf(f.senado.bimodalidad), dd = 6.5;
+      s += '<path d="M' + sxx + ',' + (syy - dd) + ' L' + (sxx + dd) + ',' + syy + ' L' + sxx + ',' + (syy + dd) + ' L' + (sxx - dd) + ',' + syy + ' Z" fill="#FFB923" stroke="#1B1C1E" stroke-width="1.2"/>';
+      s += '<text x="' + (sxx - 12) + '" y="' + (syy + 4) + '" text-anchor="end" font-family="var(--dm)" font-size="' + tipoCifra + '" font-weight="700" fill="#B26A00">' + f.senado.bimodalidad.toFixed(2).replace('.', ',') + '</text>';
+    }
+    
+    var ly1 = angosto ? 14 : mT, ly2 = angosto ? 32 : mT;
+    s += '<g font-family="var(--mont)" font-size="' + tipoChica + '" fill="#657D81">';
+    s += '<line x1="' + mL + '" y1="' + ly1 + '" x2="' + (mL + 30) + '" y2="' + ly1 + '" stroke="#A10856" stroke-width="2.5"/><text x="' + (mL + 36) + '" y="' + (ly1 + 4) + '">toda la Cámara</text>';
+    var x2 = angosto ? mL : mL + 150;
+    s += '<line x1="' + x2 + '" y1="' + ly2 + '" x2="' + (x2 + 30) + '" y2="' + ly2 + '" stroke="#657D81" stroke-width="2" stroke-dasharray="5 4"/><text x="' + (x2 + 36) + '" y="' + (ly2 + 4) + '">sin el PDG</text>';
+    if (f.senado && f.senado.bimodalidad) {
+      var lx = angosto ? mL + 130 : mL + 300;
+      var ly3 = angosto ? 32 : mT;
+      s += '<path d="M' + lx + ',' + (ly3 - 5) + ' L' + (lx + 5) + ',' + ly3 + ' L' + lx + ',' + (ly3 + 5) + ' L' + (lx - 5) + ',' + ly3 + ' Z" fill="#FFB923" stroke="#1B1C1E" stroke-width="1"/><text x="' + (lx + 12) + '" y="' + (ly3 + 4) + '">Senado 2026-2030</text>';
+    }
+    s += '</g>';
+    s += '</svg>';
+    cp.innerHTML = s;
+  }
+  dibujarCurva();
+  (function () {
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(dibujarCurva, 180);
+    });
+  })();
+  if (cp && F.historico && F.historico.length) {
+    var f = F.facts;
+    var nota = el('histNota');
+    if (nota) {
+      var notaSen = '';
+      if (f.senado && f.senado.bimodalidad) {
+        notaSen = ' El <strong>rombo amarillo</strong> es el Senado 2026-2030 con la misma medida: <strong>' +
+          f.senado.bimodalidad.toFixed(2).replace('.', ',') + '</strong>, bastante más polarizado que la Cámara del mismo período (' +
+          (f.polarizacion_actual != null ? f.polarizacion_actual.toFixed(2).replace('.', ',') : '') +
+          ') y casi sin centro: de sus ' + f.senado.n + ' integrantes, ' +
+          (f.senado.centro === 0 ? 'ninguno cae fuera'
+            : f.senado.centro === 1 ? 'solo uno cae fuera'
+            : 'solo ' + f.senado.centro + ' caen fuera') + ' de las dos trincheras.';
+      }
+      nota.innerHTML = 'Cada punto es una legislatura y mide la polarización entre las trincheras (los bandos de izquierda y derecha, sin el centro). La Cámara se mantuvo fuertemente bipolar entre 2002 y 2018, <strong>tocó su mínimo en 2022-2026</strong> y <strong>vuelve a subir en 2026-2030</strong>. La línea punteada excluye además al PDG, que por antisistema no calza en el eje izquierda-derecha; casi no cambia la curva, señal de que el PDG habita el centro y no las trincheras.' + notaSen;
+    }
+    initMapaNominate();
+  }
+  })();
+  </script>
+
+    <footer class="c22skin-foot">
+      <div class="c22skin-grid">
+        <div class="c22skin-marcas">
+          <img class="c22" src="../assets/logo-blanco.svg" alt="C22">
+          <img class="cep" src="../assets/logo-cep-blanco.svg" alt="Centro de Estudios Públicos">
+        </div>
+        <div class="c22skin-menu">
+          <h4>C22</h4>
+          <ul>
+          <li><a href="https://c22cepchile.cl/sobre-c22/">Sobre C22</a></li>
+          <li><a href="https://c22cepchile.cl/personas/">Personas</a></li>
+          <li><a href="https://c22cepchile.cl/analisis-online/">Análisis Online</a></li>
+          <li><a href="https://c22cepchile.cl/categorias_publicaciones/notas-de-investigacion/">Notas de investigación</a></li>
+          <li><a href="https://c22cepchile.cl/publicaciones/">Publicaciones</a></li>
+          <li><a href="https://c22cepchile.cl/eventos-y-noticias/">Eventos y Noticias</a></li>
+            <li><a href="https://c22cepchile.cl/contacto/">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Encuéntranos</h4>
+          <div class="c22skin-dir">
+            Centro de Estudios Públicos,<br>Monseñor Sótero Sanz 162, Providencia,<br>Santiago de Chile. 7500011<br><br>
+            +56 22 328 2400<br><a href="mailto:c22@cepchile.cl">c22@cepchile.cl</a>
+          </div>
+          <h4 style="margin-top:26px">Síguenos</h4>
+          <div class="c22skin-redes">
+          <a href="https://twitter.com/cepchile" target="_blank" rel="noopener">X / Twitter</a>
+          <a href="https://www.instagram.com/cepchile" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.linkedin.com/company/centro-de-estudios-p%C3%BAblicos" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.youtube.com/channel/UCBNm3ldq_kNdQexDGJDWOeQ" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div class="c22skin-menu">
+          <h4>Sitios asociados</h4>
+          <ul>
+          <li><a href="https://www.cepchile.cl">Centro de Estudios Públicos</a></li>
+          <li><a href="https://estudiospublicos.cl/index.php/cep/index">Revista Estudios Públicos</a></li>
+          <li><a href="https://c22cepchile.cl">Monitor Constitucional</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="c22skin-legal">
+        <span>Monitor Legislativo · C22 — Centro de Estudios Públicos</span>
+        <span>Datos de la API de datos abiertos del Congreso Nacional</span>
+      </div>
+    </footer>
+  <script>
+   
+  (function () {
+    var MINIMO = 11;    
+    var DENSO = 0.55;   
+
+    function base(t) {
+      if (!t.getAttribute('data-fs-base')) {
+        t.setAttribute('data-fs-base', t.getAttribute('font-size') || '12');
+      }
+      return parseFloat(t.getAttribute('data-fs-base')) || 12;
+    }
+
+    function ajustar(svg) {
+      var vb = (svg.getAttribute('viewBox') || '').trim().split(/[ ,]+/).map(Number);
+      var ancho = svg.getBoundingClientRect().width;
+      if (!vb[2] || !ancho) return;
+      var esc = ancho / vb[2];
+      if (esc > 1) esc = 1;
+      var apretado = esc < DENSO;
+      svg.querySelectorAll('text').forEach(function (t) {
+        var b = base(t);
+        var clase = t.getAttribute('class') || '';
+         
+        var suelto = /extreme|punto|etiqueta-dato/.test(clase);
+        if (suelto && apretado) { t.style.display = 'none'; return; }
+         
+        var eje = /axis-label/.test(clase);
+        t.style.display = '';
+        var meta = Math.max(b, (eje && apretado ? MINIMO * 0.8 : MINIMO) / esc);
+        t.setAttribute('font-size', meta.toFixed(1));
+        var largo = 0;
+        try { largo = t.getComputedTextLength(); } catch (e) { largo = 0; }
+        var cabe = vb[2] * 0.94;
+        if (largo > cabe) {
+          t.setAttribute('font-size', Math.max(b, meta * cabe / largo).toFixed(1));
+        }
+      });
+      encajar(svg, vb);
+      descontar(svg);
+    }
+
+    function encajar(svg, vb) {
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var previa = t.getAttribute('transform') || '';
+        if (previa && !/^translate\(-?[\d.]+ 0\)$/.test(previa)) return;
+        t.removeAttribute('transform');
+        var c;
+        try { c = t.getBBox(); } catch (e) { return; }
+        if (!c || !c.width) return;
+        var dx = 0;
+        if (c.x < vb[0] + 1) dx = vb[0] + 1 - c.x;
+        else if (c.x + c.width > vb[0] + vb[2] - 1) dx = vb[0] + vb[2] - 1 - (c.x + c.width);
+        if (Math.abs(dx) > 0.5) t.setAttribute('transform', 'translate(' + dx.toFixed(1) + ' 0)');
+      });
+    }
+
+    function descontar(svg) {
+      var visibles = [];
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.style.display === 'none') return;
+        var caja = t.getBoundingClientRect();
+        if (!caja.width) return;
+        var clase = t.getAttribute('class') || '';
+        visibles.push({
+          el: t, caja: caja,
+          eje: /axis-label/.test(clase),
+          suelto: /extreme|punto|etiqueta-dato/.test(clase)
+        });
+      });
+      function choca(a, o) {
+        return a.caja.left < o.caja.right - 1 && o.caja.left < a.caja.right - 1 &&
+               a.caja.top < o.caja.bottom - 1 && o.caja.top < a.caja.bottom - 1;
+      }
+      var firmes = visibles.filter(function (v) { return !v.eje && !v.suelto; });
+      function acomodar(lista) {
+        lista.forEach(function (a) {
+          var i;
+          for (i = 0; i < firmes.length; i++) {
+            if (choca(a, firmes[i])) { a.el.style.display = 'none'; return; }
+          }
+          firmes.push(a);
+        });
+      }
+      acomodar(visibles.filter(function (v) { return v.eje; }));
+      acomodar(visibles.filter(function (v) { return v.suelto; }));
+    }
+
+    function pasada() {
+      document.querySelectorAll('svg[viewBox]').forEach(ajustar);
+    }
+    var t;
+    function agendar() { clearTimeout(t); t = setTimeout(pasada, 120); }
+    window.addEventListener('load', agendar);
+    window.addEventListener('resize', agendar);
+    if (window.MutationObserver) {
+      try {
+        new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
+      } catch (e) {}
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', agendar);
+    } else { agendar(); }
+  })();
+  </script>
+
+</body>
+
+</html>
