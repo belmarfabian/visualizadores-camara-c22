@@ -175,13 +175,13 @@ button, select, input {
   color: var(--cep-blue);
 }
 
-.hero {
+.seg-hero {
   padding: 48px 0 24px;
   text-align: left;
   border-bottom: 1px solid var(--soft-line);
   margin-bottom: 40px;
 }
-.hero h1 {
+.seg-hero h1 {
   font-family: var(--dm);
   font-size: 38px;
   font-weight: 700;
@@ -190,7 +190,7 @@ button, select, input {
   line-height: 1.15;
   margin-bottom: 12px;
 }
-.hero p {
+.seg-hero p {
   color: var(--muted);
   font-family: var(--mont);
   font-size: 16px;
@@ -1079,7 +1079,7 @@ body.profile-open .deputy-panel {
   display: none !important;
 }
 
-.hero p,
+.seg-hero p,
 .methodology-section .details-content p,
 .synthesis-col p,
 .prose-justify {
@@ -1088,7 +1088,7 @@ body.profile-open .deputy-panel {
 }
 
 @media (max-width: 600px) {
-  .hero p,
+  .seg-hero p,
   .methodology-section .details-content p,
   .synthesis-col p,
   .prose-justify {
@@ -1117,6 +1117,14 @@ html, body {
   display: none !important;
 }
 
+</style>
+  <style>
+
+main.container { width: auto !important; }
+.seg-hero { position: relative; }
+.seg-hero .seg-guia { position: absolute; top: 44px; right: 0; }
+@media (max-width: 700px) { .seg-hero .seg-guia { position: static; margin: 0 0 12px; } }
+@media (max-width: 700px) { .metrics-row { grid-template-columns: repeat(2, 1fr) !important; } }
 </style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
@@ -1162,30 +1170,13 @@ window.addEventListener("message", function(event) {
   }
 });
 </script>
-
-<div style="line-height:0"><img src="../assets/ribbon.svg" alt="" style="width:100%;height:6px;display:block"></div>
-
-<div style="border-bottom:1px solid var(--border);background:var(--bg-white)">
-  <div style="max-width:1200px;margin:0 auto;padding:18px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
-    <div style="display:flex;align-items:center;gap:18px">
-      <a href="https://c22cepchile.cl" target="_blank" rel="noopener" aria-label="C22 CEP"><img src="../assets/logo-color.svg" alt="C22" style="height:54px;width:auto;display:block"></a>
-      <a href="https://www.cepchile.cl" target="_blank" rel="noopener" aria-label="CEP"><img src="../assets/logo-cep-color.svg" alt="CEP" style="height:36px;width:auto;display:block"></a>
-      <span style="color:var(--border);font-size:22px;font-weight:200">|</span>
-      <span style="font-family:var(--mont);font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:1.5px;line-height:1.4">Métodos digitales<br>Cámara de Diputadas y Diputados</span>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center">
-      <button class="c22-tour-btn" onclick="C22Tour.restart()"><span class="c22-tour-btn-ico">?</span> Cómo funciona</button>
-      <a href="../" style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-2);padding:8px 16px;border:1px solid var(--border);border-radius:50px;text-decoration:none;transition:all .25s ease-in-out" onmouseover="this.style.borderColor='var(--text-2)';this.style.color='var(--dark)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-2)'">← Portal</a>
-    </div>
-  </div>
-</div>
-
 <main class="container">
 
-  <section class="hero">
+  <section class="seg-hero">
     <div style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);display:inline-flex;align-items:center;gap:10px;margin-bottom:14px">
-      <span style="display:inline-block;width:24px;height:2px;background:var(--green)"></span>Visualizador 4 · Seguridad
+      <span style="display:inline-block;width:24px;height:2px;background:var(--green)"></span>Análisis · Seguridad
     </div>
+    <button class="c22-tour-btn seg-guia" onclick="C22Tour.restart()"><span class="c22-tour-btn-ico">?</span> Cómo funciona</button>
     <h1>Seguridad en la Cámara: discurso y votación</h1>
     <p>Un visualizador para explorar cómo se relacionan las posiciones discursivas estimadas con el modelo TBIP y las posiciones de votación estimadas con NOMINATE en debates sobre seguridad.</p>
     <p style="font-size: 13px; color: var(--muted); margin-top: 12px; font-style: italic;">Nota: Los ejes muestran posiciones relativas en modelos estadísticos y no equivalen automáticamente a izquierda/derecha ni a ideología general.</p>
@@ -1204,7 +1195,7 @@ window.addEventListener("message", function(event) {
         <div class="metric-lbl">Votaciones de Seguridad</div>
       </div>
       <div class="metric-item m-4">
-        <div class="metric-num" id="metric-pearson">r = 0.631</div>
+        <div class="metric-num" id="metric-pearson">r = 0,631</div>
         <div class="metric-lbl">Asociación TBIP-NOMINATE</div>
       </div>
     </div>
@@ -1362,8 +1353,6 @@ window.addEventListener("message", function(event) {
   </section>
 </main>
 
-<div style="line-height:0;margin-top:28px"><img src="../assets/ribbon.svg" alt="" style="width:100%;height:4px;display:block"></div>
-
 <footer class="c22skin-fuera" style="background:var(--dark);color:rgba(255,255,255,0.75);padding:50px 5% 30px;font-family:var(--mont)">
   <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,1fr));gap:50px;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,0.1)">
     <div>
@@ -1475,7 +1464,7 @@ function initUI() {
   document.getElementById('metric-matched').textContent = DATA.metrics.n_matched;
   document.getElementById('metric-docs').textContent = DATA.metrics.n_documents.toLocaleString('es-CL');
   document.getElementById('metric-votes').textContent = DATA.metrics.n_votaciones;
-  document.getElementById('metric-pearson').textContent = `r = ${DATA.metrics.pearson_r.toFixed(3)}`;
+  document.getElementById('metric-pearson').textContent = `r = ${dec(DATA.metrics.pearson_r, 3)}`;
   document.getElementById('footer-gen-date').textContent = `Generado el: ${DATA.generated}`;
 
   renderSynthesisGrid();
@@ -1887,7 +1876,7 @@ function drawTrayectorias() {
            <div style="position: absolute; top: 7px; left: ${nomPct}%; width: 10px; height: 10px; border: 2px solid ${color}; background: white; border-radius: 2px; transform: translateX(-50%); z-index: 3;"></div>
        </div>
        <div style="width: 60px; flex-shrink: 0; text-align: right;">
-           <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;">${m.abs_divergencia.toFixed(2)}</span>
+           <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;">${dec(m.abs_divergencia, 2)}</span>
        </div>
     </div>
     `;
@@ -1927,7 +1916,7 @@ function drawTbipAxis() {
   for (let x = xMin; x <= xMax; x += ticksStep) {
     const tx = scaleX(x);
     svg.innerHTML += `<line x1="${tx}" y1="${cy - 4}" x2="${tx}" y2="${cy + 4}" stroke="rgba(101,125,129,0.2)" stroke-width="1"/>`;
-    svg.innerHTML += `<text x="${tx}" y="${cy + 18}" text-anchor="middle" fill="#657D81" font-size="10">${x.toFixed(2)}</text>`;
+    svg.innerHTML += `<text x="${tx}" y="${cy + 18}" text-anchor="middle" fill="#657D81" font-size="10">${dec(x, 2)}</text>`;
   }
 
   svg.innerHTML += `<text x="${margin.l}" y="${H - margin.b + 40}" text-anchor="start" fill="var(--muted)" font-size="12">Polo Negativo</text>`;
@@ -2016,7 +2005,7 @@ function drawNominateAxis() {
   for (let x = xMin; x <= xMax; x += ticksStep) {
     const tx = scaleX(x);
     svg.innerHTML += `<line x1="${tx}" y1="${cy - 4}" x2="${tx}" y2="${cy + 4}" stroke="rgba(101,125,129,0.2)" stroke-width="1"/>`;
-    svg.innerHTML += `<text x="${tx}" y="${cy + 18}" text-anchor="middle" fill="#657D81" font-size="10">${x.toFixed(2)}</text>`;
+    svg.innerHTML += `<text x="${tx}" y="${cy + 18}" text-anchor="middle" fill="#657D81" font-size="10">${dec(x, 2)}</text>`;
   }
 
   svg.innerHTML += `<text x="${margin.l}" y="${H - margin.b + 40}" text-anchor="start" fill="var(--muted)" font-size="12">Polo Negativo</text>`;
@@ -2090,8 +2079,8 @@ function renderGridView() {
               <div class="axis-line"></div>
               <div class="zero-line"></div>
               <div class="connector" style="left:${leftPct}%; width:${widthPct}%;"></div>
-              <div class="marker tbip" style="left:${50 + (tbipNorm/4)*88}%;" title="Eje Discurso TBIP: ${p.tbip_mean.toFixed(2)}"></div>
-              <div class="marker nominate" style="left:${50 + (nomNorm/4)*88}%;" title="Eje Voto NOMINATE: ${p.nominate_mean.toFixed(2)}"></div>
+              <div class="marker tbip" style="left:${50 + (tbipNorm/4)*88}%;" title="Eje Discurso TBIP: ${dec(p.tbip_mean, 2)}"></div>
+              <div class="marker nominate" style="left:${50 + (nomNorm/4)*88}%;" title="Eje Voto NOMINATE: ${dec(p.nominate_mean, 2)}"></div>
             </div>
           </div>
         `;
@@ -2101,9 +2090,9 @@ function renderGridView() {
         <div class="pacto-name"><span class="dot" style="background:${color}"></span>${p.pacto}</div>
         ${p.n_warning ? '<div style="margin:8px 0 0; padding:6px 10px; background:var(--warn-bg); border-left:2px solid #FFB923; color:var(--warn-text); font-size:11px; border-radius:4px;">Muestra reducida: interpretar con cautela</div>' : ''}
         <div class="stat-row" style="margin-top:12px;"><span class="lbl">Miembros</span><span class="val" style="font-weight:700;">${p.n}</span></div>
-        <div class="stat-row"><span class="lbl">Media Discurso (TBIP)</span><span class="val">${p.tbip_mean != null ? p.tbip_mean.toFixed(3) : '—'}</span></div>
-        <div class="stat-row"><span class="lbl">Media Voto (NOMINATE)</span><span class="val">${p.nominate_mean != null ? p.nominate_mean.toFixed(3) : '—'}</span></div>
-        <div class="stat-row"><span class="lbl">Brecha promedio</span><span class="val" style="font-weight:700;">${p.divergencia_mean != null ? p.divergencia_mean.toFixed(3) : '—'}</span></div>
+        <div class="stat-row"><span class="lbl">Media Discurso (TBIP)</span><span class="val">${p.tbip_mean != null ? dec(p.tbip_mean, 3) : '—'}</span></div>
+        <div class="stat-row"><span class="lbl">Media Voto (NOMINATE)</span><span class="val">${p.nominate_mean != null ? dec(p.nominate_mean, 3) : '—'}</span></div>
+        <div class="stat-row"><span class="lbl">Brecha promedio</span><span class="val" style="font-weight:700;">${p.divergencia_mean != null ? dec(p.divergencia_mean, 3) : '—'}</span></div>
         ${visualAxisHtml}
       `;
       grid.appendChild(card);
@@ -2217,15 +2206,15 @@ function showScatterTooltip(e, id) {
     <span style="font-size:11.5px; color:#657D81; display:block; margin-bottom:6px;">${m.partido || 'Indep.'} · ${m.pacto}</span>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">TBIP (z):</span>
-      <span>${m.tbip_z.toFixed(2)}</span>
+      <span>${dec(m.tbip_z, 2)}</span>
     </div>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">NOMINATE (z):</span>
-      <span>${m.nominate_z.toFixed(2)}</span>
+      <span>${dec(m.nominate_z, 2)}</span>
     </div>
     <div style="display:flex; justify-content:space-between; margin-top:4px; border-top:1px solid rgba(101,125,129,0.2); padding-top:4px;">
       <span style="color:#657D81">Brecha (|div|):</span>
-      <span style="font-weight:700; color:${isLejos ? '#F20231' : (isCerca ? '#4CCAA5' : '#ffffff')}">${m.abs_divergencia.toFixed(2)}</span>
+      <span style="font-weight:700; color:${isLejos ? '#F20231' : (isCerca ? '#4CCAA5' : '#ffffff')}">${dec(m.abs_divergencia, 2)}</span>
     </div>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">Nivel:</span>
@@ -2246,11 +2235,11 @@ function showTbipTooltip(e, id) {
     <span style="font-size:11.5px; color:#657D81; display:block; margin-bottom:6px;">${m.partido} · ${m.pacto}</span>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">Posición (theta):</span>
-      <span>${m.tbip.toFixed(3)}</span>
+      <span>${dec(m.tbip, 3)}</span>
     </div>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">Incertidumbre (sigma):</span>
-      <span>${m.sigma_x.toFixed(4)}</span>
+      <span>${dec(m.sigma_x, 4)}</span>
     </div>
   `;
   showTT(e, html);
@@ -2265,7 +2254,7 @@ function showNominateTooltip(e, id) {
     <span style="font-size:11.5px; color:#657D81; display:block; margin-bottom:6px;">${m.partido} · ${matched?.pacto || 'Sin pacto'}</span>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">NOMINATE 1D:</span>
-      <span>${m.nominate_1d.toFixed(3)}</span>
+      <span>${dec(m.nominate_1d, 3)}</span>
     </div>
     <div style="display:flex; justify-content:space-between; margin-top:2px;">
       <span style="color:#657D81">Votos Válidos:</span>
@@ -2295,7 +2284,8 @@ function hideTooltip() {
   TT.innerHTML = '';
 }
 
-function fmt(v, d=3) { return v != null && isFinite(v) ? v.toFixed(d) : '—'; }
+function fmt(v, d=3) { return v != null && isFinite(v) ? dec(v, d) : '—'; }
+function dec(v, d) { return Number(v).toFixed(d).replace('.', ','); }
 
 function selectMember(id) {
   if (selectedMemberId === id) {
@@ -2363,8 +2353,8 @@ function updateSidebar() {
           <div class="axis-line"></div>
           <div class="zero-line"></div>
           <div class="connector" style="left:${leftPct}%; width:${widthPct}%;"></div>
-          <div class="marker tbip" style="left:${scale(tbipNorm)}%;" title="Estandarizado Discurso TBIP (z): ${m.tbip_z.toFixed(2)}"></div>
-          <div class="marker nominate" style="left:${scale(nomNorm)}%;" title="Estandarizado Voto NOMINATE (z): ${m.nominate_z.toFixed(2)}"></div>
+          <div class="marker tbip" style="left:${scale(tbipNorm)}%;" title="Estandarizado Discurso TBIP (z): ${dec(m.tbip_z, 2)}"></div>
+          <div class="marker nominate" style="left:${scale(nomNorm)}%;" title="Estandarizado Voto NOMINATE (z): ${dec(m.nominate_z, 2)}"></div>
         </div>
         <div class="visual-comparison-labels">
           <span>Polo Bajo (z)</span>
@@ -2381,9 +2371,9 @@ function updateSidebar() {
   detailsHtml += `<div class="info-box"><h4>Posiciones en Modelos</h4>`;
   if (m && m.tbip != null) {
     detailsHtml += `
-      <div class="info-row"><span class="lbl">Discurso TBIP (theta)</span><span class="val">${m.tbip.toFixed(3)}</span></div>
-      <div class="info-row"><span class="lbl">TBIP Estandarizado (z)</span><span class="val">${m.tbip_z.toFixed(2)}</span></div>
-      <div class="info-row"><span class="lbl">Incertidumbre (sigma)</span><span class="val">${m.sigma_x.toFixed(4)}</span></div>
+      <div class="info-row"><span class="lbl">Discurso TBIP (theta)</span><span class="val">${dec(m.tbip, 3)}</span></div>
+      <div class="info-row"><span class="lbl">TBIP Estandarizado (z)</span><span class="val">${dec(m.tbip_z, 2)}</span></div>
+      <div class="info-row"><span class="lbl">Incertidumbre (sigma)</span><span class="val">${dec(m.sigma_x, 4)}</span></div>
       <div class="info-row"><span class="lbl">Rank Discurso TBIP</span><span class="val">#${m.rank_tbip} / 88</span></div>
     `;
   } else {
@@ -2392,8 +2382,8 @@ function updateSidebar() {
 
   if (nom && nom.nominate_1d != null) {
     detailsHtml += `
-      <div class="info-row"><span class="lbl">Voto NOMINATE 1D</span><span class="val">${nom.nominate_1d.toFixed(3)}</span></div>
-      ${m?.nominate_z != null ? `<div class="info-row"><span class="lbl">NOMINATE Estandarizado (z)</span><span class="val">${m.nominate_z.toFixed(2)}</span></div>` : ''}
+      <div class="info-row"><span class="lbl">Voto NOMINATE 1D</span><span class="val">${dec(nom.nominate_1d, 3)}</span></div>
+      ${m?.nominate_z != null ? `<div class="info-row"><span class="lbl">NOMINATE Estandarizado (z)</span><span class="val">${dec(m.nominate_z, 2)}</span></div>` : ''}
       <div class="info-row"><span class="lbl">Votos Válidos</span><span class="val">${nom.n_votos} / 142</span></div>
       <div class="info-row"><span class="lbl">Rank Voto NOMINATE</span><span class="val">#${nom.rank_nominate} / 157</span></div>
     `;
@@ -2448,8 +2438,8 @@ function updateSidebar() {
     detailsHtml += `
       <div class="info-box">
         <h4>Nivel de alineamiento discurso-voto</h4>
-        <div class="info-row"><span class="lbl">Divergencia (z)</span><span class="val">${m.divergencia.toFixed(3)}</span></div>
-        <div class="info-row"><span class="lbl">Brecha absoluta</span><span class="val" style="font-weight:800; color:${clColor}">${m.abs_divergencia.toFixed(3)}</span></div>
+        <div class="info-row"><span class="lbl">Divergencia (z)</span><span class="val">${dec(m.divergencia, 3)}</span></div>
+        <div class="info-row"><span class="lbl">Brecha absoluta</span><span class="val" style="font-weight:800; color:${clColor}">${dec(m.abs_divergencia, 3)}</span></div>
         <div class="info-row"><span class="lbl">Lectura</span><span class="val" style="font-weight:700; color:${clColor}">${lectura}</span></div>
         ${interpHTML}
       </div>
@@ -2458,8 +2448,8 @@ function updateSidebar() {
     detailsHtml += `
       <div class="info-box">
         <h4>Nivel de alineamiento discurso-voto</h4>
-        <div class="info-row"><span class="lbl">Divergencia (z)</span><span class="val">${m.divergencia.toFixed(3)}</span></div>
-        <div class="info-row"><span class="lbl">Brecha absoluta</span><span class="val" style="font-weight:800; color:${clColor}">${m.abs_divergencia.toFixed(3)}</span></div>
+        <div class="info-row"><span class="lbl">Divergencia (z)</span><span class="val">${dec(m.divergencia, 3)}</span></div>
+        <div class="info-row"><span class="lbl">Brecha absoluta</span><span class="val" style="font-weight:800; color:${clColor}">${dec(m.abs_divergencia, 3)}</span></div>
         <div class="info-row"><span class="lbl">Lectura</span><span class="val" style="font-weight:700; color:${clColor}">${lectura}</span></div>
         ${m.caso_incierto ? '' : interpHTML}
       </div>
@@ -2493,7 +2483,7 @@ function updateSidebar() {
       const color = DATA.colors[n.pacto] || '#657D81';
       return `<div style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0; cursor:pointer;" onclick="selectMember('${n.id}')">
         <span style="font-weight:600; color:var(--cep-blue);"><span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:${color}; margin-right:6px;"></span>${n.name}</span>
-        <span style="color:var(--muted);">dist: ${n.dist.toFixed(3)}</span>
+        <span style="color:var(--muted);">dist: ${dec(n.dist, 3)}</span>
       </div>`;
     }).join('');
 
@@ -2562,7 +2552,7 @@ function renderEditorialRankings() {
         <div class="editorial-ranking-name">${m.name}</div>
         <div class="editorial-ranking-meta">${m.partido} · ${m.pacto}</div>
       </div>
-      <div class="editorial-ranking-badge divergent">Brecha ${m.abs_divergencia.toFixed(2)}</div>
+      <div class="editorial-ranking-badge divergent">Brecha ${dec(m.abs_divergencia, 2)}</div>
     </div>
   `).join('');
 
@@ -2573,7 +2563,7 @@ function renderEditorialRankings() {
         <div class="editorial-ranking-name">${m.name}</div>
         <div class="editorial-ranking-meta">${m.partido} · ${m.pacto}</div>
       </div>
-      <div class="editorial-ranking-badge coincident">Brecha ${m.abs_divergencia.toFixed(2)}</div>
+      <div class="editorial-ranking-badge coincident">Brecha ${dec(m.abs_divergencia, 2)}</div>
     </div>
   `).join('');
 }
@@ -2641,11 +2631,11 @@ function renderTechNote() {
 
     <p style="margin-top:12px;"><strong>Estadísticas Derivadas Calculadas:</strong></p>
     <ul class="method-list">
-      <li>Correlación de Pearson pre-calculada: r = ${m.pearson_r.toFixed(4)}</li>
-      <li>Correlación de Spearman pre-calculada: rho = ${m.spearman_r.toFixed(4)}</li>
+      <li>Correlación de Pearson pre-calculada: r = ${dec(m.pearson_r, 4)}</li>
+      <li>Correlación de Spearman pre-calculada: rho = ${dec(m.spearman_r, 4)}</li>
       <li>Estandarización de variables: z = (x - mean) / sd (realizada en la base cruzada)</li>
       <li>Estadísticas por Pacto: Calculadas a partir de la muestra cruzada de 88 diputadas y diputados.</li>
-      <li>Clasificación de Divergencia: Terciles de |Divergencia| (t1 = ${DATA.divergence_thresholds.t1.toFixed(3)}, t2 = ${DATA.divergence_thresholds.t2.toFixed(3)}).</li>
+      <li>Clasificación de Divergencia: Terciles de |Divergencia| (t1 = ${dec(DATA.divergence_thresholds.t1, 3)}, t2 = ${dec(DATA.divergence_thresholds.t2, 3)}).</li>
     </ul>
 
     ${w.length ? `<p style="margin-top:12px; color:var(--danger-text);"><strong>Advertencias del Generador:</strong></p><ul class="method-list">` + w.map(x => `<li>${x}</li>`).join('') + '</ul>' : ''}
