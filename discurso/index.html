@@ -220,6 +220,11 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
     }
 
   .net-node text { paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+
+@media (max-width: 560px) {
+  .metrics > .metric:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  #networkSvg { height: 440px; }
+}
 </style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
@@ -981,8 +986,9 @@ function frase(t) {
 function buildNetwork() {
   const svgEl = document.getElementById('networkSvg');
   if (!svgEl || typeof d3 === 'undefined') return;
-  
-  const W = 1000, H = 520;
+
+  const angosto = (svgEl.clientWidth || 1000) < 600;
+  const W = angosto ? 460 : 1000, H = angosto ? 500 : 520;
 
   const nodes = NODES.map(n => ({ id: n.id, pr: n.pr }));
   const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]));
@@ -1048,16 +1054,19 @@ function buildNetwork() {
     .text(d => d.id);
 
   netSimulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(95).strength(0.45))
-    .force('charge', d3.forceManyBody().strength(-340))
+    .force('link', d3.forceLink(links).id(d => d.id).distance(angosto ? 72 : 95).strength(0.45))
+    .force('charge', d3.forceManyBody().strength(angosto ? -230 : -340))
     .force('center', d3.forceCenter(W / 2, H / 2))
-    .force('x', d3.forceX(W / 2).strength(0.04))
+    .force('x', d3.forceX(W / 2).strength(angosto ? 0.05 : 0.04))
     .force('y', d3.forceY(H / 2).strength(0.06))
-    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 22))
+    .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + (angosto ? 18 : 22)))
     .alphaDecay(0.0228)
     .velocityDecay(0.4);
 
   netSimulation.on('tick', () => {
+    
+    const mx = angosto ? 44 : 50, my = 24;
+    nodes.forEach(d => { d.x = Math.max(mx, Math.min(W - mx, d.x)); d.y = Math.max(my, Math.min(H - my, d.y)); });
     link
       .attr('x1', d => d.source.x)
       .attr('y1', d => d.source.y)
