@@ -358,7 +358,13 @@
       position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
       overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
     }
-  </style>
+
+    .ver-mas { display: block; margin: 26px auto 0; font-family: var(--mont); font-size: 13px;
+      font-weight: 600; padding: 11px 22px; border-radius: 50px; border: 1px solid var(--border);
+      background: #fff; color: var(--dark); cursor: pointer; }
+    .ver-mas:hover { border-color: var(--dark); }
+    .ver-mas[hidden] { display: none; }
+</style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
   <script src="../assets/c22-anim.js" defer></script>
@@ -560,6 +566,8 @@
 
       var estado = { q: '', camara: '', partido: '' };
 
+      var PASO = 40, limite = PASO, claveFiltro = '';
+
       function filtrar() {
         var q = norm(estado.q);
         return P.filter(function (f) {
@@ -573,12 +581,24 @@
 
       function pintarLista() {
         var res = filtrar();
+        var clave = estado.q + '|' + estado.camara + '|' + estado.partido;
+        if (clave !== claveFiltro) { claveFiltro = clave; limite = PASO; }
+        var mas = el('verMas');
+        if (!mas) {
+          mas = document.createElement('button'); mas.id = 'verMas'; mas.type = 'button';
+          mas.className = 'ver-mas';
+          mas.addEventListener('click', function () { limite += PASO; pintarLista(); });
+          el('grilla').parentNode.appendChild(mas);
+        }
+        var resto = Math.max(0, res.length - limite);
+        mas.hidden = resto === 0;
+        mas.textContent = 'Ver ' + Math.min(PASO, resto) + ' más · quedan ' + resto;
         el('conteo').textContent = res.length + (res.length === 1 ? ' persona' : ' personas');
         if (!res.length) {
           el('grilla').innerHTML = '<div class="vacio">No encontramos a nadie con esa búsqueda.</div>';
           return;
         }
-        el('grilla').innerHTML = res.map(function (f) {
+        el('grilla').innerHTML = res.slice(0, limite).map(function (f) {
           return '<a class="p-card" href="#' + f.camara + f.id + '">' +
             cara(f, 'cara') +
             '<div class="nom">' + esc(f.corto) + '</div>' +
