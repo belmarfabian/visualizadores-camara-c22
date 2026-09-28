@@ -1,0 +1,65 @@
+/* Ajustes de la portada sobre sus estilos propios y c22-skin.css.
+   Criterios: el color marca dónde estás o significa algo (voto), no decora;
+   nada se corta; el texto respira. Se carga al final del <head>. */
+
+/* Título: tres líneas equilibradas, sin palabras huérfanas */
+.hero h1 {
+  font-size: clamp(36px, 4.3vw, 58px) !important;
+  letter-spacing: -1.5px !important;
+  line-height: 1.02 !important;
+  text-wrap: balance;
+}
+
+/* Mazo de la última votación: las cartas de atrás son solo papel */
+.mazo .carta.atras > * { visibility: hidden !important; }
+.mazo .carta.atras { background: #fff; }
+.vivo-res {
+  text-transform: none !important; letter-spacing: 0 !important;
+  font-size: 13.5px !important; font-weight: 600 !important; line-height: 1.45;
+}
+.vivo-link { display: inline-block; margin-top: 8px; }
+
+/* Fila de fechas: se desvanece al borde en vez de cortarse */
+.car-track {
+  -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent);
+          mask-image: linear-gradient(90deg, #000 82%, transparent);
+  padding-right: 18px !important;
+}
+
+/* Tarjetas de herramientas: un solo acento, el de la marca */
+.hero-fila .card.yellow, .hero-fila .card.purple, .hero-fila .card.green {
+  --accent: var(--green); --accent-txt: var(--green-txt, #0E7A5F);
+}
+.hero-fila .ct-tag {
+  background: transparent !important; color: var(--green-txt, #0E7A5F) !important;
+  padding: 0 !important; display: inline-flex; align-items: center; gap: 8px;
+  letter-spacing: 1.8px !important; font-size: 11px !important;
+}
+.hero-fila .ct-tag::before { content: ''; width: 18px; height: 2px; background: var(--green); }
+.hero-fila .ct-mas { color: var(--dark) !important; border-bottom: 2px solid var(--green); padding-bottom: 1px; }
+
+/* Votos que llaman la atención: la persona sin caja propia dentro de la tarjeta */
+.rar .quien {
+  border: 0 !important; background: transparent !important; padding: 0 !important;
+  border-radius: 0 !important;
+}
+.rar .quien + .quien { margin-top: 4px; padding-top: 14px !important; border-top: 1px solid var(--border-light) !important; }
+.rar .acto b { color: var(--dark); }
+
+/* Análisis: la etiqueta como ceja, no como píldora magenta */
+.an-tag {
+  background: transparent !important; color: var(--green-txt, #0E7A5F) !important;
+  padding: 0 !important; border-radius: 0 !important;
+  display: inline-flex !important; align-items: center; gap: 10px;
+  font-family: var(--mont) !important; font-size: 11px !important; letter-spacing: 2px !important;
+}
+.an-tag::before { content: ''; width: 24px; height: 2px; background: var(--green); }
+
+/* Doce cifras en el celular: dos columnas, no doce pantallas de scroll */
+@media (max-width: 600px) {
+  .facts-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .facts-grid .fact { padding: 14px 14px 12px !important; }
+  .facts-grid .fnum { font-size: 28px !important; }
+  .facts-grid .flab { font-size: 12.5px !important; line-height: 1.4 !important; }
+  .facts-grid .flab strong, .facts-grid .flab b { font-size: inherit !important; }
+}
