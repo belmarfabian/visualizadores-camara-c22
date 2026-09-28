@@ -91,3 +91,9 @@
 .c22-aviso-fecha { margin-top: 12px; padding: 10px 14px; border-left: 3px solid var(--yellow);
   background: rgba(255,185,35,.10); border-radius: 0 8px 8px 0; color: var(--text-2); max-width: 76ch; }
 .c22-aviso-fecha b { color: var(--text); }
+
+/* Qué se votó (ficha de la votación) */
+.c22-que-linea { margin: 0 0 6px; font: 600 12px/1.5 var(--mont); letter-spacing: .6px; text-transform: uppercase; color: var(--green); }
+.c22-que-art { margin: 0 0 8px; font: 500 15px/1.5 var(--mont); color: var(--text); max-width: 90ch; }
+.c22-que-mats { display: flex; flex-wrap: wrap; gap: 6px; }
+.c22-que-mat { font: 600 11px/1 var(--mont); color: var(--text-2); background: var(--border-light); padding: 6px 10px; border-radius: 50px; }

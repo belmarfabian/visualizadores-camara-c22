@@ -1969,7 +1969,7 @@ C22Tour.define('hemiciclo', [
         }).join('') + '</div></div>';
     }
 
-    el.innerHTML =
+    el.innerHTML = queSeVoto(v) +
       '<div><h3>Quién ganó y quién perdió <small>posición mayoritaria de cada bloque frente al resultado</small></h3><div class="c22-bloques">' + htmlBl + '</div></div>' +
       '<div><h3>Votos inesperados <small>' + (ie.debil ? 'no aplica' : (ie.errores.length || 'ninguno')) + apre + '</small></h3>' + htmlIe +
       (ie.errores.length ? '<p class="c22-nota">Votaron distinto de lo que predice su posición W-NOMINATE: el corte que mejor separa el sí del no deja a estas personas del lado contrario (clasificación óptima de Poole). No indica por qué.</p>' : '') + '</div>' +
@@ -1984,6 +1984,32 @@ C22Tour.define('hemiciclo', [
     ultimo = ie; marcarInesperados(ie);
   }
   var ultimo = null;
+
+  /* Qué se votó exactamente (assets/fichas-votacion.json, pipeline/fichas_votacion.py):
+     etapa, artículo, trámite, sesión, materias, iniciativa. Solo Cámara. */
+  var FICHAS = null, pidiendo = false;
+  function queSeVoto(v) {
+    if (chamberMode === 'senado') return '';
+    if (!FICHAS && !pidiendo) {
+      pidiendo = true;
+      fetch('../assets/fichas-votacion.json').then(function (r) { return r.ok ? r.json() : {}; })
+        .then(function (d) { FICHAS = d || {}; render(); }).catch(function () { FICHAS = {}; });
+    }
+    var f = FICHAS && FICHAS[String(v.id)];
+    if (!f) return '';
+    var linea = [f.etapa, f.tramite, f.sesion_num ? 'Sesión ' + f.sesion_num + (f.sesion_tipo ? ' ' + f.sesion_tipo.toLowerCase() : '') : null]
+      .filter(Boolean).map(esc).join(' · ');
+    var art = f.articulo && f.articulo !== f.etapa ? '<p class="c22-que-art">' + esc(f.articulo) + '</p>' : '';
+    var mat = f.materia ? '<p class="c22-que-art">' + esc(f.materia) + '</p>' : '';
+    var chips = (f.materias || []).map(function (m) { return '<span class="c22-que-mat">' + esc(m.charAt(0) + m.slice(1).toLowerCase()) + '</span>'; }).join('');
+    var quien = [];
+    if (f.iniciativa) quien.push(f.iniciativa + (f.origen ? ' · origen: ' + f.origen : ''));
+    if (f.ministerios && f.ministerios.length) quien.push('Patrocina: ' + f.ministerios.join(', '));
+    if (f.autores && f.autores.length) quien.push('Autores: ' + f.autores.join(', ') + (f.n_autores > f.autores.length ? ' y ' + (f.n_autores - f.autores.length) + ' más' : ''));
+    return '<div class="c22-que"><h3>Qué se votó</h3>' + (linea ? '<p class="c22-que-linea">' + linea + '</p>' : '') + art + mat +
+      (chips ? '<div class="c22-que-mats">' + chips + '</div>' : '') +
+      (quien.length ? '<p class="c22-nota" style="margin-top:8px">' + quien.map(esc).join(' · ') + '</p>' : '') + '</div>';
+  }
 
   function votoDeSeat(s) { var k = H.deputyIdx[s.id]; return k === undefined ? -1 : H.heatmap[k][currentVoteIdx]; }
 
