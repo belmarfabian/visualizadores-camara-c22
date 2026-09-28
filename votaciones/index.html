@@ -152,7 +152,22 @@ svg text { user-select: none; }
       .tab-group-label, .chip-count { font-size: 11px; }
       .coal-chip { font-size: 11px; }
     }
-  </style>
+
+@media (max-width: 560px) {
+  #metricsBand > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  #tabs .tab-group { display: flex; flex-wrap: nowrap; overflow-x: auto; width: 100%;
+    padding: 0 0 4px; border-right: none; scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+  #tabs .tab-group::-webkit-scrollbar { display: none; }
+  #tabs .tab { white-space: nowrap; flex: 0 0 auto; }
+  #tabs .tab-group-label { flex: 0 0 auto; }
+  #tabs { flex: 1 1 100% !important; }
+  #depSearch { width: 100%; }
+  #depSearch:not(#x) { }
+  nav > div:has(> #depSearch) { width: 100% !important; }
+}
+</style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
   <script src="../assets/c22-anim.js" defer></script>
@@ -451,7 +466,7 @@ function render() {
     { val: totalVotosEmitidos.toLocaleString("es-CL"), lab: "Votos emitidos", color: "var(--yellow)" },
     chamberMode === 'senado'
       ? { val: '—', lab: "Varianza eje 1", color: "var(--text-m)" }
-      : { val: `${DATA.explainedVariance.dim1}%`, lab: "Varianza eje 1", color: "var(--purple)" },
+      : { val: `${String(DATA.explainedVariance.dim1).replace('.', ',')}%`, lab: "Varianza eje 1", color: "var(--purple)" },
     { val: periodoStr, lab: `Período · ${fechas.length} fechas`, color: "var(--green)", small: true },
   ];
   document.getElementById("metricsBand").innerHTML = metrics.map(m =>
