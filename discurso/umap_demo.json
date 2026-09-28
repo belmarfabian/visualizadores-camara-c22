@@ -1,0 +1,122 @@
+[
+  {
+    "orador": "Bravo, M.",
+    "partido": "UDI",
+    "color": "#F20231",
+    "tema": "ambiente",
+    "umap_x": -1.2372623682022095,
+    "umap_y": -11.142013549804688,
+    "umap_z": 2.0837979316711426,
+    "snippet": "Necesitamos proteger nuestros ecosistemas y reducir la contaminacion ambiental urgente."
+  },
+  {
+    "orador": "Mulet",
+    "partido": "FRVS",
+    "color": "#FFB923",
+    "tema": "ambiente",
+    "umap_x": -1.8206862211227417,
+    "umap_y": -11.587014198303223,
+    "umap_z": 2.2288575172424316,
+    "snippet": "El cambio climatico exige medidas decididas para preservar bosques y agua."
+  },
+  {
+    "orador": "Mirosevic",
+    "partido": "PL",
+    "color": "#A10856",
+    "tema": "ambiente",
+    "umap_x": -1.53903067111969,
+    "umap_y": -10.897897720336914,
+    "umap_z": 2.670199155807495,
+    "snippet": "Los ecosistemas patagonicos sufren por la falta de regulacion ambiental."
+  },
+  {
+    "orador": "Delgado, V.",
+    "partido": "RD",
+    "color": "#4CCAA5",
+    "tema": "ambiente",
+    "umap_x": -1.3515390157699585,
+    "umap_y": -10.264525413513184,
+    "umap_z": 2.139111280441284,
+    "snippet": "Sin areas protegidas, la biodiversidad de Chile esta en peligro real."
+  },
+  {
+    "orador": "Schalper",
+    "partido": "RN",
+    "color": "#4CCAA5",
+    "tema": "economia",
+    "umap_x": -2.880136013031006,
+    "umap_y": -11.396751403808594,
+    "umap_z": 2.169625759124756,
+    "snippet": "El crecimiento economico depende de incentivar la inversion privada y publica."
+  },
+  {
+    "orador": "Cid, S.",
+    "partido": "UDI",
+    "color": "#F20231",
+    "tema": "economia",
+    "umap_x": -2.441549062728882,
+    "umap_y": -11.475058555603027,
+    "umap_z": 1.3897745609283447,
+    "snippet": "La inflacion afecta a las familias y debe controlarse con politica monetaria."
+  },
+  {
+    "orador": "Araya",
+    "partido": "UDI",
+    "color": "#F20231",
+    "tema": "economia",
+    "umap_x": -3.3110389709472656,
+    "umap_y": -11.193018913269043,
+    "umap_z": 1.6110366582870483,
+    "snippet": "Necesitamos reformas fiscales que incentiven el empleo y la productividad."
+  },
+  {
+    "orador": "Grau",
+    "partido": "GOB",
+    "color": "#657D81",
+    "tema": "economia",
+    "umap_x": -3.1000816822052,
+    "umap_y": -11.886722564697266,
+    "umap_z": 1.7345054149627686,
+    "snippet": "El presupuesto publico requiere disciplina y control del gasto fiscal."
+  },
+  {
+    "orador": "Weisse",
+    "partido": "RN",
+    "color": "#4CCAA5",
+    "tema": "seguridad",
+    "umap_x": -2.3278629779815674,
+    "umap_y": -9.844290733337402,
+    "umap_z": 1.7030668258666992,
+    "snippet": "La delincuencia y el crimen organizado golpean a las comunas mas vulnerables."
+  },
+  {
+    "orador": "Bernales",
+    "partido": "PDG",
+    "color": "#FFB923",
+    "tema": "seguridad",
+    "umap_x": -2.4161438941955566,
+    "umap_y": -9.876765251159668,
+    "umap_z": 2.4686262607574463,
+    "snippet": "Las policias necesitan mas recursos para combatir el narcotrafico y los homicidios."
+  },
+  {
+    "orador": "Lee",
+    "partido": "IND",
+    "color": "#657D81",
+    "tema": "seguridad",
+    "umap_x": -1.7895464897155762,
+    "umap_y": -10.528285026550293,
+    "umap_z": 1.3858529329299927,
+    "snippet": "La inseguridad ciudadana es la principal preocupacion de los chilenos."
+  },
+  {
+    "orador": "Melo",
+    "partido": "PC",
+    "color": "#A10856",
+    "tema": "seguridad",
+    "umap_x": -3.040757656097412,
+    "umap_y": -10.110611915588379,
+    "umap_z": 2.0228943824768066,
+    "snippet": "Hay que reformar el codigo penal para responder al aumento del crimen organizado."
+  }
+]
