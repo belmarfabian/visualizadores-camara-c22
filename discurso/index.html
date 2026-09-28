@@ -228,6 +228,7 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
 </style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
+<link rel="stylesheet" href="../assets/c22-componentes.css">
   <script src="../assets/c22-anim.js" defer></script>
 </head>
 <body>
@@ -319,11 +320,9 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
 <header class="site-header">
   <div class="top" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
     <div style="flex:1;min-width:280px">
-      <div class="label" title="Tercer visualizador de la serie: monitor del discurso parlamentario (NLP, embeddings, UMAP)" style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--purple);display:inline-flex;align-items:center;gap:10px">
-        <span style="display:inline-block;width:24px;height:2px;background:var(--purple)"></span>Visualizador 3 · Discurso
-      </div>
+      <p class="c22-ceja">Monitor legislativo <span>/</span> Discurso</p>
       <h1>Monitor de discurso legislativo</h1>
-      <p class="sub">Análisis del discurso parlamentario chileno del periodo legislativo 2026-2030: frecuencias léxicas, bigramas y trigramas, análisis de sentimiento, TF-IDF por orador y red semántica con PageRank. Las sesiones se procesan desde el Diario de Sesiones publicado en camara.cl.</p>
+      <p class="sub c22-bajada">Análisis del discurso parlamentario chileno del periodo legislativo 2026-2030: frecuencias léxicas, bigramas y trigramas, análisis de sentimiento, TF-IDF por orador y red semántica con PageRank. Las sesiones se procesan desde el Diario de Sesiones publicado en camara.cl.</p>
     </div>
     <button class="c22-tour-btn" onclick="C22Tour.restart()"><span class="c22-tour-btn-ico">?</span> Cómo funciona</button>
   </div>
@@ -1535,5 +1534,22 @@ C22Tour.define('discurso', [
   })();
   </script>
 
+
+<script>
+/* Aviso de actualidad: el Monitor de discurso depende de los PDF del Diario de
+   Sesiones, que hoy se procesan a mano. Se dice cuál es la última sesión. */
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    var ses = (window.SESIONES_DATA && SESIONES_DATA.sesiones) || [];
+    var f = ses.map(function (x) { return x.meta && x.meta.fecha; }).filter(Boolean).sort().pop();
+    if (!f) return;
+    var N = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'], p = f.split('-');
+    var el = document.createElement('p');
+    el.className = 'c22-nota c22-aviso-fecha';
+    el.innerHTML = '<b>Última sesión procesada: ' + (+p[2]) + ' ' + N[+p[1] - 1] + ' ' + p[0] + '.</b> Las sesiones posteriores se incorporan a medida que se procesan sus Diarios de Sesiones.';
+    var sub = document.querySelector('.site-header .sub'); if (sub) sub.insertAdjacentElement('afterend', el);
+  } catch (e) {}
+});
+</script>
 </body>
 </html>

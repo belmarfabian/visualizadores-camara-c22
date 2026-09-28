@@ -169,6 +169,8 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
   </style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
+<link rel="stylesheet" href="../assets/c22-componentes.css">
+<script src="../assets/c22-lectura-voto.js"></script>
   <script src="../assets/c22-anim.js" defer></script>
 </head>
 <body>
@@ -259,29 +261,23 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
 
 <div style="max-width:1200px;margin:0 auto;padding:0 5%">
 
-<header style="padding:40px 0 32px">
-  <div title="Primer visualizador de la serie: hemiciclo de votaciones individuales" style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);display:inline-flex;align-items:center;gap:10px">
-    <span style="display:inline-block;width:24px;height:2px;background:var(--green)"></span>Visualizador 1 · Hemiciclo
-  </div>
-  <h1 style="font-family:var(--dm);font-size:42px;font-weight:700;letter-spacing:-.5px;line-height:1.05;margin:14px 0 14px;color:var(--dark)">
-    Hemiciclo: votaciones individuales
-  </h1>
-  <p id="hemiIntro" style="font-family:var(--mont);font-size:16px;color:var(--text-2);line-height:1.55;font-weight:400;text-align:justify;hyphens:auto">
-    Visualización de cada votación en la Cámara de Diputadas y Diputados. Los 155 escaños se agrupan en tres bloques (oposición, otros, oficialismo) ordenados de izquierda a derecha según afinidad ideológica. Es una <strong>representación simplificada</strong> del orden real del hemiciclo: las posiciones no replican la disposición física exacta de cada banca, sino que buscan facilitar la lectura ideológica de cada votación.
-  </p>
+<header class="c22-cabecera">
+  <p class="c22-ceja">Monitor legislativo <span>/</span> Hemiciclo</p>
+  <h1>Hemiciclo: votaciones individuales</h1>
+  <p id="hemiIntro" class="c22-bajada">Visualización de cada votación en la Cámara de Diputadas y Diputados. Los 155 escaños se agrupan en tres bloques (oposición, otros, oficialismo) ordenados de izquierda a derecha según afinidad ideológica. Es una <strong>representación simplificada</strong> del orden real del hemiciclo: las posiciones no replican la disposición física exacta de cada banca, sino que buscan facilitar la lectura ideológica de cada votación.</p>
 </header>
 
-<div style="padding:0 0 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<div class="c22-meta">
   <span style="font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-m)">Corporación:</span>
   <div id="tourChamber" style="display:inline-flex;background:var(--bg-white);border:1px solid var(--border);border-radius:50px;padding:3px;gap:0">
     <button id="chamberCamara" onclick="setChamber('camara')" class="chamber-btn active" style="padding:6px 16px;font-family:var(--dm);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border:none;border-radius:50px;cursor:pointer;background:var(--dark);color:#fff;transition:all 180ms ease">Cámara <span style="opacity:.7;font-weight:500" id="chamberCamaraN">155</span></button>
     <button id="chamberSenado" onclick="setChamber('senado')" class="chamber-btn" style="padding:6px 16px;font-family:var(--dm);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border:none;border-radius:50px;cursor:pointer;background:transparent;color:var(--text-2);transition:all 180ms ease">Senado <span style="opacity:.7;font-weight:500" id="chamberSenadoN">50</span></button>
   </div>
   <span id="chamberInfo" style="font-family:var(--mont);font-size:11px;color:var(--text-m);font-style:italic"></span>
-  <button class="c22-tour-btn" style="margin-left:auto" onclick="C22Tour.restart()"><span class="c22-tour-btn-ico">?</span> Cómo funciona</button>
+  <button class="c22-tour-btn" onclick="C22Tour.restart()"><span class="c22-tour-btn-ico">?</span> Cómo funciona</button>
 </div>
 
-<nav style="padding:0 0 18px">
+<nav class="c22-vistas">
   <div id="mainTabs" style="display:flex;gap:0;flex-wrap:wrap">
     <button class="tab-btn active" id="tabHemi" onclick="setMainTab('hemi')">Hemiciclo</button>
     <button class="tab-btn" id="tabRank" onclick="setMainTab('ranking')">Ranking de votaciones reñidas</button>
@@ -300,6 +296,7 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
   <button id="modeVote" class="mode-btn active" onclick="setMode('vote')" aria-label="Colorear puntos según voto del diputado">Por voto</button>
   <button id="modeCoal" class="mode-btn" onclick="setMode('coalition')" aria-label="Colorear puntos según coalición">Por coalición</button>
   <button id="modeOrder" class="mode-btn" onclick="setMode('order')" aria-label="Reordenar puntos en bloques según el voto">Por bloques</button>
+  <button id="modeInesp" class="mode-btn" onclick="toggleInesperados()" aria-pressed="false" title="Marca a quienes votaron distinto de lo que predice su posición en el eje">Votos inesperados</button>
   <button id="cbBtn" class="mode-btn" onclick="toggleColorblind()" aria-pressed="false" aria-label="Versión colorblind: colores de voto aptos para daltonismo" title="Versión colorblind (colores de voto aptos para daltonismo)" style="margin-left:auto;padding:5px 11px;font-size:15px;line-height:1">◐</button>
 </div>
 
@@ -327,6 +324,8 @@ select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
     <span class="legend-item" data-vote-key="2" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:#FFB923;width:9px;height:9px"></span>Abstención</span>
     <span class="legend-item" data-vote-key="-1" style="display:inline-flex;align-items:center;gap:5px;transition:transform 600ms cubic-bezier(.4,0,.2,1),opacity 300ms ease;will-change:transform"><span class="legend-dot" style="background:rgba(101,125,129,0.25);width:9px;height:9px"></span>Ausente</span>
   </div>
+
+  <div id="votoLectura" class="c22-lectura"></div>
 
   <div id="partidosLeyenda" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border-light)"></div>
 
@@ -1903,7 +1902,9 @@ C22Tour.define('hemiciclo', [
   var t = setInterval(function () {
     intentos++;
     try {
-      var lista = (typeof H_CAMARA_DATA !== 'undefined' && H_CAMARA_DATA.votes) || [];
+      // c=senado abre el Senado (enlaces compartidos desde esa corporacion).
+      if (/[?&]c=senado/.test(location.search) && typeof setChamber === 'function' && chamberMode !== 'senado') setChamber('senado');
+      var lista = (typeof H !== 'undefined' && H.votes) || [];
       for (var i = 0; i < lista.length; i++) {
         if (String(lista[i].id) === m[1]) { setVote(i); clearInterval(t); return; }
       }
@@ -1911,6 +1912,113 @@ C22Tour.define('hemiciclo', [
     } catch (e) {}
     if (intentos > 24) clearInterval(t);
   }, 250);
+})();
+</script>
+<script>
+/* Lectura de la votación (c22-lectura-voto.js): quién perdió, votos inesperados
+   y el proyecto completo. Se engancha a setVote/paintSeats sin tocarlos. */
+(function () {
+  if (!window.C22LecturaVoto) return;
+  var L = window.C22LecturaVoto;
+  var marcar = false;
+  var VCOLS = { 1: 'var(--green)', 0: 'var(--red)', 2: 'var(--yellow)' };
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+  function nombreCorto(n) { var p = String(n).split(' '); return p.length > 2 ? p.slice(0, p.length - 1).join(' ') : n; }
+
+  function render() {
+    var el = document.getElementById('votoLectura'); if (!el || typeof H === "undefined") return;
+    var j = currentVoteIdx, v = H.votes[j];
+    var bl = L.bloques(H, j), hist = L.derrotas(H);
+    var cam = chamberMode === 'senado' ? 'Senado' : 'Cámara';
+
+    var htmlBl = L.BLOQUES.filter(function (b) { return bl[b].n; }).map(function (b) {
+      var x = bl[b], h = hist[b];
+      var ins = x.pos === null ? '<span class="c22-insignia neutro">Sin posición</span>'
+        : x.perdio ? '<span class="c22-insignia perdio">Perdió</span>' : '<span class="c22-insignia gano">Ganó</span>';
+      var pos = x.pos === null ? 'Dividido o sin votos' : (x.pos === 1 ? 'Mayoría a favor' : 'Mayoría en contra');
+      return '<div><div class="nom">' + b + ' ' + ins + '</div>' +
+        '<div class="pos">' + pos + ' · ' + x.si + ' sí, ' + x.no + ' no' + (x.ab ? ', ' + x.ab + ' abst.' : '') + '</div>' +
+        '<div class="hist">En el período perdió ' + h.perdio + ' de ' + h.tomo + ' votaciones (' + pct(h.perdio, h.tomo) + '%)</div></div>';
+    }).join('');
+
+    var ie = L.inesperados(H, j);
+    var htmlIe;
+    if (!ie.minoria) {
+      htmlIe = '<p class="c22-nota">Votación sin votos en contra (o sin votos a favor): no hay un corte que predecir.</p>';
+    } else if (ie.apre < 0.6) {
+      // Con un ajuste pobre, los "errores" son del modelo y no de las personas.
+      htmlIe = '<p class="c22-nota">El eje izquierda-derecha explica poco esta votación: la división no siguió esa línea, así que no se marcan votos individuales como inesperados.</p>';
+      ie = { errores: [], apre: ie.apre, minoria: ie.minoria, debil: true };
+    } else if (!ie.errores.length) {
+      htmlIe = '<p class="c22-nota">Nadie votó contra lo que predice su posición en el eje: la votación se ordena de izquierda a derecha sin excepciones.</p>';
+    } else {
+      htmlIe = '<div class="c22-chips">' + ie.errores.map(function (i) {
+        var s = H.seats[i], x = votoDeSeat(s);
+        return '<button class="c22-chip" data-seat="' + i + '"><i style="background:' + (VCOLS[x] || '#ccc') + '"></i>' + esc(nombreCorto(s.nombre)) + ' <small>' + esc(s.partido_code || '') + '</small></button>';
+      }).join('') + '</div>';
+    }
+    var apre = ie.apre === null ? '' : ' · el eje explica el ' + Math.round(ie.apre * 100) + '% de la división';
+
+    var mismos = L.mismoBoletin(H, j), htmlPr = '';
+    if (mismos.length > 1) {
+      htmlPr = '<div><h3>El proyecto completo <small>boletín ' + esc(L.boletinDe(v)) + ' · ' + mismos.length + ' votaciones en la ' + cam + '</small></h3><div class="c22-chips">' +
+        mismos.map(function (k) {
+          var w = H.votes[k], ok = /aprob/i.test(w.resultado || '');
+          return '<button class="c22-chip' + (k === j ? ' on' : '') + '" data-voto="' + k + '"><i style="background:' + (ok ? 'var(--green)' : 'var(--red)') + '"></i>' + esc(fechaLarga(w.fecha)) + ' <small>' + w.totalSi + '–' + w.totalNo + '</small></button>';
+        }).join('') + '</div></div>';
+    }
+
+    el.innerHTML =
+      '<div><h3>Quién ganó y quién perdió <small>posición mayoritaria de cada bloque frente al resultado</small></h3><div class="c22-bloques">' + htmlBl + '</div></div>' +
+      '<div><h3>Votos inesperados <small>' + (ie.debil ? 'no aplica' : (ie.errores.length || 'ninguno')) + apre + '</small></h3>' + htmlIe +
+      (ie.errores.length ? '<p class="c22-nota">Votaron distinto de lo que predice su posición W-NOMINATE: el corte que mejor separa el sí del no deja a estas personas del lado contrario (clasificación óptima de Poole). No indica por qué.</p>' : '') + '</div>' +
+      htmlPr;
+
+    el.querySelectorAll('[data-seat]').forEach(function (b) {
+      b.addEventListener('click', function () { var s = H.seats[+b.dataset.seat]; if (s && window.showDetail) showDetail(s); });
+    });
+    el.querySelectorAll('[data-voto]').forEach(function (b) {
+      b.addEventListener('click', function () { setVote(+b.dataset.voto); });
+    });
+    ultimo = ie; marcarInesperados(ie);
+  }
+  var ultimo = null;
+
+  function votoDeSeat(s) { var k = H.deputyIdx[s.id]; return k === undefined ? -1 : H.heatmap[k][currentVoteIdx]; }
+
+  function marcarInesperados(ie) {
+    if (!marcar) return;
+    (ie || ultimo || { errores: [] }).errores.forEach(function (i) {
+      var c = document.getElementById('seat-' + i); if (!c) return;
+      c.setAttribute('stroke', '#1B1C1E'); c.setAttribute('stroke-width', '7'); c.setAttribute('opacity', '1');
+    });
+  }
+
+  window.toggleInesperados = function () {
+    marcar = !marcar;
+    var b = document.getElementById('modeInesp');
+    if (b) { b.classList.toggle('active', marcar); b.setAttribute('aria-pressed', String(marcar)); }
+    paintSeats(); marcarInesperados();
+  };
+
+  // Enlace compartible: la dirección guarda la votación que se está mirando.
+  function recordar() {
+    try {
+      var v = H.votes[currentVoteIdx]; if (!v) return;
+      var u = new URL(location.href);
+      u.searchParams.set('v', v.id); u.searchParams.set('i', currentVoteIdx);
+      if (chamberMode === 'senado') u.searchParams.set('c', 'senado'); else u.searchParams.delete('c');
+      history.replaceState(null, '', u);
+    } catch (e) {}
+  }
+
+  // setVote corre dentro de una View Transition (asincrona): se engancha a
+  // updateSummary, que setVote llama por nombre dentro de esa misma transicion.
+  var _upd = updateSummary, _paint = paintSeats;
+  updateSummary = function () { _upd.apply(this, arguments); render(); recordar(); };
+  paintSeats = function () { _paint.apply(this, arguments); marcarInesperados(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
 })();
 </script>
 </body>
