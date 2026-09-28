@@ -9,6 +9,16 @@
   padding-right: max(5%, calc((100% - var(--banda, 1160px)) / 2)) !important;
 }
 
+/* La cabecera ya no crece con la pantalla: dentro de la banda se usa siempre
+   la versión compacta del menú (la de c22-skin bajo 1560 px) y sin 'Buscar',
+   que ahí no cabe. Sin esto, sobre 1600 px el menú se montaba sobre Contacto. */
+@media (min-width: 1291px) {
+  .c22skin-head { gap: 22px; }
+  .c22skin-nav { gap: 13px; }
+  .c22skin-nav a { font-size: 13px; }
+  .c22skin-buscar { display: none; }
+}
+
 /* ── Cabecera de página ── */
 .c22-cabecera { padding: 48px 0 26px; }
 .c22-ceja {
