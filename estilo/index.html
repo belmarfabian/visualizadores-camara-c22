@@ -56,7 +56,8 @@
 <link rel="stylesheet" href="../assets/c22.css">
 <style>
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
-  .wrap { max-width:1000px; margin:0 auto; padding:0 5%; }
+  .wrap { max-width:none; margin:0; padding:0 max(5%, calc((100% - var(--banda, 1160px)) / 2)); }  /* la banda común */
+  .wrap p, .wrap li { max-width: 76ch; }
   h1 { font-size:clamp(30px,4.4vw,46px); line-height:1.1; letter-spacing:-.5px; margin:14px 0 12px; }
   h2 { font-size:26px; letter-spacing:-.3px; margin:0 0 6px; }
   h3 { font-size:16px; margin:26px 0 10px; }
@@ -91,6 +92,7 @@
 </style>
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
+<link rel="stylesheet" href="../assets/c22-componentes.css">
   <script src="../assets/c22-anim.js" defer></script>
 </head>
 <body>
@@ -121,9 +123,9 @@
       </div>
     </nav>
 
-<div class="c22-ribbon"><img src="../assets/ribbon.svg" alt=""></div>
+<div class="c22-ribbon c22skin-fuera"><img src="../assets/ribbon.svg" alt=""></div>
 
-<div class="c22-brandbar">
+<div class="c22-brandbar c22skin-fuera">
   <div class="inner">
     <div class="marca">
       <a href="https://c22cepchile.cl" target="_blank" rel="noopener" aria-label="C22 CEP"><img class="logo-c22" src="../assets/logo-color.svg" alt="C22"></a>
@@ -137,8 +139,8 @@
 
 <div class="wrap">
 
-  <header class="c22skin-fuera" style="padding:44px 0 10px">
-    <div class="c22-eyebrow">Documento interno · Referencia</div>
+  <header class="c22-cabecera" style="padding-bottom:10px">
+    <p class="c22-ceja">Documento interno <span>/</span> Manual de estilo</p>
     <h1>Manual de estilo del Monitor Legislativo</h1>
     <p class="lead">Las decisiones estéticas y de lenguaje que rigen las cuatro páginas de la plataforma.
       Esta página está construida con el CSS real del sitio (<code>assets/c22.css</code>), así que lo que se ve
@@ -280,17 +282,19 @@
     <h2>Estructura de página</h2>
     <p>Toda página de la plataforma sigue el mismo orden vertical. Un lector que aprende a moverse en el
       hemiciclo debe reconocer de inmediato dónde está todo en el panel de votaciones.</p>
-    <pre>ribbon (6px)
-barra de marca      logos C22 + CEP · «Monitor Legislativo / Congreso Nacional» · ← Portal
-encabezado          eyebrow verde · h1 · párrafo de contexto
-controles           selector de corporación · pestañas · pills de modo
-contenido           la visualización y sus paneles
-ribbon (4px)
-footer              marca + SODAS · Productos · Recursos · Equipo</pre>
+    <pre>cabecera C22        la del sitio c22cepchile.cl (c22-skin): logo, secciones, Monitor activo
+secciones           pastilla flotante: Portada · Hemiciclo · Votaciones · Discurso · Legisladores · Rankings
+encabezado          ceja verde con ruta («Monitor legislativo / Hemiciclo») · h1 · bajada
+metadatos           corporación · datos al … · Cómo funciona
+vistas              pestañas con subrayado verde (el mismo de «MONITOR» en la cabecera)
+contenido           cifras · la visualización · su lectura · pie con fuente y descargas
+pie C22             marca + SODAS · C22 · Encuéntranos · Sitios asociados</pre>
 
-    <h3>Ancho y aire</h3>
-    <p>Contenido a <strong>1200px</strong> máximo, con <code>padding</code> lateral de 5%. Las secciones se
-      separan con 40-50px verticales. El texto de lectura no pasa de 70 caracteres por línea.</p>
+    <h3>Un solo ancho</h3>
+    <p>Cabecera, contenido y pie comparten los mismos bordes: la banda de <strong>1160&nbsp;px</strong>
+      (<code>--banda</code>), que bajo 1290&nbsp;px cae a un margen del 5%. Ninguna página ni sección usa
+      otro ancho; el texto largo se limita por largo de línea (76 caracteres), no achicando la columna.
+      Las reglas viven en <code>assets/c22-componentes.css</code>.</p>
 
     <h3>Botón «Cómo funciona»</h3>
     <p>Cada página tiene su guía paso a paso (<code>assets/c22-tour.js</code>), accesible desde el botón
@@ -348,6 +352,24 @@ footer              marca + SODAS · Productos · Recursos · Equipo</pre>
     </ul>
     <p>Cada visualización declara su cobertura: cuántas votaciones, qué período, qué corporación y con qué
       fecha de corte. Un gráfico sin ese pie no se publica.</p>
+
+    <h3>Reglas agregadas en septiembre de 2026</h3>
+    <ul>
+      <li><strong>Cifras en tinta.</strong> Los números grandes van en negro salvo que el color signifique algo
+        (a favor, en contra, abstención). Nunca un amarillo o un morado de adorno.</li>
+      <li><strong>«Figura 1» solo en análisis firmados</strong> (Polarización, Seguridad, notas de investigación).
+        En las herramientas interactivas el gráfico abre directo con su título.</li>
+      <li><strong>Pocos datos.</strong> Un porcentaje calculado sobre menos de 150 votaciones lleva el aviso
+        «pocos datos · n»; una asistencia de 0 dice «sin votos».</li>
+      <li><strong>Votos inesperados.</strong> Solo se marcan personas si el eje explica al menos el 60% de la
+        división (APRE); si no, se dice que la votación no siguió la línea izquierda-derecha.</li>
+      <li><strong>Pacto y bloque no son lo mismo.</strong> «Lealtad a su pacto» mide contra el pacto electoral;
+        «fuera de su bloque», contra oposición, otros u oficialismo del hemiciclo.</li>
+      <li><strong>Enlaces que se comparten.</strong> La dirección guarda lo que se está mirando (votación,
+        pestaña, personas, variable) para que un enlace copiado abra lo mismo.</li>
+      <li><strong>Actualidad a la vista.</strong> Si una página no está al día con el resto, lo dice arriba
+        con la fecha de su último dato.</li>
+    </ul>
   </section>
 
   <section class="blk" id="accesibilidad">

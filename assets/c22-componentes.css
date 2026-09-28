@@ -1,0 +1,99 @@
+/* Componentes compartidos del Monitor Legislativo, con el lenguaje de
+   c22cepchile.cl. Solo tokens de c22-tokens.css. El color de acento marca
+   dónde está uno (ceja, pestaña activa, enlaces) o un significado fijo
+   (voto, partido); no decora. Va después de c22-skin.css. */
+
+/* ── Un solo ancho: cabecera y pie siguen la banda del contenido ── */
+.c22skin-head, .c22skin-foot {
+  padding-left: max(5%, calc((100% - var(--banda, 1160px)) / 2)) !important;
+  padding-right: max(5%, calc((100% - var(--banda, 1160px)) / 2)) !important;
+}
+
+/* ── Cabecera de página ── */
+.c22-cabecera { padding: 48px 0 26px; }
+.c22-ceja {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 16px;
+  font-family: var(--mont); font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+}
+.c22-ceja::before { content: ''; flex: 0 0 24px; height: 2px; background: var(--green); }
+.c22-ceja span { color: var(--text-m); font-weight: 500; }
+.c22-cabecera h1 {
+  font-family: var(--dm); font-size: clamp(30px, 4.2vw, 44px); line-height: 1.08;
+  letter-spacing: -0.02em; font-weight: 700; color: var(--dark); margin: 0 0 16px;
+}
+.c22-bajada {
+  font-family: var(--mont); font-size: 16px; line-height: 1.65; color: var(--text-2);
+  max-width: 76ch; margin: 0; text-align: left !important; hyphens: manual !important;
+}
+.c22-meta {
+  display: flex; align-items: center; gap: 12px 18px; flex-wrap: wrap; padding: 0 0 18px;
+  font-family: var(--mont); font-size: 12px; color: var(--text-2);
+}
+.c22-meta .c22-tour-btn { margin-left: auto; }
+
+/* ── Pestañas de vista: subrayado verde, como la barra del C22 ── */
+.c22-vistas { border-bottom: 1px solid var(--border); margin-bottom: 22px; }
+.c22-vistas .tab-btn { padding: 14px 0 12px !important; margin-right: 28px; }
+.c22-vistas .tab-btn.active { color: var(--dark); border-bottom-color: var(--green) !important; }
+
+/* ── Lectura de la votación ── */
+.c22-lectura { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border-light); display: grid; gap: 22px; }
+.c22-lectura h3 {
+  margin: 0 0 10px; font: 700 11px/1.3 var(--mont); letter-spacing: 1.6px;
+  text-transform: uppercase; color: var(--text);
+}
+.c22-lectura h3 small { font-weight: 500; letter-spacing: .3px; text-transform: none; color: var(--text-m); font-size: 12px; margin-left: 8px; }
+.c22-bloques { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-light);
+  border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; }
+.c22-bloques > div { background: var(--bg-white); padding: 14px 16px; }
+.c22-bloques .nom { font: 700 13px/1.2 var(--dm); color: var(--dark); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.c22-bloques .pos { font: 500 12px/1.5 var(--mont); color: var(--text-2); margin-top: 6px; }
+.c22-bloques .hist { font: 400 11px/1.4 var(--mont); color: var(--text-m); margin-top: 6px; }
+.c22-insignia { font: 700 10px/1 var(--mont); letter-spacing: 1.2px; text-transform: uppercase; padding: 5px 9px; border-radius: 50px; white-space: nowrap; }
+.c22-insignia.gano { color: #0E7A5F; background: rgba(76,202,165,.16); }
+.c22-insignia.perdio { color: #B0022A; background: rgba(242,2,49,.10); }
+.c22-insignia.neutro { color: var(--text-2); background: var(--border-light); }
+.c22-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.c22-chip {
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 50px;
+  border: 1px solid var(--border); background: var(--bg-white); cursor: pointer;
+  font: 500 12px/1.2 var(--mont); color: var(--text);
+}
+.c22-chip:hover { border-color: var(--text-2); }
+.c22-chip.on { background: var(--dark); border-color: var(--dark); color: #fff; }
+.c22-chip i { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
+.c22-chip small { color: var(--text-m); font-size: 11px; }
+.c22-chip.on small { color: rgba(255,255,255,.7); }
+.c22-nota { font: 400 12px/1.55 var(--mont); color: var(--text-m); margin: 8px 0 0; max-width: 90ch; }
+
+@media (max-width: 760px) {
+  .c22-cabecera { padding-top: 32px; }
+  .c22-bloques { grid-template-columns: 1fr; }
+  .c22-meta .c22-tour-btn { margin-left: 0; }
+}
+
+/* Votos inesperados: es una capa sobre el modo de color, no un modo más */
+#modeInesp { display: inline-flex; align-items: center; gap: 8px; }
+#modeInesp::before { content: ''; width: 10px; height: 10px; border-radius: 50%; border: 2px solid currentColor; }
+#modeInesp.active { background: var(--bg-white); color: var(--dark); border: 2px solid var(--dark); }
+
+/* Pestañas agrupadas de Votaciones: mismo subrayado verde, sin píldoras */
+.c22-vistas-grupos #tabs .tab {
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important; padding: 12px 0 10px !important; margin-right: 22px;
+  color: var(--text-2) !important;
+}
+.c22-vistas-grupos #tabs .tab.active { color: var(--dark) !important; border-bottom-color: var(--green) !important; }
+.c22-vistas-grupos #tabs .tab-group { margin-bottom: 0; }
+
+/* Aviso de actualidad (Discurso) */
+.c22-aviso-fecha { margin-top: 12px; padding: 10px 14px; border-left: 3px solid var(--yellow);
+  background: rgba(255,185,35,.10); border-radius: 0 8px 8px 0; color: var(--text-2); max-width: 76ch; }
+.c22-aviso-fecha b { color: var(--text); }
+
+/* Qué se votó (ficha de la votación) */
+.c22-que-linea { margin: 0 0 6px; font: 600 12px/1.5 var(--mont); letter-spacing: .6px; text-transform: uppercase; color: var(--green); }
+.c22-que-art { margin: 0 0 8px; font: 500 15px/1.5 var(--mont); color: var(--text); max-width: 90ch; }
+.c22-que-mats { display: flex; flex-wrap: wrap; gap: 6px; }
+.c22-que-mat { font: 600 11px/1 var(--mont); color: var(--text-2); background: var(--border-light); padding: 6px 10px; border-radius: 50px; }
