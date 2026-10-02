@@ -14,9 +14,23 @@
     if (forzado || enMarco) raiz.classList.add('c22-embed');
     if (!enMarco) return;
 
+    /* El alto se mide sobre el contenido y no con scrollHeight: dentro del
+       marco, scrollHeight nunca baja del alto que el anfitrion ya le dio, y
+       el body se estira hasta ese alto. Asi el marco solo podia crecer y
+       dejaba un vacio bajo el Monitor (en Legisladores, miles de px). */
+    var ajuste = document.createElement('style');
+    ajuste.textContent = 'html.c22-embed,html.c22-embed body{height:auto!important;min-height:0!important}';
+    (document.head || raiz).appendChild(ajuste);
+    function medir() {
+      var b = document.body;
+      if (!b) return raiz.scrollHeight;
+      var cs = window.getComputedStyle(b);
+      return Math.ceil(b.getBoundingClientRect().height + (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0));
+    }
+
     var ultimo = 0;
     function avisar() {
-      var h = Math.max(raiz.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      var h = medir();
       if (Math.abs(h - ultimo) < 3) return;
       ultimo = h;
       try { parent.postMessage({ c22monitor: 'alto', alto: h }, '*'); } catch (e) {}
