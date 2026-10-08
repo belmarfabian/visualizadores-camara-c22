@@ -6,7 +6,7 @@
    
   (function () {
     var raiz = document.documentElement;
-    var forzado = /[?&]embed=1/.test(location.search);
+    var forzado = /[?&]embed=1\b/.test(location.search);
     var enMarco = false;
     try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
      
@@ -107,6 +107,7 @@
   
   <link rel="stylesheet" href="../assets/c22-skin.css">
 <link rel="stylesheet" href="../assets/c22-componentes.css">
+<link rel="stylesheet" href="../assets/c22-sobrio.css">
   <script src="../assets/c22-anim.js" defer></script>
 </head>
 <body>

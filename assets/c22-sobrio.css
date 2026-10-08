@@ -1,0 +1,132 @@
+/* Monitor Legislativo · estilo sobrio (octubre 2026)
+   Lleva el Monitor al lenguaje de la portada nueva de c22cepchile.cl:
+   plano, con filetes finos y un solo color de acento (el verde oscuro del C22).
+   La paleta completa del C22 queda solo donde significa algo: el voto
+   (a favor, en contra, abstención) y los partidos. No decora.
+   Va al final del <head>, después de c22-componentes.css. */
+:root {
+  --s-tinta: #1B1C1E;
+  --s-texto: #303030;
+  --s-gris: #566C70;
+  --s-filete: rgba(101, 125, 129, 0.22);
+  --s-fondo: #F3F5F5;
+  --s-acento: #0E7A5F;
+  --s-acento-l: #4CCAA5;
+  --s-radio: 6px;
+}
+
+/* ── Una sola banda de contenido. Suelto: la del sitio (90 %, máx. 1296 px).
+   Incrustado en c22cepchile.cl el marco ya está en esa banda, así que adentro
+   no se agrega margen: el Monitor queda alineado con el logo y el menú del C22. ── */
+:root { --banda: 1296px; --s-banda: max(5%, calc((100% - var(--banda)) / 2)); }
+html.c22-embed { --banda: 100%; --s-banda: 0px; }
+section.hero, .hero-fila, section.pulso, section.rarezas, section.analisis, section.about {
+  padding-left: var(--s-banda) !important; padding-right: var(--s-banda) !important;
+}
+section.hero .inner, .hero-fila-in, section.pulso .inner, section.rarezas .inner, section.about .inner {
+  padding-left: 0 !important; padding-right: 0 !important; margin-left: 0 !important; margin-right: 0 !important; max-width: none !important;
+}
+.sec-title, .sec-label { margin-left: 0 !important; }
+/* páginas internas: los contenedores de cada página siguen la misma banda */
+div[style*="max-width:1200px;margin:0 auto;padding:0 5%"], .c22-banda,
+section.ranking-dip, .rankings-sec, .historico, body header.art-cab, body .art-pie {
+  max-width: none !important; padding-left: var(--s-banda) !important; padding-right: var(--s-banda) !important;
+}
+/* la barra de secciones del Monitor, suelto: misma banda y alineada a la izquierda */
+.c22skin-sub { margin-left: 0 !important; margin-right: 0 !important; padding-left: var(--s-banda) !important; padding-right: var(--s-banda) !important; justify-content: flex-start !important; }
+.c22skin-sub > .c22skin-pastilla { width: 100% !important; }
+section.ranking-dip .inner, .rankings-sec .inner, .historico .inner, section.tope .inner, #vistaLista > section .inner, #vistaFicha > section .inner {
+  max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; margin-left: 0 !important; margin-right: 0 !important;
+}
+
+/* ── Un solo acento: las tarjetas ya no traen verde, amarillo y morado ── */
+.card.green, .card.yellow, .card.purple, .card.red {
+  --accent: var(--s-acento) !important;
+  --accent-txt: var(--s-acento) !important;
+}
+
+/* ── Navegación del Monitor: barra plana con subrayado, sin píldora flotante ── */
+.c22skin-sub > .c22skin-pastilla {
+  background: transparent !important; box-shadow: none !important; border-radius: 0 !important;
+  padding: 10px 0 !important; gap: 26px !important; justify-content: flex-start !important;
+  border-bottom: 1px solid var(--s-filete) !important;
+}
+html.c22-embed .c22skin-sub { position: static !important; margin-top: 0 !important; margin-bottom: 0 !important; pointer-events: auto !important; }
+html.c22-embed .c22skin-sub > .c22skin-pastilla { width: 100% !important; }
+
+/* ── Portada: sin foto de fondo ni velo; texto oscuro sobre el gris del sitio ── */
+.hero { background: none !important; border-radius: 0 !important; margin: 0 !important; }
+html.c22-embed .hero { padding-top: 26px !important; }
+/* sin foto, las tarjetas ya no se montan sobre la portada: espacios parejos */
+section.hero .inner { padding-top: 24px !important; padding-bottom: 0 !important; }
+section.hero { padding-bottom: 30px !important; }
+.hero-fila { margin-top: 0 !important; }
+@media (max-width: 760px) { html.c22-embed .hero { padding-top: 4px !important; } }
+.hero-velo { display: none !important; }
+.hero .eyebrow { color: var(--s-acento) !important; }
+.hero .eyebrow::before { background: var(--s-acento) !important; }
+.hero h1 { color: var(--s-tinta) !important; border-bottom: 0 !important; padding-bottom: 0 !important; }
+.hero p.lead { color: var(--s-gris) !important; }
+.hero #buildStatus, .hero #buildStatus * { color: var(--s-gris) !important; }
+.hero .panel { box-shadow: none !important; border: 1px solid var(--s-filete) !important; border-radius: var(--s-radio) !important; }
+.hero .panel::before, .hero .panel::after { display: none !important; }
+.carta.atras { display: none !important; }  /* las tarjetas apiladas detrás de la última votación */
+.hero .car-tick { color: var(--s-texto) !important; background: #fff !important; border-color: var(--s-filete) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.hero .car-tick.activo, .hero .car-tick[aria-current] { background: var(--s-tinta) !important; color: #fff !important; border-color: var(--s-tinta) !important; }
+.hero .car-nav button { color: var(--s-tinta) !important; border-color: var(--s-filete) !important; background: #fff !important; }
+.hero .busca .sec-label, .hero .busca-info { background: none !important; color: var(--s-acento) !important; padding: 0 !important; text-shadow: none !important; }
+.apoyo-hero { background: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
+.apoyo-hero .rot { color: var(--s-gris) !important; }
+.apoyo-hero img { filter: brightness(0) saturate(0) opacity(.62); }
+
+/* ── Tarjetas de los visualizadores: planas, con filete entre una y otra ── */
+.hero-fila .card { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; transform: none !important; position: relative; }
+.hero-fila .card + .card::before { content: ''; position: absolute; left: -9px; top: 0; bottom: 0; border-left: 1px solid var(--s-filete); }
+.hero-fila .ct-mini { border-radius: var(--s-radio) !important; }
+.hero-fila .card { padding: 0 !important; }
+.hero-fila .ct-cuerpo { padding: 12px 0 0 !important; }
+.hero-fila .ct-tag { background: none !important; color: var(--s-acento) !important; padding: 0 !important; border-radius: 0 !important; font-size: 11px !important; letter-spacing: .08em !important; }
+.hero-fila .card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Títulos de sección: sin el subrayado verde grueso; filete fino a todo el ancho ── */
+.sec-title, .section-title-block h2, .rarezas h2 {
+  display: block !important; max-width: none !important;
+  border-bottom: 1px solid var(--s-filete) !important; padding-bottom: 12px !important;
+}
+.sec-label { color: var(--s-acento) !important; }
+
+/* ── Paneles y cifras: planos ── */
+section.pulso .inner > div:not(.panel) { border-radius: 0 !important; overflow: visible !important; }
+.panel, .card, .preview, .rank-barras, .vivo, .c22-card, .c22-panel { border-radius: var(--s-radio) !important; box-shadow: none !important; }
+.fact {
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  border-top: 1px solid var(--s-filete) !important; padding: 14px 6px 0 0 !important; box-shadow: none !important;
+}
+.rar {
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  border-top: 1px solid var(--s-filete) !important; padding: 16px 0 0 !important;
+}
+.rar .quien { background: transparent !important; border: 0 !important; }
+
+/* ── Análisis hechos con el Monitor: planos, etiqueta sin color de fondo ── */
+.an-uno {
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  padding: 0 0 24px !important; border-bottom: 1px solid var(--s-filete) !important;
+}
+.an-foto { border-radius: var(--s-radio) !important; }
+.an-tag { background: none !important; color: var(--s-acento) !important; padding: 0 !important; border-radius: 0 !important; font-size: 11px !important; letter-spacing: .08em !important; }
+.an-mas { color: var(--s-acento) !important; }
+.art-tag { background: none !important; color: var(--s-acento) !important; padding: 0 !important; border-radius: 0 !important; }
+
+/* ── Páginas internas: franja de cifras y recuadros, planos ── */
+#metricsBand { background: transparent !important; border-left: 0 !important; border-right: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.tab-content, .nav-temp, .c22-bloques, .rank-restcol, figure.mapa-par, p.art-metodo { border-radius: var(--s-radio) !important; box-shadow: none !important; }
+
+/* cifras del discurso: el color no significaba nada, quedan en tinta */
+.metrics-wrap .val { color: var(--s-tinta) !important; }
+/* fichas de legisladores: planas; al pasar el mouse, fondo blanco */
+a.p-card { background: transparent !important; border-color: transparent !important; border-radius: var(--s-radio) !important; box-shadow: none !important; }
+a.p-card:hover, a.p-card:focus-visible { background: #fff !important; }
+
+/* ── Sin la cinta de cinco colores ── */
+.ribbon, .c22-ribbon, img[src*="ribbon.svg"] { display: none !important; }
