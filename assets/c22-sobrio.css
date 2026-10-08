@@ -1,6 +1,9 @@
 /* Monitor Legislativo · estilo sobrio (octubre 2026)
-   Lleva el Monitor al lenguaje de la portada nueva de c22cepchile.cl:
-   plano, con filetes finos y un solo color de acento (el verde oscuro del C22).
+   Lleva el Monitor al lenguaje de c22cepchile.cl: cabeceras como las de sus
+   páginas (título de 40 px con la barra verde de Análisis online y la cinta de
+   cinco colores debajo), títulos de sección de 26 px con su barra, la píldora de
+   secciones como la de Publicaciones; y, por dentro, plano, con filetes finos y
+   un solo color de acento (el verde del C22).
    La paleta completa del C22 queda solo donde significa algo: el voto
    (a favor, en contra, abstención) y los partidos. No decora.
    Va al final del <head>, después de c22-componentes.css. */
@@ -13,6 +16,7 @@
   --s-acento: #0E7A5F;
   --s-acento-l: #4CCAA5;
   --s-radio: 6px;
+  --s-cinta: linear-gradient(90deg, #657D81 0 20%, #4CCAA5 20% 40%, #FFB923 40% 60%, #F20231 60% 80%, #A10856 80% 100%);
 }
 
 /* ── Una sola banda de contenido. Suelto: la del sitio (90 %, máx. 1296 px).
@@ -32,9 +36,6 @@ div[style*="max-width:1200px;margin:0 auto;padding:0 5%"], .c22-banda,
 section.ranking-dip, .rankings-sec, .historico, body header.art-cab, body .art-pie {
   max-width: none !important; padding-left: var(--s-banda) !important; padding-right: var(--s-banda) !important;
 }
-/* la barra de secciones del Monitor, suelto: misma banda y alineada a la izquierda */
-.c22skin-sub { margin-left: 0 !important; margin-right: 0 !important; padding-left: var(--s-banda) !important; padding-right: var(--s-banda) !important; justify-content: flex-start !important; }
-.c22skin-sub > .c22skin-pastilla { width: 100% !important; }
 section.ranking-dip .inner, .rankings-sec .inner, .historico .inner, section.tope .inner, #vistaLista > section .inner, #vistaFicha > section .inner {
   max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; margin-left: 0 !important; margin-right: 0 !important;
 }
@@ -45,28 +46,55 @@ section.ranking-dip .inner, .rankings-sec .inner, .historico .inner, section.top
   --accent-txt: var(--s-acento) !important;
 }
 
-/* ── Navegación del Monitor: barra plana con subrayado, sin píldora flotante ── */
-.c22skin-sub > .c22skin-pastilla {
-  background: transparent !important; box-shadow: none !important; border-radius: 0 !important;
-  padding: 10px 0 !important; gap: 26px !important; justify-content: flex-start !important;
-  border-bottom: 1px solid var(--s-filete) !important;
-}
-html.c22-embed .c22skin-sub { position: static !important; margin-top: 0 !important; margin-bottom: 0 !important; pointer-events: auto !important; }
-html.c22-embed .c22skin-sub > .c22skin-pastilla { width: 100% !important; }
+/* ── Navegación del Monitor: la píldora blanca con íconos, como la de Publicaciones en el C22.
+   Incrustado, centrada en el marco y sin montarse sobre la cabecera. ── */
+html.c22-embed .c22skin-sub { margin: 0 0 6px !important; }
 
 /* ── Portada: sin foto de fondo ni velo; texto oscuro sobre el gris del sitio ── */
-.hero { background: none !important; border-radius: 0 !important; margin: 0 !important; }
+.hero { border-radius: 0 !important; margin: 0 !important; }
+section.hero { background: none !important; }
+/* La portada se ordena como las páginas del C22: arriba la cabecera (título a todo
+   el ancho, bajada y la cinta de cinco colores) y debajo la última votación y el
+   buscador, uno al lado del otro. */
+section.hero > .inner { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; column-gap: 48px !important; row-gap: 0 !important; padding-bottom: 0 !important; align-items: start !important; }
+section.hero .hero-txt, section.hero .car-col { display: contents !important; }
+section.hero > .inner::after { content: ''; display: block; height: 6px; margin: 26px 0 30px; background: var(--s-cinta); order: 1; }
+section.hero #cardVivo, section.hero #carRail, section.hero section.busca { order: 2; }
+section.hero .apoyo-hero { position: static !important; margin: 14px 0 0 !important; opacity: 1 !important; }
+section.hero #buildStatus { margin-top: 14px !important; }
+section.hero p.lead { margin: 0 !important; max-width: 760px; }
+@media (min-width: 981px) {
+  section.hero > .inner { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr) !important; }
+  section.hero h1 { grid-column: 1 / -1; grid-row: 1; justify-self: start; }
+  section.hero p.lead { grid-column: 1; grid-row: 2; }
+  section.hero #buildStatus { grid-column: 1; grid-row: 3; }
+  section.hero .apoyo-hero { grid-column: 2; grid-row: 2 / span 2; justify-self: end; align-self: end; margin: 0 !important; }
+  section.hero > .inner::after { grid-column: 1 / -1; grid-row: 4; }
+  section.hero #cardVivo { grid-column: 1; grid-row: 5; }
+  section.hero #carRail { grid-column: 1; grid-row: 6; }
+  section.hero section.busca { grid-column: 2; grid-row: 5 / span 2; }
+}
 html.c22-embed .hero { padding-top: 26px !important; }
 /* sin foto, las tarjetas ya no se montan sobre la portada: espacios parejos */
-section.hero .inner { padding-top: 24px !important; padding-bottom: 0 !important; }
+section.hero .inner { padding-top: 24px !important; }
 section.hero { padding-bottom: 30px !important; }
 .hero-fila { margin-top: 0 !important; }
 @media (max-width: 760px) { html.c22-embed .hero { padding-top: 4px !important; } }
 .hero-velo { display: none !important; }
-.hero .eyebrow { color: var(--s-acento) !important; }
-.hero .eyebrow::before { background: var(--s-acento) !important; }
-.hero h1 { color: var(--s-tinta) !important; border-bottom: 0 !important; padding-bottom: 0 !important; }
-.hero p.lead { color: var(--s-gris) !important; }
+/* título como los de las páginas del C22: 40 px, con la barra verde de Análisis online */
+.hero .eyebrow { display: none !important; }
+.hero h1, .c22-ceja ~ h1 {
+  font: 700 40px/44px 'DM Sans', sans-serif !important; letter-spacing: normal !important; color: var(--s-tinta) !important;
+  display: inline-block !important; border-bottom: 7px solid var(--s-acento-l) !important; padding-bottom: 2px !important;
+  margin: 0 0 12px !important; max-width: none !important;
+}
+.hero p.lead, .c22-ceja ~ h1 ~ p.c22-bajada, .c22-ceja ~ h1 + p.lead {
+  font: 400 16px/24.8px 'DM Sans', sans-serif !important; color: #41454A !important;
+}
+/* páginas internas: la misma cinta bajo la cabecera de cada sección del Monitor */
+header.c22-cabecera, header.site-header > .top, section.tope {
+  background: var(--s-cinta) bottom / 100% 6px no-repeat !important; padding-bottom: 30px !important; margin-bottom: 18px !important;
+}
 .hero #buildStatus, .hero #buildStatus * { color: var(--s-gris) !important; }
 .hero .panel { box-shadow: none !important; border: 1px solid var(--s-filete) !important; border-radius: var(--s-radio) !important; }
 .hero .panel::before, .hero .panel::after { display: none !important; }
@@ -88,10 +116,10 @@ section.hero { padding-bottom: 30px !important; }
 .hero-fila .ct-tag { background: none !important; color: var(--s-acento) !important; padding: 0 !important; border-radius: 0 !important; font-size: 11px !important; letter-spacing: .08em !important; }
 .hero-fila .card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 
-/* ── Títulos de sección: sin el subrayado verde grueso; filete fino a todo el ancho ── */
+/* ── Títulos de sección como en el C22: 26 px con la barra verde ── */
 .sec-title, .section-title-block h2, .rarezas h2 {
-  display: block !important; max-width: none !important;
-  border-bottom: 1px solid var(--s-filete) !important; padding-bottom: 12px !important;
+  display: inline-block !important; max-width: none !important; font: 700 26px/28.6px 'DM Sans', sans-serif !important;
+  letter-spacing: normal !important; border-bottom: 7px solid var(--s-acento-l) !important; padding-bottom: 2px !important; margin-bottom: 18px !important;
 }
 .sec-label { color: var(--s-acento) !important; }
 
@@ -129,4 +157,4 @@ a.p-card { background: transparent !important; border-color: transparent !import
 a.p-card:hover, a.p-card:focus-visible { background: #fff !important; }
 
 /* ── Sin la cinta de cinco colores ── */
-.ribbon, .c22-ribbon, img[src*="ribbon.svg"] { display: none !important; }
+.ribbon, .c22-ribbon, img[src*="ribbon.svg"] { display: none !important; }  /* la cinta va ahora bajo cada cabecera */
