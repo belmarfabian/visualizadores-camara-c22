@@ -1948,21 +1948,28 @@
                  cuerpo(sig, 'Votación anterior', true) + '</div>';
       }
       var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // la carta se va, cambia su contenido y vuelve: el contenido se cambia a
+      // mitad de la animación (antes se cambiaba al tiro y la animación no se veía)
+      function pon() {
+        cv.className = 'panel mazo';
+        cv.innerHTML = atras + '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
+          '<div class="vivo-proj" title="' + esc(d.proyecto || d.descripcion) + '">' + titular + '</div>' +
+          '<div class="vivo-fecha">' + fmtFecha(d.fecha) + (d.tipo ? ' · ' + d.tipo : '') + '</div>' +
+          '<div class="vivo-bar">' + seg(d.si, 'var(--green)', 'A favor') + seg(d.abstencion, '#C9CDCE', 'Abstención') + seg(d.no, 'var(--red)', 'En contra') + '</div>' +
+          '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
+          (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
+          '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
+          (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>';
+        barra(!!timer);
+      }
       if (suave && cv.dataset.pintada) {
         cv.classList.add('hoja-sale');
-        setTimeout(function () { cv.classList.remove('hoja-sale'); cv.classList.add('hoja-entra');
-          setTimeout(function () { cv.classList.remove('hoja-entra'); }, 260); }, 200);
-      }
+        setTimeout(function () {
+          pon(); cv.classList.add('hoja-entra');
+          setTimeout(function () { cv.classList.remove('hoja-entra'); }, 300);
+        }, 200);
+      } else pon();
       cv.dataset.pintada = '1';
-      cv.className = 'panel mazo';
-      cv.innerHTML = atras + '<div class="carta"><div class="vivo-rot">' + rotulo + '</div>' +
-        '<div class="vivo-proj" title="' + esc(d.proyecto || d.descripcion) + '">' + titular + '</div>' +
-        '<div class="vivo-fecha">' + fmtFecha(d.fecha) + (d.tipo ? ' · ' + d.tipo : '') + '</div>' +
-        '<div class="vivo-bar">' + seg(d.si, 'var(--green)', 'A favor') + seg(d.abstencion, '#C9CDCE', 'Abstención') + seg(d.no, 'var(--red)', 'En contra') + '</div>' +
-        '<div class="vivo-res" style="color:' + (aprob ? 'var(--green-txt)' : 'var(--red)') + '">' +
-        (d.resultado || '') + ' · ' + d.si + ' a favor, ' + d.no + ' en contra' + (d.abstencion ? ', ' + d.abstencion + ' abst.' : '') + '</div>' +
-        '<a class="vivo-link" href="hemiciclo/">Ver el hemiciclo completo →</a>' +
-        (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>';
       idx = i;
       if (track) {
         var ts = track.querySelectorAll('.car-tick');

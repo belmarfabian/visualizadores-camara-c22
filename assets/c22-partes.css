@@ -45,3 +45,6 @@
 .rar .que { flex: 1; }
 .rar .marcador { margin-top: auto !important; }
 .rar-grid.rar-plegado > .rar.rar-fuera { display: none !important; }
+
+/* 2 · Últimas votaciones: en las cartas de atrás no asoma texto */
+.panel.mazo .carta.atras > * { display: none !important; }
