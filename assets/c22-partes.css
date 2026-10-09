@@ -48,3 +48,9 @@
 
 /* 2 · Últimas votaciones: en las cartas de atrás no asoma texto */
 .panel.mazo .carta.atras > * { display: none !important; }
+
+/* la foto termina poco después del buscador; las tarjetas alineadas con la foto */
+section.hero { min-height: 0 !important; height: auto !important; padding-bottom: 0 !important; }
+.hero .inner { padding-bottom: 44px !important; }
+.hero-fila { padding-left: 0 !important; padding-right: 0 !important; }
+.hero-fila-in { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
