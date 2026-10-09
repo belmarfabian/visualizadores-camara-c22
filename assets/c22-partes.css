@@ -37,3 +37,11 @@
 .facts-grupo:nth-child(2) { --g: #FFB923; --gt: #1B1C1E; --gs: #FFF4DC; --gx: #8A5D00; }
 .facts-grupo:nth-child(3) { --g: #A10856; --gt: #fff; --gs: #F6E3EC; --gx: #A10856; }
 .facts-grupo-tit { display: inline-block; padding: 3px 7px; border-radius: 2.5px; background: var(--g); color: var(--gt) !important; }
+
+/* 6 · Votos que llaman la atención: las mismas tarjetas, todas del mismo alto;
+       el resultado y la fecha siempre al pie. */
+.rar-grid { grid-auto-rows: 1fr !important; align-items: stretch !important; }
+.rar { display: flex !important; flex-direction: column; height: 100%; box-sizing: border-box; }
+.rar .que { flex: 1; }
+.rar .marcador { margin-top: auto !important; }
+.rar-grid.rar-plegado > .rar.rar-fuera { display: none !important; }
