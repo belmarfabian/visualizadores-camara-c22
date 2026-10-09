@@ -1,0 +1,31 @@
+/* Monitor Legislativo · ajustes elegidos parte por parte (octubre 2026)
+   Va al final del <head>, después de c22-componentes.css. */
+
+/* 1 · Cabecera de las páginas internas: título de 40 px con la barra verde,
+       como las páginas del C22, sin cinta de colores. */
+.c22-ceja ~ h1 {
+  font: 700 40px/44px 'DM Sans', sans-serif !important; letter-spacing: normal !important;
+  display: inline-block !important; border-bottom: 7px solid #4CCAA5 !important; padding-bottom: 2px !important;
+  margin: 0 0 12px !important; max-width: none !important;
+}
+.c22-ceja ~ h1 ~ p.c22-bajada, .c22-ceja ~ h1 + p.lead { font: 400 16px/24.8px 'DM Sans', sans-serif !important; color: #41454A !important; }
+
+/* 3 · Tarjetas de las herramientas: como las de Publicaciones del C22. Bajo la
+       foto, sin caja, con la etiqueta sobre la imagen y un filete entre una y otra. */
+.hero-fila { margin-top: 28px !important; }
+.hero .inner { padding-bottom: 56px !important; }
+.hero-fila .card { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; position: relative; transform: none !important; }
+.hero-fila .card + .card::before { content: ''; position: absolute; left: -9px; top: 0; bottom: 0; border-left: 1px solid rgba(101, 125, 129, .25); }
+.hero-fila .ct-mini { border-radius: 6px !important; }
+.hero-fila .ct-cuerpo { padding: 12px 0 0 !important; position: static !important; }
+.hero-fila .ct-tag { position: absolute !important; top: 10px; left: 10px; margin: 0 !important; }
+.hero-fila h3 { font-size: 17px !important; }
+@media (max-width: 760px) { .hero-fila .card + .card::before { display: none; } }
+
+/* 5 · Cifras: las mismas cajas, agrupadas por tema y alineadas en columnas. */
+.facts-grid.facts-grupos { display: block !important; }
+.facts-grupo + .facts-grupo { margin-top: 24px; }
+.facts-grupo-tit { margin: 0 0 10px; font: 700 12px/1 'DM Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #566C70; }
+.facts-fila { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .facts-fila { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .facts-fila { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

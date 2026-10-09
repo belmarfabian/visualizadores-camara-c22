@@ -7,7 +7,7 @@
    
   (function () {
     var raiz = document.documentElement;
-    var forzado = /[?&]embed=1/.test(location.search);
+    var forzado = /[?&]embed=1\b/.test(location.search);
     var enMarco = false;
     try { enMarco = window.self !== window.top; } catch (e) { enMarco = true; }
      
@@ -1490,6 +1490,7 @@
   
   <link rel="stylesheet" href="assets/c22-skin.css">
 <link rel="stylesheet" href="assets/c22-componentes.css">
+  <link rel="stylesheet" href="assets/c22-partes.css">
   <script src="assets/c22-anim.js" defer></script>
 </head>
 
@@ -1820,27 +1821,27 @@
      
     var dec = function (x) { return String(x.toFixed(2)).replace('.', ','); };
 
-    cards.push({ tipo: 'cifra', n: f.n_votaciones, lab: 'votaciones de Sala en el período',
+    cards.push({ tipo: 'cifra', g: 'sala', n: f.n_votaciones, lab: 'votaciones de Sala en el período',
       desglose: true });
-    cards.push({ tipo: 'cifra', n: '<span id="cifraDias">—</span>', lab: 'días de Sala con votaciones' });
-    cards.push({ tipo: 'cifra', n: '<span id="cifraPorDia">—</span>', lab: 'votaciones por cada día de Sala' });
-    cards.push({ tipo: 'cifra', n: f.pct_divididas + '<small>%</small>', lab: 'se resolvieron <strong>divididas</strong>' });
-    cards.push({ tipo: 'cifra', n: '155', lab: 'diputadas y diputados' });
-    if (f.senado && f.senado.n) cards.push({ tipo: 'cifra', n: f.senado.n,
+    cards.push({ tipo: 'cifra', g: 'sala', n: '<span id="cifraDias">—</span>', lab: 'días de Sala con votaciones' });
+    cards.push({ tipo: 'cifra', g: 'sala', n: '<span id="cifraPorDia">—</span>', lab: 'votaciones por cada día de Sala' });
+    cards.push({ tipo: 'cifra', g: 'sala', n: f.pct_divididas + '<small>%</small>', lab: 'se resolvieron <strong>divididas</strong>' });
+    cards.push({ tipo: 'cifra', g: 'comp', n: '155', lab: 'diputadas y diputados' });
+    if (f.senado && f.senado.n) cards.push({ tipo: 'cifra', g: 'comp', n: f.senado.n,
       lab: 'senadoras y senadores' });
 
-    if (f.n_partidos) cards.push({ tipo: 'cifra', n: f.n_partidos,
+    if (f.n_partidos) cards.push({ tipo: 'cifra', g: 'comp', n: f.n_partidos,
       lab: 'partidos con representación en la Cámara' });
-    if (f.polarizacion_actual != null) cards.push({ tipo: 'cifra',
+    if (f.polarizacion_actual != null) cards.push({ tipo: 'cifra', g: 'pol',
       n: dec(f.polarizacion_actual), lab: 'polarización de la <strong>Cámara</strong> en dos bloques' });
-    if (f.senado && f.senado.bimodalidad != null) cards.push({ tipo: 'cifra',
+    if (f.senado && f.senado.bimodalidad != null) cards.push({ tipo: 'cifra', g: 'pol',
       n: dec(f.senado.bimodalidad), lab: 'la misma medida en el <strong>Senado</strong>' });
-    if (f.senado && f.senado.centro != null) cards.push({ tipo: 'cifra',
+    if (f.senado && f.senado.centro != null) cards.push({ tipo: 'cifra', g: 'pol',
       n: f.senado.centro, lab: 'senadores fuera de las dos trincheras' });
-    if (f.mas_izquierda) cards.push({ tipo: 'cifra',
+    if (f.mas_izquierda) cards.push({ tipo: 'cifra', g: 'pol',
       n: dec(f.mas_izquierda.dim1),
       lab: 'el extremo izquierdo del eje: <strong>' + (f.mas_izquierda.corto || f.mas_izquierda.nombre) + '</strong>' });
-    if (f.mas_derecha) cards.push({ tipo: 'cifra',
+    if (f.mas_derecha) cards.push({ tipo: 'cifra', g: 'pol',
       n: '+' + dec(f.mas_derecha.dim1),
       lab: 'el extremo derecho: <strong>' + (f.mas_derecha.corto || f.mas_derecha.nombre) + '</strong>' });
      
@@ -1858,7 +1859,9 @@
         if (pd && res.dias && res.total) pd.textContent = Math.round(res.total / res.dias);
       }).catch(function () {});
     var fg = el('factsGrid');
-  if (fg) fg.innerHTML = cards.map(function (c) {
+  // las cifras van agrupadas por tema, cada grupo con su título
+  var GRUPOS_CIFRAS = [['sala', 'La Sala'], ['comp', 'Quiénes votan'], ['pol', 'Cuán polarizado']];
+  function cifraHtml(c) {
     if (c.tipo === 'persona') {
       var d = c.d;
       var vis = d.foto
@@ -1879,7 +1882,15 @@
     return '<div class="fact">' +
         '<div class="fnum">' + c.n + '</div><div class="flab">' + c.lab + '</div>' +
         (c.desglose ? '<div class="fact-desglose"></div>' : '') + '</div>';
-  }).join('');
+  }
+  if (fg) {
+    fg.classList.add('facts-grupos');
+    fg.innerHTML = GRUPOS_CIFRAS.map(function (g) {
+      var del = cards.filter(function (c) { return (c.g || 'pol') === g[0]; });
+      return del.length ? '<div class="facts-grupo"><div class="facts-grupo-tit">' + g[1] + '</div>' +
+        '<div class="facts-fila">' + del.map(cifraHtml).join('') + '</div></div>' : '';
+    }).join('');
+  }
 
   var v = F.votacion_vivo, cv = el('cardVivo');
   var lista = (F.ultimas && F.ultimas.length) ? F.ultimas : (v ? [v] : []);
