@@ -158,3 +158,22 @@ a.p-card:hover, a.p-card:focus-visible { background: #fff !important; }
 
 /* ── Sin la cinta de cinco colores ── */
 .ribbon, .c22-ribbon, img[src*="ribbon.svg"] { display: none !important; }  /* la cinta va ahora bajo cada cabecera */
+
+/* ── Ordenado (octubre 2026): menos cosas en la portada y una columna más angosta ──
+   El contenido va en una columna de 1100 px como máximo, centrada (también
+   incrustado en c22cepchile.cl). En la portada quedan: título, última votación
+   y buscador; los cuatro visualizadores; el mapa de partidos con una sola fila de
+   cifras; tres votos que llaman la atención; y «Sobre el proyecto». */
+:root { --banda: 1100px; }
+html.c22-embed { --banda: 1100px; --s-banda: max(0px, calc((100% - 1100px) / 2)); }
+html.c22-embed .c22skin-sub { margin-left: auto !important; margin-right: auto !important; }
+/* portada: sin la fila de fechas bajo la última votación */
+#carRail, .car-rail, .car-prog { display: none !important; }
+/* cifras: solo la primera fila */
+.facts-grid > .fact:nth-child(n+5), .fact-desglose { display: none !important; }
+/* votos que llaman la atención: tres, en una fila; el botón muestra el resto */
+.rar-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.rar-grid.rar-plegado > .rar:nth-child(n+4) { display: none !important; }
+@media (max-width: 760px) { .rar-grid { grid-template-columns: minmax(0, 1fr) !important; } }
+/* sobre el proyecto: sin «En qué estamos» */
+.about .roadmap-col { display: none !important; }
