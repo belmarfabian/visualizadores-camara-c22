@@ -265,7 +265,8 @@ html.c22-embed body { padding-top: 0; }
   border-radius: 25px;
   overflow: hidden;
   margin: 26px 5% 0;
-  background: #F3F5F5 url('hero-congreso.jpg') center 62%/cover no-repeat;
+  /* foto: gente caminando (la misma que usa c22cepchile.cl en «Sobre C22»), con un velo oscuro para el texto blanco */
+  background: linear-gradient(rgba(27, 28, 30, .58), rgba(27, 28, 30, .58)), #1B1C1E url('hero-gente.jpg') center 45%/cover no-repeat;
 }
 
 .hero .hemi-bg { display: none !important; }
