@@ -1962,12 +1962,19 @@
           (lista.length > 1 ? '<div class="car-prog" id="carProg"><i></i></div>' : '') + '</div>';
         barra(!!timer);
       }
-      if (suave && cv.dataset.pintada) {
-        cv.classList.add('hoja-sale');
+      // como un mazo de papel: la carta de arriba sale hacia un lado, la de abajo
+      // (que ya trae la votación siguiente) sube a su lugar y la del fondo avanza
+      var arriba = cv.querySelector('.carta:not(.atras)'), a1 = cv.querySelector('.carta.atras-1'), a2 = cv.querySelector('.carta.atras-2');
+      if (suave && cv.dataset.pintada && arriba && !cv.classList.contains('barajando')) {
+        cv.classList.add('barajando');
+        if (a1) a1.innerHTML = cuerpo(d, rotulo, true);
+        arriba.classList.add(i === (idx + 1) % lista.length || !a1 ? 'carta-sale' : 'carta-sale-der');
+        if (a1) a1.classList.add('carta-sube');
+        if (a2) a2.classList.add('carta-avanza');
         setTimeout(function () {
-          pon(); cv.classList.add('hoja-entra');
-          setTimeout(function () { cv.classList.remove('hoja-entra'); }, 300);
-        }, 200);
+          pon();
+          if (!a1) { var n = cv.querySelector('.carta:not(.atras)'); if (n) { n.classList.add('carta-aparece'); void n.offsetWidth; n.classList.remove('carta-aparece'); } }
+        }, 520);
       } else pon();
       cv.dataset.pintada = '1';
       idx = i;

@@ -46,8 +46,31 @@
 .rar .marcador { margin-top: auto !important; }
 .rar-grid.rar-plegado > .rar.rar-fuera { display: none !important; }
 
-/* 2 · Últimas votaciones: en las cartas de atrás no asoma texto */
-.panel.mazo .carta.atras > * { display: none !important; }
+/* 2 · Últimas votaciones como un mazo de cartas de papel: tres cartas enteras,
+       apiladas y apenas giradas. Al pasar, la de arriba sale hacia un lado y la de
+       abajo sube a su lugar (el JS pone carta-sale, carta-sube y carta-avanza). */
+#cardVivo.panel.mazo { position: relative; isolation: isolate; }
+#cardVivo.panel.mazo .carta { transition: transform .5s cubic-bezier(.2, .7, .25, 1), opacity .5s ease, box-shadow .5s ease; }
+#cardVivo.panel.mazo .carta:not(.atras) { position: relative; z-index: 3; transform-origin: 30% 120%; }
+#cardVivo.panel.mazo .carta.atras {
+  position: absolute !important; inset: 0 !important; width: auto !important; height: auto !important;
+  display: flex !important; flex-direction: column; overflow: hidden;
+  background: #fff !important; border: 1px solid rgba(27, 28, 30, .08) !important; border-radius: 16px !important;
+  padding: 26px 26px 22px !important; box-shadow: 0 8px 20px rgba(27, 28, 30, .22) !important; transform-origin: 30% 120%;
+}
+#cardVivo.panel.mazo .carta.atras > * { display: block !important; visibility: visible !important; opacity: 1 !important; }
+#cardVivo.panel.mazo .carta.atras > .vivo-bar { display: flex !important; }
+#cardVivo.panel.mazo .carta.atras > .vivo-link { margin-top: auto; }
+#cardVivo.panel.mazo .carta.atras > .car-prog { display: none !important; }
+#cardVivo.panel.mazo .carta.atras-1 { z-index: 2 !important; transform: translate(9px, 9px) rotate(1.6deg) !important; }
+#cardVivo.panel.mazo .carta.atras-2 { z-index: 1 !important; transform: translate(18px, 17px) rotate(3.2deg) !important; }
+/* el cambio */
+#cardVivo.panel.mazo .carta.carta-sale { transform: translate(-118%, -26px) rotate(-14deg) !important; opacity: 0; box-shadow: 0 30px 60px rgba(27, 28, 30, .3); transition: transform .52s cubic-bezier(.55, 0, .7, .4), opacity .45s ease-in .1s; }
+#cardVivo.panel.mazo .carta.carta-sale-der { transform: translate(60%, -30px) rotate(12deg) !important; opacity: 0; transition: transform .52s cubic-bezier(.55, 0, .7, .4), opacity .4s ease-in .1s; }
+#cardVivo.panel.mazo .carta.atras-1.carta-sube { transform: none !important; box-shadow: 0 20px 55px rgba(27, 28, 30, .16) !important; }
+#cardVivo.panel.mazo .carta.atras-2.carta-avanza { transform: translate(9px, 9px) rotate(1.6deg) !important; }
+#cardVivo.panel.mazo .carta.carta-aparece { opacity: 0; transform: translateY(12px); transition: none; }
+@media (prefers-reduced-motion: reduce) { #cardVivo.panel.mazo .carta { transition: none !important; } }
 
 /* la foto termina poco después del buscador; las tarjetas alineadas con la foto */
 section.hero { min-height: 0 !important; height: auto !important; padding-bottom: 0 !important; }
