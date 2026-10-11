@@ -1008,7 +1008,8 @@ function decodificarDescripcion(desc) {
       let tituloCorto = nombre;
       const corte = nombre.search(/[,.;:]\s/);
       if (corte > 30 && corte < 90) tituloCorto = nombre.slice(0, corte);
-      else if (nombre.length > 90) tituloCorto = nombre.slice(0, 87) + '…';
+      // hasta dos líneas; si hay que cortar, se corta en una palabra completa
+      else if (nombre.length > 150) tituloCorto = nombre.slice(0, 147).replace(/\s+\S*$/, '') + '…';
       return {
         titulo: `Boletín N° ${num}`,
         subtitulo: tituloCorto,

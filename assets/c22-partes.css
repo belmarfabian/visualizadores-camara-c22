@@ -83,3 +83,12 @@ section.hero { min-height: 0 !important; height: auto !important; padding-bottom
 section.about > .inner { background: #fff !important; border: 1px solid rgba(27, 28, 30, .08) !important; border-radius: 16px !important; padding: 32px 34px !important; }
 .about .roadmap-col { display: none !important; }
 .about .cita, .about blockquote, .about .cita-txt { background: #EEF4F3 !important; border-left: 4px solid #4CCAA5 !important; padding: 12px 14px !important; border-radius: 4px !important; }
+
+/* Revisión de pestañas (octubre 2026) */
+/* Rankings: las secciones con el mismo margen que la cabecera (antes pegadas al borde) */
+section.ranking-dip, section.rankings-sec {
+  padding-left: max(5%, calc((100% - var(--banda, 1160px)) / 2)) !important;
+  padding-right: max(5%, calc((100% - var(--banda, 1160px)) / 2)) !important;
+}
+/* Discurso: «Cómo funciona» a la altura de las demás pestañas, junto a la bajada */
+header.site-header > .top { align-items: flex-end !important; }
