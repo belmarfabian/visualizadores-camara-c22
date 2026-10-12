@@ -695,6 +695,23 @@
 
       function pintarFicha(f) {
         var m = f.m || {};
+        /* Sin ningún voto emitido en el período (la Cámara la registra como «No vota»
+           en todas): no hay posición ni métricas que mostrar, y las secciones de
+           votos quedarían vacías por falta de datos, no por su conducta. */
+        if (f.dim1 == null && !m.asistencia) {
+          el('fichaCuerpo').innerHTML =
+            '<div class="f-top">' + cara(f, 'cara') +
+            '<div class="datos"><h2>' + esc(f.nombre) + '</h2>' +
+            '<div class="linea"><span class="badge" style="color:' + colorTexto(f) + '">' +
+            esc((sello(f) || {}).n || f.partido) + '</span></div>' +
+            '<div class="linea"><span class="dato"><b>' + (f.camara === 'S' ? 'Senado' : 'Cámara de Diputados') + '</b></span>' +
+            (f.region ? '<span class="dato">· ' + esc(f.region) + '</span>' : '') +
+            '</div></div></div>' +
+            '<div class="sin-datos" style="margin-top:18px">No registra votos emitidos en la Sala en este período: en el registro ' +
+            (f.camara === 'S' ? 'del Senado' : 'de la Cámara') +
+            ' aparece «No vota» en todas las votaciones. Por eso no tiene posición estimada ni métricas de votación.</div>';
+          return;
+        }
         var mets = [
           medidor('Izquierda → derecha', f.dim1, (f.dim1 == null ? '—' : f.dim1.toFixed(2)),
             'Posición estimada con W-NOMINATE, de -1 (izquierda) a 1 (derecha).', 'pos'),
