@@ -1571,6 +1571,9 @@
       binH[b] = (binH[b] || 0) + 1;
       place.push({ d: d, b: b, k: binH[b] });
     });
+    /* Alto según la pila más alta: con H fijo, la columna republicana se salía por arriba. */
+    var maxK = 0; for (var kb in binH) maxK = Math.max(maxK, binH[kb]);
+    H = Math.max(H, Math.ceil(26 + maxK * (R * 2 + 1.4) + 12));
     var cx = function (d) { return 30 + (d.dim1 + 1) / 2 * (W - 60); };
     var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Distribución de los diputados de izquierda a derecha">';
     svg += '<line x1="' + (W/2) + '" y1="10" x2="' + (W/2) + '" y2="' + (H-24) + '" stroke="#e2e6e6" stroke-dasharray="3 3"/>';

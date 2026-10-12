@@ -30,7 +30,7 @@
 @media (max-width: 900px) { .facts-fila { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .facts-fila { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* cajas del mismo tamaño, con el fondo suave del color de su tema */
-.facts-fila .fact { height: 150px !important; box-sizing: border-box; display: flex !important; flex-direction: column; justify-content: center; overflow: hidden; border: 0 !important; background: var(--gs) !important; }
+.facts-fila .fact { height: 150px !important; box-sizing: border-box; display: flex !important; flex-direction: column; justify-content: flex-start; padding-top: 30px !important; overflow: hidden; border: 0 !important; background: var(--gs) !important; }
 .facts-fila .fact-desglose { display: none !important; }
 .facts-fila .fnum { color: var(--gx) !important; }
 .facts-grupo:nth-child(1) { --g: #4CCAA5; --gt: #1B1C1E; --gs: #E4F7F1; --gx: #16765C; }
@@ -92,3 +92,23 @@ section.ranking-dip, section.rankings-sec {
 }
 /* Discurso: «Cómo funciona» a la altura de las demás pestañas, junto a la bajada */
 header.site-header > .top { align-items: flex-end !important; }
+
+/* ── Carril de fechas del mazo (portada): la última fecha se desvanece en vez
+   de cortarse, y las flechas se ven sobre la foto ── */
+.hero .car-track {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+          mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  padding-right: 24px;
+}
+.hero .car-nav button {
+  background: rgba(27, 28, 30, .78);
+  border-color: rgba(255, 255, 255, .35);
+  color: #fff;
+}
+.hero .car-nav button:hover { background: #1B1C1E; border-color: var(--green, #4CCAA5); color: #fff; }
+
+/* En pantallas angostas la pastilla del menú ocupa todo el ancho y tapaba la
+   ceja («Monitor legislativo / …») de las páginas interiores. */
+@media (max-width: 900px) {
+  .c22-cabecera .c22-ceja { margin-top: 16px; }
+}

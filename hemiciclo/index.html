@@ -1317,13 +1317,15 @@ function buildBancadas() {
       'Partido Comunista': 'Comunista',
     };
     
-    const rows = Math.ceil(sorted.length / 4);
+    /* En pantallas angostas, dos columnas: con cuatro los nombres quedaban en «Co…». */
+    const nCols = (lp.clientWidth || 800) < 560 ? 2 : 4;
+    const rows = Math.ceil(sorted.length / nCols);
     let html = `<h2 style="font-family:var(--dm);font-size:18px;font-weight:700;color:var(--dark);letter-spacing:-.2px;margin-bottom:14px">Partidos</h2>
       <div style="display:grid;grid-template-rows:repeat(${rows}, auto);grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px 18px;font-family:var(--mont);font-size:13px">`;
     for (const p of sorted) {
       const safe = p.partido.replace(/'/g, "&#39;");
       const labelShort = partyAliasLong[p.partido] || p.partido;
-      html += `<div style="display:flex;align-items:center;gap:10px;cursor:pointer;white-space:nowrap;overflow:hidden" title="${p.partido} (${p.n} diputados)"
+      html += `<div style="display:flex;align-items:center;gap:10px;cursor:pointer;white-space:${nCols === 2 ? 'normal;line-height:1.25' : 'nowrap'};overflow:hidden" title="${p.partido} (${p.n} diputados)"
         onmouseenter="highlightPartyFn('${safe}', '${p.coalition}')"
         onmouseleave="clearHighlight()">
         <span style="width:14px;height:14px;border-radius:50%;background:${p.color};flex-shrink:0;border:1px solid rgba(0,0,0,.08)"></span>

@@ -482,7 +482,7 @@ function render() {
     chamberMode === 'senado'
       ? { val: '—', lab: "Varianza eje 1", color: "var(--text-m)" }
       : { val: `${String(DATA.explainedVariance.dim1).replace('.', ',')}%`, lab: "Varianza eje 1", color: "var(--purple)" },
-    { val: periodoStr, lab: `Período · ${fechas.length} fechas`, color: "var(--green)", small: true },
+    { val: periodoStr, lab: `Período · ${new Set(fechas.map(f => String(f).slice(0, 10))).size} días de Sala`, color: "var(--green)", small: true },
   ];
   document.getElementById("metricsBand").innerHTML = metrics.map(m =>
     `<div style="background:var(--bg-white);padding:22px 16px;text-align:center">
