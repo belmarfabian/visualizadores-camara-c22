@@ -177,3 +177,8 @@ a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$=
 /* Hemiciclo simplificado: solo el hemiciclo, por voto o por coalición, con «Qué se votó» y «Quién ganó y quién perdió» */
 #mainTabs, #modeOrder, #modeInesp, #votoLectura .c22-inesp, #votoLectura .c22-proyecto,
 #partidosLeyenda, #bancadas { display: none !important; }
+
+/* Portada: el borde redondeado de la grilla recortaba los rótulos «La Sala», «Quiénes votan»… */
+.facts-grid.facts-grupos { overflow: visible !important; border-radius: 0 !important; }
+/* Rankings: el selector Diputados/Partidos en su propia línea, bajo el título */
+.inner > h2.sec-title + .rank-toggle { display: flex !important; width: max-content; margin: 4px 0 18px !important; }

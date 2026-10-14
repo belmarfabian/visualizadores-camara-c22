@@ -1792,6 +1792,8 @@
   })();
 
   function initRankings() {
+    // Simplificación (oct 2026): sin las variables técnicas (predecibilidad del voto y segunda dimensión)
+    if (window.RANKINGS && window.RANKINGS.diputados) window.RANKINGS.diputados = window.RANKINGS.diputados.filter(function (v) { return v.key !== 'gmp' && v.key !== 'dim2'; });
     var R = window.RANKINGS, toggle = document.getElementById('rankToggle'),
       varsEl = document.getElementById('rankVars'), lista = document.getElementById('rankLista');
     if (!R || !toggle || !varsEl || !lista) return;
