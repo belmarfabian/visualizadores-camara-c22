@@ -183,3 +183,18 @@ a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$=
 /* Rankings: el selector Diputados/Partidos en su propia línea, bajo el título */
 .inner > h2.sec-title + .rank-toggle { display: flex !important; width: max-content; margin: 4px 0 18px !important; }
 .rank-desc { margin: 4px 0 22px; font: 400 14px/1.55 var(--mont); color: var(--text-2); max-width: 80ch; }
+
+/* Rankings: dos extremos lado a lado y la lista completa a pedido, todo con el mismo diseño */
+.rk-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 40px; }
+.rk-tit { margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 700 12px/1.3 var(--mont); letter-spacing: 1.6px; text-transform: uppercase; color: var(--text); }
+.rk-meta { display: flex; align-items: center; gap: 8px; }
+.rk-barra { position: relative; display: block; width: 100%; max-width: none; height: 5px; margin-top: 3px; border-radius: 3px; background: var(--border-light); overflow: hidden; }
+.rk-barra i { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.rk-barra.pos::after { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--text-m); }
+.rk-todos-wrap { margin-top: 24px; text-align: center; }
+.rk-ver { font: 600 13px/1 var(--mont); padding: 12px 22px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--dark); cursor: pointer; }
+.rk-ver:hover { border-color: var(--text-2); }
+.rk-todos { margin-top: 26px; text-align: left; }
+.rk-todos-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; gap: 0 40px; }
+@media (max-width: 760px) { .rk-cols, .rk-todos-grid { grid-template-columns: 1fr; } }
+.rk-col .rank-top-info, .rk-todos .rank-top-info { align-self: stretch; justify-content: center; }

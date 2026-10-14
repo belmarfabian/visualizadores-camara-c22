@@ -1836,30 +1836,51 @@
         return '';
       }
       function baseTxt(d) { return d[4] != null ? ' title="Sobre ' + d[4] + ' votaciones"' : ''; }
-      var top = datos.slice(0, 10), resto = datos.slice(10);
-      var topHtml = top.map(function (d, i) {
-         
+      // Dos extremos lado a lado, con el mismo diseño; la lista completa, a pedido.
+      var N = datos.length;
+      var vals = datos.map(function (d) { return d[2]; });
+      var vmax = Math.max.apply(null, vals.map(Math.abs)) || 1;
+      var TIT = {
+        izq_der: ['Más a la izquierda', 'Más a la derecha'],
+        lealtad: ['Más leales a su pacto', 'Menos leales a su pacto'],
+        asistencia: ['Con más asistencia', 'Con menos asistencia'],
+        abstencion: ['Los que más se abstienen', 'Los que menos se abstienen']
+      }[v.key] || ['Primeros', 'Últimos'];
+      function fila(d, pos) {
         var sello = (window.SELLOS_PARTIDOS || {})[d[1]];
-        var chapa = sello
-          ? '<span class="chapa"><img src="../assets/partidos-sello/' + sello.a + '" alt="" loading="lazy"></span>'
-          : '';
+        var chapa = sello ? '<span class="chapa"><img src="../assets/partidos-sello/' + sello.a + '" alt="" loading="lazy"></span>' : '';
         var cara = d[3]
-          ? '<img class="rank-top-foto" src="../assets/diputados/' + d[3] + '.jpg" alt="">'
+          ? '<img class="rank-top-foto" src="../assets/diputados/' + d[3] + '.jpg" alt="" loading="lazy">'
           : '<span class="rank-top-badge" style="background:' + pcol(d[1]) + ';color:' + ptxt(pcol(d[1])) + '">' + d[1] + '</span>';
-        var vis = '<span class="retrato">' + cara + chapa + '</span>';
-        return '<div class="rank-top-item"><span class="rank-top-pos">' + (i + 1) + '</span>' + vis +
+        var col = pcol(d[1]), barra;
+        if (esPos) {
+          var w = Math.abs(d[2]) / vmax * 50;
+          barra = '<span class="rk-barra pos"><i style="' + (d[2] < 0 ? 'right:50%' : 'left:50%') + ';width:' + w + '%;background:' + col + '"></i></span>';
+        } else {
+          barra = '<span class="rk-barra"><i style="left:0;width:' + Math.max(1, d[2] * 100) + '%;background:' + col + '"></i></span>';
+        }
+        return '<div class="rank-top-item"><span class="rank-top-pos">' + pos + '</span>' +
+          '<span class="retrato">' + cara + chapa + '</span>' +
           '<div class="rank-top-info"><span class="rank-top-nom">' + d[0] + '</span>' +
-          '<span class="pbadge" style="color:' + (sello ? sello.c : '#566C70') + '">' + d[1] + '</span>' + aviso(d) + '</div>' +
+          '<span class="rk-meta"><span class="pbadge" style="color:' + (sello ? sello.c : '#566C70') + '">' + d[1] + '</span>' + aviso(d) + '</span>' + barra + '</div>' +
           '<span class="rank-top-val"' + baseTxt(d) + '>' + fmtVal(d[2], esPos) + '</span></div>';
-      }).join('');
-      var restoHtml = resto.map(function (d, i) {
-        return '<div class="rank-rest-item"><span class="rank-rest-pos">' + (i + 11) + '</span>' +
-          '<span class="rank-rest-badge" style="background:' + pcol(d[1]) + '"></span>' +
-          '<span class="rank-rest-nom">' + d[0] + aviso(d) + '</span>' +
-          '<span class="rank-rest-val"' + baseTxt(d) + '>' + fmtVal(d[2], esPos) + '</span></div>';
-      }).join('');
-      lista.innerHTML = '<div class="rank-cols"><div class="rank-topcol">' + topHtml + '</div>' +
-        '<div class="rank-restcol">' + restoHtml + '</div></div>';
+      }
+      var arriba = datos.slice(0, 10).map(function (d, k) { return fila(d, k + 1); }).join('');
+      var abajo = datos.slice(-10).reverse().map(function (d, k) { return fila(d, N - k); }).join('');
+      var todos = datos.map(function (d, k) { return fila(d, k + 1); }).join('');
+      lista.innerHTML =
+        '<div class="rk-cols">' +
+          '<div class="rk-col"><h3 class="rk-tit">' + TIT[0] + '</h3>' + arriba + '</div>' +
+          '<div class="rk-col"><h3 class="rk-tit">' + TIT[1] + '</h3>' + abajo + '</div>' +
+        '</div>' +
+        '<div class="rk-todos-wrap"><button type="button" class="rk-ver" aria-expanded="false">Ver los ' + N + '</button>' +
+        '<div class="rk-todos" hidden><h3 class="rk-tit">Los ' + N + ', en orden</h3><div class="rk-todos-grid">' + todos + '</div></div></div>';
+      var btn = lista.querySelector('.rk-ver'), caja = lista.querySelector('.rk-todos');
+      btn.addEventListener('click', function () {
+        var abrir = caja.hidden; caja.hidden = !abrir;
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+        btn.textContent = abrir ? 'Ocultar la lista completa' : 'Ver los ' + N;
+      });
       recordar();
     }
     /* Cohesión de cada partido mes a mes: una línea chica por partido, misma escala. */
