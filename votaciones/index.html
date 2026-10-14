@@ -417,13 +417,12 @@ let DATA_POLAR = DATA_POLAR_CAMARA;
 let chamberMode = 'camara';
 
 const TABS_DEF = [
-  { id: "map",          label: "Mapa ideológico",   group: "Diputadas y Diputados" },
-  { id: "discolos",     label: "Díscolos del pacto", group: "Diputadas y Diputados" },
-  { id: "comparar",     label: "Comparar",           group: "Diputadas y Diputados" },
-  { id: "rice",         label: "Cohesión",          group: "Partidos" },
-  { id: "heatmap",      label: "Mapa de calor",      group: "Votaciones" },
-  { id: "balance",      label: "Balance",            group: "Votaciones" },
-  { id: "polarizacion", label: "Polarización",       group: "Votaciones" },
+  { id: "map",          label: "Mapa ideológico", group: "" },
+  { id: "comparar",     label: "Comparar dos diputados", group: "" },
+  { id: "polarizacion", label: "Polarización",    group: "" },
+  // Ocultas (oct 2026): díscolos y cohesión ya están en Rankings; el mapa de calor
+  // cuesta leerlo y el balance repite el carril de fechas del Hemiciclo. Siguen
+  // funcionando con ?tab=discolos | rice | heatmap | balance.
 ];
 
 let state = { tab: "map", selected: null, filterCoal: "all", colorBy: "partido", method: "wnom", dims: "2d" };
@@ -1779,12 +1778,12 @@ C22Tour.define('votaciones', [
     text: 'Cambia entre las dos corporaciones. Todo el panel se recalcula para la que elijas.' },
   { el: '#metricsBand', pos: 'bottom', title: 'Las cifras del período',
     text: 'Un resumen rápido: cuántas votaciones, cuántos parlamentarios y los índices clave del período.' },
-  { el: '#tabs', pos: 'bottom', title: 'Cinco maneras de mirar', before: function(){ setTab('map'); },
-    text: 'Cada pestaña es una vista distinta de las mismas votaciones: el mapa ideológico, los díscolos, el mapa de calor, la polarización y el balance.' },
+  { el: '#tabs', pos: 'bottom', title: 'Tres maneras de mirar', before: function(){ setTab('map'); },
+    text: 'Cada botón es una vista distinta de las mismas votaciones: el mapa ideológico, la comparación entre dos diputados y la polarización.' },
   { el: '#mainContent', pos: 'top', title: 'El mapa ideológico', before: function(){ setTab('map'); },
     text: 'Cada punto es un diputado, ubicado según <strong>cómo vota</strong>. Izquierda–derecha es el eje principal. Arriba tienes los controles para ver 1D o 2D y colorear por partido o coalición. Haz clic en un punto para ver a la persona.' },
-  { el: '#mainContent', pos: 'top', title: 'Quién se sale de la línea', before: function(){ setTab('discolos'); },
-    text: 'Los <strong>díscolos</strong>: parlamentarios que votaron distinto a la mayoría de su propio pacto. Sirve para detectar quiebres internos.' },
+  { el: '#mainContent', pos: 'top', title: 'Dos diputados, cara a cara', before: function(){ setTab('comparar'); },
+    text: 'Elige dos nombres y ves en cuántas votaciones coincidieron y en cuáles se separaron.' },
   { el: '#mainContent', pos: 'top', title: 'Cuán dividida está la sala', before: function(){ setTab('polarizacion'); },
     text: 'La <strong>polarización</strong> mide, votación a votación, qué tan partida quedó la Cámara. Sube cuando los bloques votan en contra entre sí.' },
   { el: '#depSearch', pos: 'bottom', title: 'Busca a alguien puntual', before: function(){ setTab('map'); },

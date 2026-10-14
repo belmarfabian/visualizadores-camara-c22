@@ -121,3 +121,16 @@ code, kbd, samp, pre, tt,
 [style*="Plex Mono"], [style*="monospace"],
 svg text { font-family: 'DM Sans', sans-serif !important; }
 body { font-variant-numeric: tabular-nums; }
+
+/* Votaciones: tres vistas como botones en una fila, como en Discurso */
+.c22-vistas-grupos { border-bottom: 0 !important; }
+.c22-vistas-grupos #tabs { gap: 8px !important; }
+.c22-vistas-grupos #tabs .tab-group { display: contents !important; }
+.c22-vistas-grupos #tabs .tab-group-label { display: none !important; }
+.c22-vistas-grupos #tabs .tab {
+  border: 1px solid var(--border) !important; border-radius: 50px !important;
+  padding: 10px 18px !important; margin: 0 !important; background: var(--bg-white) !important;
+  font-size: 12px !important; letter-spacing: 1px; color: var(--text) !important;
+}
+.c22-vistas-grupos #tabs .tab:hover { border-color: var(--text-2) !important; }
+.c22-vistas-grupos #tabs .tab.active { background: var(--dark) !important; color: #fff !important; border-color: var(--dark) !important; }
