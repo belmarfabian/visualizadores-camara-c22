@@ -134,3 +134,20 @@ body { font-variant-numeric: tabular-nums; }
 }
 .c22-vistas-grupos #tabs .tab:hover { border-color: var(--text-2) !important; }
 .c22-vistas-grupos #tabs .tab.active { background: var(--dark) !important; color: #fff !important; border-color: var(--dark) !important; }
+
+/* Un solo ancho dentro de c22cepchile.cl: todas las pestañas ocupan el ancho
+   del marco, como la portada y las páginas internas del C22 (antes 1160 px al centro). */
+html.c22-embed { --banda: 100%; }
+html.c22-embed section.ranking-dip, html.c22-embed section.rankings-sec,
+html.c22-embed .c22-banda { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Mismo fondo gris en todas las pestañas (Rankings tenía la cabecera y la lista en blanco) */
+body:has(section.rankings-sec) { background: var(--bg) !important; }
+section.rankings-sec, section.ranking-dip { background: transparent !important; }
+/* Título a la misma altura en todas las pestañas (Discurso y Legisladores quedaban más arriba) */
+header.site-header { padding-top: 48px !important; }
+section.tope { padding-top: 48px !important; }
+/* Bajada del mismo ancho en todas las pestañas */
+section.tope .lead { max-width: 76ch !important; }
+/* Discurso: cifras en negro, como en Votaciones; el color no significaba nada */
+.metric .val[id^="m-"] { color: var(--dark) !important; }
