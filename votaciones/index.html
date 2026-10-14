@@ -301,7 +301,7 @@ svg text { user-select: none; }
 
 <div id="detail" style="margin-bottom:18px"></div>
 
-<div id="navTemporalSlot" style="margin-bottom:14px"></div>
+<div id="navTemporalSlot" style="margin-bottom:14px;display:none"></div>
 
 <nav class="c22-vistas c22-vistas-grupos" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
   <div id="tabs" style="display:flex;gap:0;flex-wrap:wrap;flex:1;min-width:0"></div>
@@ -509,9 +509,6 @@ function render() {
     { val: DATA.votes.length, lab: "Votaciones", color: "var(--green)" },
     { val: nPartidos, lab: "Partidos", color: "var(--text-2)" },
     { val: totalVotosEmitidos.toLocaleString("es-CL"), lab: "Votos emitidos", color: "var(--yellow)" },
-    chamberMode === 'senado'
-      ? { val: '—', lab: "Varianza eje 1", color: "var(--text-m)" }
-      : { val: `${String(DATA.explainedVariance.dim1).replace('.', ',')}%`, lab: "Varianza eje 1", color: "var(--purple)" },
     { val: periodoStr, lab: `Período · ${new Set(fechas.map(f => String(f).slice(0, 10))).size} días de Sala`, color: "var(--green)", small: true },
   ];
   document.getElementById("metricsBand").innerHTML = metrics.map(m =>
@@ -659,10 +656,6 @@ function renderMap(el) {
   };
 
   let modeToggle = `<div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
-    <span style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:1px;font-weight:600">Dim:</span>
-    <button class="pill ${state.dims==='1d'?'active':''}" onclick="state.dims='1d';renderMap(document.getElementById('mainContent'))">1D</button>
-    <button class="pill ${state.dims==='2d'?'active':''}" onclick="state.dims='2d';renderMap(document.getElementById('mainContent'))">2D</button>
-    <span style="width:1px;height:20px;background:var(--border);margin:0 6px"></span>
     <span style="font-size:11px;color:var(--text-m);text-transform:uppercase;letter-spacing:1px;font-weight:600">Filtrar:</span>
     <button class="pill ${state.colorBy==='partido'?'active':''}" onclick="state.colorBy='partido';state.filterCoal='all';renderMap(document.getElementById('mainContent'))">Por partido</button>
     <button class="pill ${state.colorBy==='coalition'?'active':''}" onclick="state.colorBy='coalition';state.filterCoal='all';renderMap(document.getElementById('mainContent'))">Por coalición</button>
