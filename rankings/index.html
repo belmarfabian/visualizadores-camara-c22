@@ -1867,19 +1867,35 @@
       }
       var arriba = datos.slice(0, 10).map(function (d, k) { return fila(d, k + 1); }).join('');
       var abajo = datos.slice(-10).reverse().map(function (d, k) { return fila(d, N - k); }).join('');
-      var todos = datos.map(function (d, k) { return fila(d, k + 1); }).join('');
+      var todos = datos.map(function (d, k) { return fila(d, k + 1).replace('<div class="rank-top-item">', '<div class="rank-top-item" data-k="' + k + '">'); }).join('');
       lista.innerHTML =
         '<div class="rk-cols">' +
           '<div class="rk-col"><h3 class="rk-tit">' + TIT[0] + '</h3>' + arriba + '</div>' +
           '<div class="rk-col"><h3 class="rk-tit">' + TIT[1] + '</h3>' + abajo + '</div>' +
         '</div>' +
-        '<div class="rk-todos-wrap"><button type="button" class="rk-ver" aria-expanded="false">Ver los ' + N + '</button>' +
+        '<div class="rk-todos-wrap"><div class="rk-acciones"><button type="button" class="rk-ver" aria-expanded="false">Ver los ' + N + '</button>' +
+        '<input class="rk-busca" type="search" placeholder="Busca un diputado" aria-label="Busca un diputado en el ranking"><span class="rk-hallado" aria-live="polite"></span></div>' +
         '<div class="rk-todos" hidden><h3 class="rk-tit">Los ' + N + ', en orden</h3><div class="rk-todos-grid">' + todos + '</div></div></div>';
       var btn = lista.querySelector('.rk-ver'), caja = lista.querySelector('.rk-todos');
       btn.addEventListener('click', function () {
         var abrir = caja.hidden; caja.hidden = !abrir;
         btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
         btn.textContent = abrir ? 'Ocultar la lista completa' : 'Ver los ' + N;
+      });
+      // Buscador: abre la lista completa y marca la fila de la persona
+      var sinTilde = function (t) { return (t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); };
+      var inp = lista.querySelector('.rk-busca'), msg = lista.querySelector('.rk-hallado');
+      inp.addEventListener('input', function () {
+        var q = sinTilde(inp.value.trim());
+        [].forEach.call(caja.querySelectorAll('.rk-hit'), function (x) { x.classList.remove('rk-hit'); });
+        if (q.length < 3) { msg.textContent = ''; return; }
+        var k = -1;
+        for (var z = 0; z < N; z++) { if (sinTilde(datos[z][0]).indexOf(q) > -1) { k = z; break; } }
+        if (k < 0) { msg.textContent = 'Sin resultados'; return; }
+        if (caja.hidden) { caja.hidden = false; btn.setAttribute('aria-expanded', 'true'); btn.textContent = 'Ocultar la lista completa'; }
+        var row = caja.querySelector('[data-k="' + k + '"]');
+        if (row) { row.classList.add('rk-hit'); row.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        msg.textContent = datos[k][0] + ': puesto ' + (k + 1) + ' de ' + N;
       });
       recordar();
     }

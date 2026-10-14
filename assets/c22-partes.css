@@ -198,3 +198,11 @@ a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$=
 .rk-todos-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; gap: 0 40px; }
 @media (max-width: 760px) { .rk-cols, .rk-todos-grid { grid-template-columns: 1fr; } }
 .rk-col .rank-top-info, .rk-todos .rank-top-info { align-self: stretch; justify-content: center; }
+.rk-acciones { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rk-busca { font: 400 13px/1 var(--mont); padding: 11px 16px; width: 240px; border-radius: 50px; border: 1px solid var(--border); background: var(--bg-white); color: var(--dark); }
+.rk-busca:focus { outline: none; border-color: var(--acento); }
+.rk-hallado { font: 600 12px/1.3 var(--mont); color: var(--text-2); }
+.rank-top-item.rk-hit { background: var(--acento-suave, rgba(13,115,214,.14)); }
+/* Rankings: un solo título (el de la página); el selector va bajo la bajada */
+section.rankings-sec { padding-top: 8px !important; }
+section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-title { display: none !important; }
