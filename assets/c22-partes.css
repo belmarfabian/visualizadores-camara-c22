@@ -135,9 +135,10 @@ body { font-variant-numeric: tabular-nums; }
 .c22-vistas-grupos #tabs .tab:hover { border-color: var(--text-2) !important; }
 .c22-vistas-grupos #tabs .tab.active { background: var(--dark) !important; color: #fff !important; border-color: var(--dark) !important; }
 
-/* Un solo ancho dentro de c22cepchile.cl: todas las pestañas ocupan el ancho
-   del marco, como la portada y las páginas internas del C22 (antes 1160 px al centro). */
+/* Un solo ancho dentro de c22cepchile.cl para todas las pestañas */
 html.c22-embed { --banda: 100%; }
+/* El ancho lo manda la portada de c22cepchile.cl: 1248 px centrados */
+html.c22-embed body { max-width: 1248px; margin-left: auto !important; margin-right: auto !important; }
 html.c22-embed section.ranking-dip, html.c22-embed section.rankings-sec,
 html.c22-embed .c22-banda { padding-left: 0 !important; padding-right: 0 !important; }
 
