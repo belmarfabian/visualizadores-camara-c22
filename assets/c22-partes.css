@@ -167,3 +167,7 @@ section#methodology { max-width: none !important; margin-left: 0 !important; mar
 
 /* Dentro de c22cepchile.cl el fondo es el de la página: así se ven sus círculos rayados en los márgenes */
 html.c22-embed, html.c22-embed body { background: transparent !important; }
+
+/* Simplificación (oct 2026): Discurso sale del Monitor (queda en discurso/, sin enlaces) */
+.c22skin-sub a[href$="discurso/"], .c22skin-nav a[href$="discurso/"],
+a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$="discurso/"]) { display: none !important; }

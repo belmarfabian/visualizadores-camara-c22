@@ -16,7 +16,6 @@
     { txt: 'Portada',      ruta: '' },
     { txt: 'Hemiciclo',    ruta: 'hemiciclo/' },
     { txt: 'Votaciones',   ruta: 'votaciones/' },
-    { txt: 'Discurso',     ruta: 'discurso/' },
     { txt: 'Legisladores', ruta: 'legisladores/' }
   ];
 
