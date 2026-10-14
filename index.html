@@ -2310,7 +2310,7 @@
 
   function initRankings() {
     // Simplificación (oct 2026): sin las variables técnicas (predecibilidad del voto y segunda dimensión)
-    if (window.RANKINGS && window.RANKINGS.diputados) window.RANKINGS.diputados = window.RANKINGS.diputados.filter(function (v) { return v.key !== 'gmp' && v.key !== 'dim2'; });
+    if (window.RANKINGS && window.RANKINGS.diputados) window.RANKINGS.diputados = window.RANKINGS.diputados.filter(function (v) { return v.key !== 'gmp' && v.key !== 'dim2' && v.key !== 'oficialismo'; });
     var R = window.RANKINGS, toggle = document.getElementById('rankToggle'),
       varsEl = document.getElementById('rankVars'), lista = document.getElementById('rankLista');
     if (!R || !toggle || !varsEl || !lista) return;
@@ -2318,6 +2318,16 @@
     function fmtVal(x, esPos) { return esPos ? ((x >= 0 ? '+' : '') + x.toFixed(2)) : Math.round(x * 100) + '%'; }
     function pintaLista() {
       var v = R[state.tipo][state.vi], datos = v.datos, esPos = v.fmt === 'pos';
+      var DESC = {
+        'diputados:izq_der': 'Posición estimada con W-NOMINATE a partir de todas sus votaciones. −1 es el extremo izquierdo y +1 el derecho.',
+        'diputados:lealtad': 'Porcentaje de sus votos a favor o en contra que coinciden con lo que votó la mayoría de su pacto.',
+        'diputados:asistencia': 'Porcentaje de las votaciones del período en que emitió voto.',
+        'diputados:abstencion': 'Porcentaje de abstenciones entre las votaciones en que votó.',
+        'partidos:cohesion': 'Promedio del índice de Rice en todas las votaciones: |sí − no| / (sí + no). 100 % significa que todos sus diputados votan igual.',
+        'partidos:posicion': 'Promedio de la posición W-NOMINATE de sus diputados. −1 es el extremo izquierdo y +1 el derecho.',
+        'partidos:asistencia': 'Promedio de la asistencia de sus diputados.'
+      };
+      var dEl = document.getElementById('rankDesc'); if (dEl) dEl.textContent = DESC[state.tipo + ':' + v.key] || '';
       if (state.tipo !== 'diputados') {                 
         var vals = datos.map(function (d) { return d[2]; });
         var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), maxAbs = Math.max(Math.abs(min), Math.abs(max)) || 1;

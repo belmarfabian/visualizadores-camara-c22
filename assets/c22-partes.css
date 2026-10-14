@@ -182,3 +182,4 @@ a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$=
 .facts-grid.facts-grupos { overflow: visible !important; border-radius: 0 !important; }
 /* Rankings: el selector Diputados/Partidos en su propia línea, bajo el título */
 .inner > h2.sec-title + .rank-toggle { display: flex !important; width: max-content; margin: 4px 0 18px !important; }
+.rank-desc { margin: 4px 0 22px; font: 400 14px/1.55 var(--mont); color: var(--text-2); max-width: 80ch; }
