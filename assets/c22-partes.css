@@ -171,3 +171,5 @@ html.c22-embed, html.c22-embed body { background: transparent !important; }
 /* Simplificación (oct 2026): Discurso sale del Monitor (queda en discurso/, sin enlaces) */
 .c22skin-sub a[href$="discurso/"], .c22skin-nav a[href$="discurso/"],
 a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$="discurso/"]) { display: none !important; }
+/* sin Discurso, las tres tarjetas llenan la fila */
+@media (min-width: 761px) { .products .cards, div.cards:has(> a.card[href="votaciones/"]) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
