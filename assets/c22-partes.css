@@ -151,3 +151,15 @@ section.tope { padding-top: 48px !important; }
 section.tope .lead { max-width: 76ch !important; }
 /* Discurso: cifras en negro, como en Votaciones; el color no significaba nada */
 .metric .val[id^="m-"] { color: var(--dark) !important; }
+
+/* Discurso: carril de fechas y metodología al mismo ancho que en las demás pestañas */
+#navTemporalSlot { max-width: none !important; }
+section#methodology { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+
+/* Portada: cada fila de cifras llena el ancho (antes quedaban huecos a la derecha) */
+@media (min-width: 901px) {
+  .facts-fila { grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+}
+/* Votaciones: el botón activo ya dice qué vista es */
+#viewContext { display: none !important; }
+@media (max-width: 560px) { .c22-ceja ~ h1 { font-size: 30px !important; line-height: 34px !important; } }

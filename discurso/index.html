@@ -174,9 +174,9 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
 .tab-content .card.card-pad { padding-left:0; padding-right:0; }
 #networkSvg { width:100%; height:520px; display:block; cursor:grab; user-select:none; }
 #networkSvg:active { cursor:grabbing; }
-#networkSvg .net-link { stroke:#4CCAA5; stroke-opacity:.55; fill:none; }
+#networkSvg .net-link { stroke:var(--acento); stroke-opacity:.55; fill:none; }
 #networkSvg .net-link.dim { stroke-opacity:.05; }
-#networkSvg .net-arrow { fill:#4CCAA5; fill-opacity:.55; }
+#networkSvg .net-arrow { fill:var(--acento); fill-opacity:.55; }
 #networkSvg .net-arrow.dim { fill-opacity:.05; }
 #networkSvg .net-node { cursor:pointer; }
 #networkSvg .net-node circle { fill:#657D81; stroke:#fff; stroke-width:1.5px; transition:fill .2s; }
@@ -188,7 +188,7 @@ main { padding:30px 5%; max-width:1200px; margin:0 auto; }
 #networkSvg .net-node.dim circle { fill-opacity:.18; stroke-opacity:.4; }
 #networkSvg .net-node.dim text { fill-opacity:.18; }
 #networkSvg .net-node.dragging circle { fill:#A10856; stroke:#fff; stroke-width:2.5px; }
-#networkSvg .net-node:hover circle { fill:#4CCAA5; }
+#networkSvg .net-node:hover circle { fill:var(--acento); }
 #networkTooltip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-family:'DM Sans',sans-serif; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); display:none; z-index:50; max-width:240px; }
 #networkSearch { padding:8px 14px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border); border-radius:50px; background:var(--bg-white); color:var(--dark); outline:none; width:240px; }
 #nodeDetail { display:none; margin-top:14px; background:var(--bg-white); border:1px solid var(--border); border-radius:15px; padding:18px 22px; }
@@ -733,7 +733,7 @@ function renderBigrams() {
   bigEl.innerHTML = big.length ? big.map((b,i) =>
     `<div class="bar-row clickable-row" data-w="${b[0]}" ${i===big.length-1?'style="border-bottom:none"':''}>
       <div class="label">${hl(b[0])} → ${hl(b[1])}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${(b[2]/max*100)}%;background:linear-gradient(90deg,#4CCAA5,#4CCAA5dd)"></div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(b[2]/max*100)}%;background:linear-gradient(90deg,#0D73D6,#0D73D6dd)"></div></div>
       <div class="count">${b[2]}</div>
     </div>`
   ).join('') : `<div style="font-family:'Montserrat',sans-serif;font-size:13px;color:var(--text-2);font-style:italic">Sin coincidencias para "${escapeHtml(q)}".</div>`;
@@ -1026,7 +1026,7 @@ function buildNetwork() {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M0,-5L10,0L0,5')
-    .attr('fill', '#4CCAA5')
+    .attr('fill', '#0D73D6')
     .attr('fill-opacity', 0.6);
 
   const gContent = svg.append('g').attr('class', 'net-root');
