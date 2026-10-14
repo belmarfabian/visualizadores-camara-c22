@@ -164,3 +164,6 @@ section#methodology { max-width: none !important; margin-left: 0 !important; mar
 /* Votaciones: el botón activo ya dice qué vista es */
 #viewContext { display: none !important; }
 @media (max-width: 560px) { .c22-ceja ~ h1 { font-size: 30px !important; line-height: 34px !important; } }
+
+/* Dentro de c22cepchile.cl el fondo es el de la página: así se ven sus círculos rayados en los márgenes */
+html.c22-embed, html.c22-embed body { background: transparent !important; }
