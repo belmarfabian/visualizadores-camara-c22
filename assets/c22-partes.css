@@ -112,3 +112,12 @@ header.site-header > .top { align-items: flex-end !important; }
 @media (max-width: 900px) {
   .c22-cabecera .c22-ceja { margin-top: 16px; }
 }
+
+/* Una sola familia, como el resto de c22cepchile.cl: lo que iba en
+   IBM Plex Mono (ejes de fecha, cifras de píldoras, nombres de paquetes)
+   pasa a DM Sans, con cifras de ancho fijo para que las columnas sigan alineadas. */
+:root { --mono: 'DM Sans', sans-serif !important; }
+code, kbd, samp, pre, tt,
+[style*="Plex Mono"], [style*="monospace"],
+svg text { font-family: 'DM Sans', sans-serif !important; }
+body { font-variant-numeric: tabular-nums; }
