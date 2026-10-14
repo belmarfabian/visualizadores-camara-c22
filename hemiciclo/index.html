@@ -394,9 +394,8 @@ select:focus { outline: 2px solid var(--acento); outline-offset: -1px; }
         <dt style="font-weight:700;color:var(--dark);margin-top:6px">Por voto</dt>
         <dd style="margin:2px 0 8px">Color por decisión del diputado: <span style="color:#4CCAA5;font-weight:600">a favor</span>, <span style="color:#F20231;font-weight:600">en contra</span>, <span style="color:#FFB923;font-weight:600">abstención</span>, gris ausente.</dd>
         <dt style="font-weight:700;color:var(--dark);margin-top:6px">Por coalición</dt>
-        <dd style="margin:2px 0 8px">Color por partido, posición fija. Permite identificar bloques homogéneos.</dd>
-        <dt style="font-weight:700;color:var(--dark);margin-top:6px">Por bloques</dt>
-        <dd style="margin:2px 0 0">Reordena los puntos agrupándolos por cómo votaron (a favor / en contra / abstención / ausente), conservando el color de partido. Cruza orden ideológico vs. distribución del voto.</dd>
+        <dd style="margin:2px 0 0">Color por partido, posición fija. Permite identificar bloques homogéneos.</dd>
+
       </dl>
     </div>
     <div>
@@ -854,6 +853,7 @@ function setMode(m) {
   document.getElementById("modeVote").classList.toggle("active", m === "vote");
   document.getElementById("modeCoal").classList.toggle("active", m === "coalition");
   document.getElementById("modeOrder").classList.toggle("active", m === "order");
+  var lv = document.getElementById("leyendaVotos"); if (lv) lv.style.visibility = m === "coalition" ? "hidden" : "";
   paintSeats();
 }
 
@@ -1739,12 +1739,8 @@ C22Tour.define('hemiciclo', [
     text: 'Un resumen rápido de la votación en pantalla y del período: cuántos votaron a favor, en contra o se abstuvieron.' },
   { el: '#hemicycle', pos: 'top', title: 'El hemiciclo', before: function(){ setMainTab('hemi'); },
     text: 'Cada punto es una diputada o un diputado. Por defecto el color muestra <strong>cómo votó</strong>: verde a favor, rojo en contra, amarillo abstención, gris ausente. Pasa el cursor por un escaño para ver de quién se trata.' },
-  { el: '#tourModes', pos: 'bottom', title: 'Tres formas de colorear', before: function(){ setMainTab('hemi'); },
-    text: 'Cambia la lectura del hemiciclo: <strong>por voto</strong> (a favor / en contra), <strong>por coalición</strong> (el color de cada pacto) o <strong>por bloques</strong>, que reagrupa los escaños según el sentido del voto.' },
-  { el: '#viewRanking', pos: 'top', title: 'Las votaciones más reñidas', before: function(){ setMainTab('ranking'); },
-    text: 'El <strong>ranking</strong> ordena las votaciones por margen de cierre: arriba quedan las que se decidieron por pocos votos. Haz clic en cualquiera para verla en el hemiciclo.' },
-  { el: '#viewAsistencia', pos: 'top', title: 'Quién asiste a votar', before: function(){ setMainTab('asistencia'); },
-    text: 'La <strong>asistencia</strong> muestra en qué proporción de las votaciones cada diputada o diputado emitió voto. Sirve para ver quién está y quién falta a la hora de decidir.' },
+  { el: '#tourModes', pos: 'bottom', title: 'Dos formas de colorear', before: function(){ setMainTab('hemi'); },
+    text: 'Cambia la lectura del hemiciclo: <strong>por voto</strong> (a favor / en contra) o <strong>por coalición</strong> (el color de cada pacto).' },
   { title: 'Listo', before: function(){ setMainTab('hemi'); },
     text: 'Eso es todo. Explora a tu ritmo, y si te pierdes, el botón <strong>Cómo funciona</strong> te trae de vuelta acá.' }
 ]);
@@ -1980,7 +1976,7 @@ C22Tour.define('hemiciclo', [
 
     var mismos = L.mismoBoletin(H, j), htmlPr = '';
     if (mismos.length > 1) {
-      htmlPr = '<div><h3>El proyecto completo <small>boletín ' + esc(L.boletinDe(v)) + ' · ' + mismos.length + ' votaciones en la ' + cam + '</small></h3><div class="c22-chips">' +
+      htmlPr = '<div class="c22-proyecto"><h3>El proyecto completo <small>boletín ' + esc(L.boletinDe(v)) + ' · ' + mismos.length + ' votaciones en la ' + cam + '</small></h3><div class="c22-chips">' +
         mismos.map(function (k) {
           var w = H.votes[k], ok = /aprob/i.test(w.resultado || '');
           return '<button class="c22-chip' + (k === j ? ' on' : '') + '" data-voto="' + k + '"><i style="background:' + (ok ? 'var(--green)' : 'var(--red)') + '"></i>' + esc(fechaLarga(w.fecha)) + ' <small>' + w.totalSi + '–' + w.totalNo + '</small></button>';
@@ -1989,7 +1985,7 @@ C22Tour.define('hemiciclo', [
 
     el.innerHTML = queSeVoto(v) +
       '<div><h3>Quién ganó y quién perdió <small>posición mayoritaria de cada bloque frente al resultado</small></h3><div class="c22-bloques">' + htmlBl + '</div></div>' +
-      '<div><h3>Votos inesperados <small>' + (ie.debil ? 'no aplica' : (ie.errores.length || 'ninguno')) + apre + '</small></h3>' + htmlIe +
+      '<div class="c22-inesp"><h3>Votos inesperados <small>' + (ie.debil ? 'no aplica' : (ie.errores.length || 'ninguno')) + apre + '</small></h3>' + htmlIe +
       (ie.errores.length ? '<p class="c22-nota">Votaron distinto de lo que predice su posición W-NOMINATE: el corte que mejor separa el sí del no deja a estas personas del lado contrario (clasificación óptima de Poole). No indica por qué.</p>' : '') + '</div>' +
       htmlPr;
 
