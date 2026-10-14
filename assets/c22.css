@@ -46,11 +46,11 @@ body.c22 {
 
 .c22-eyebrow {
   font-family: var(--mont); font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 2px; color: var(--green);
+  text-transform: uppercase; letter-spacing: 2px; color: var(--acento);
   display: inline-flex; align-items: center; gap: 10px;
 }
 .c22-eyebrow::before {
-  content: ''; display: inline-block; width: 24px; height: 2px; background: var(--green);
+  content: ''; display: inline-block; width: 24px; height: 2px; background: var(--acento);
 }
 
 
@@ -69,10 +69,10 @@ body.c22 {
 .c22-badge {
   display: inline-block; font-family: var(--mont); font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px; border-radius: 50px;
-  background: color-mix(in srgb, var(--c, var(--green)) 14%, transparent);
-  color: var(--c, var(--green));
+  background: color-mix(in srgb, var(--c, var(--acento)) 14%, transparent);
+  color: var(--c, var(--acento));
 }
-.c22-badge.solida { background: var(--c, var(--green)); color: #fff; }
+.c22-badge.solida { background: var(--c, var(--acento)); color: #fff; }
 
 
 .c22-card {
@@ -95,10 +95,10 @@ footer.c22-site .addr {
   font-family: var(--mont); font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.6);
 }
 footer.c22-site .addr a { color: rgba(255,255,255,.85); text-decoration: none; border-bottom: 1px solid transparent; }
-footer.c22-site .addr a:hover { border-bottom-color: var(--green); }
+footer.c22-site .addr a:hover { border-bottom-color: var(--acento); }
 footer.c22-site h4 {
   font-family: var(--mont); font-size: 12px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 2px; color: var(--green); margin-bottom: 14px;
+  letter-spacing: 2px; color: var(--acento); margin-bottom: 14px;
 }
 footer.c22-site ul { list-style: none; margin: 0; padding: 0; }
 footer.c22-site ul li { font-family: var(--mont); font-size: 13px; line-height: 2; color: rgba(255,255,255,.7); }

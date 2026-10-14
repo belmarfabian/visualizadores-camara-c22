@@ -14,9 +14,9 @@
 .c22-ceja {
   display: flex; align-items: center; gap: 12px; margin: 0 0 16px;
   font-family: var(--mont); font-size: 11px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+  letter-spacing: 2px; text-transform: uppercase; color: var(--acento);
 }
-.c22-ceja::before { content: ''; flex: 0 0 24px; height: 2px; background: var(--green); }
+.c22-ceja::before { content: ''; flex: 0 0 24px; height: 2px; background: var(--acento); }
 .c22-ceja span { color: var(--text-m); font-weight: 500; }
 .c22-cabecera h1 {
   font-family: var(--dm); font-size: clamp(30px, 4.2vw, 44px); line-height: 1.08;
@@ -35,7 +35,7 @@
 /* ── Pestañas de vista: subrayado verde, como la barra del C22 ── */
 .c22-vistas { border-bottom: 1px solid var(--border); margin-bottom: 22px; }
 .c22-vistas .tab-btn { padding: 14px 0 12px !important; margin-right: 28px; }
-.c22-vistas .tab-btn.active { color: var(--dark); border-bottom-color: var(--green) !important; }
+.c22-vistas .tab-btn.active { color: var(--dark); border-bottom-color: var(--acento) !important; }
 
 /* ── Lectura de la votación ── */
 .c22-lectura { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border-light); display: grid; gap: 22px; }
@@ -84,7 +84,7 @@
   border-bottom: 2px solid transparent !important; padding: 12px 0 10px !important; margin-right: 22px;
   color: var(--text-2) !important;
 }
-.c22-vistas-grupos #tabs .tab.active { color: var(--dark) !important; border-bottom-color: var(--green) !important; }
+.c22-vistas-grupos #tabs .tab.active { color: var(--dark) !important; border-bottom-color: var(--acento) !important; }
 .c22-vistas-grupos #tabs .tab-group { margin-bottom: 0; }
 
 /* Aviso de actualidad (Discurso) */
@@ -93,7 +93,7 @@
 .c22-aviso-fecha b { color: var(--text); }
 
 /* Qué se votó (ficha de la votación) */
-.c22-que-linea { margin: 0 0 6px; font: 600 12px/1.5 var(--mont); letter-spacing: .6px; text-transform: uppercase; color: var(--green); }
+.c22-que-linea { margin: 0 0 6px; font: 600 12px/1.5 var(--mont); letter-spacing: .6px; text-transform: uppercase; color: var(--acento); }
 .c22-que-art { margin: 0 0 8px; font: 500 15px/1.5 var(--mont); color: var(--text); max-width: 90ch; }
 .c22-que-mats { display: flex; flex-wrap: wrap; gap: 6px; }
 .c22-que-mat { font: 600 11px/1 var(--mont); color: var(--text-2); background: var(--border-light); padding: 6px 10px; border-radius: 50px; }

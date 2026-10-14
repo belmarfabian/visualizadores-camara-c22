@@ -5,7 +5,7 @@
        como las páginas del C22, sin cinta de colores. */
 .c22-ceja ~ h1 {
   font: 700 40px/44px 'DM Sans', sans-serif !important; letter-spacing: normal !important;
-  display: inline-block !important; border-bottom: 7px solid #4CCAA5 !important; padding-bottom: 2px !important;
+  display: inline-block !important; border-bottom: 7px solid var(--acento) !important; padding-bottom: 2px !important;
   margin: 0 0 12px !important; max-width: none !important;
 }
 .c22-ceja ~ h1 ~ p.c22-bajada, .c22-ceja ~ h1 + p.lead { font: 400 16px/24.8px 'DM Sans', sans-serif !important; color: #41454A !important; }
@@ -82,7 +82,7 @@ section.hero { min-height: 0 !important; height: auto !important; padding-bottom
        «Cómo citar» destacado y sin la lista «En qué estamos». */
 section.about > .inner { background: #fff !important; border: 1px solid rgba(27, 28, 30, .08) !important; border-radius: 16px !important; padding: 32px 34px !important; }
 .about .roadmap-col { display: none !important; }
-.about .cita, .about blockquote, .about .cita-txt { background: #EEF4F3 !important; border-left: 4px solid #4CCAA5 !important; padding: 12px 14px !important; border-radius: 4px !important; }
+.about .cita, .about blockquote, .about .cita-txt { background: #EEF4F3 !important; border-left: 4px solid var(--acento) !important; padding: 12px 14px !important; border-radius: 4px !important; }
 
 /* Revisión de pestañas (octubre 2026) */
 /* Rankings: las secciones con el mismo margen que la cabecera (antes pegadas al borde) */
@@ -105,7 +105,7 @@ header.site-header > .top { align-items: flex-end !important; }
   border-color: rgba(255, 255, 255, .35);
   color: #fff;
 }
-.hero .car-nav button:hover { background: #1B1C1E; border-color: var(--green, #4CCAA5); color: #fff; }
+.hero .car-nav button:hover { background: #1B1C1E; border-color: var(--acento); color: #fff; }
 
 /* En pantallas angostas la pastilla del menú ocupa todo el ancho y tapaba la
    ceja («Monitor legislativo / …») de las páginas interiores. */

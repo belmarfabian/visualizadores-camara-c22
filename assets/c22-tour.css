@@ -13,8 +13,8 @@
   white-space: nowrap;
 }
 .c22-tour-btn:hover {
-  color: var(--green, #4CCAA5);
-  border-color: var(--green, #4CCAA5);
+  color: var(--green, var(--acento));
+  border-color: var(--green, var(--acento));
 }
 .c22-tour-btn .c22-tour-btn-ico {
   width: 16px; height: 16px; border-radius: 50%;
@@ -30,7 +30,7 @@
   box-shadow: 0 0 0 9999px rgba(27,28,30, 0.72);   
   pointer-events: none;
   transition: all .32s cubic-bezier(.4,0,.2,1);
-  outline: 2px solid var(--green, #4CCAA5);
+  outline: 2px solid var(--green, var(--acento));
   outline-offset: 2px;
 }
 
@@ -57,12 +57,12 @@
 .c22-tour-eyebrow {
   font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 1.8px;
-  color: var(--green, #4CCAA5);
+  color: var(--green, var(--acento));
   display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
 }
 .c22-tour-eyebrow::before {
   content: ""; width: 22px; height: 2px;
-  background: var(--green, #4CCAA5); display: inline-block;
+  background: var(--green, var(--acento)); display: inline-block;
 }
 .c22-tour-title {
   font-size: 17px; font-weight: 700; line-height: 1.25;
@@ -84,7 +84,7 @@
   background: var(--border, rgba(101,125,129,0.25));
   transition: background .2s, transform .2s;
 }
-.c22-tour-dot.on { background: var(--green, #4CCAA5); transform: scale(1.25); }
+.c22-tour-dot.on { background: var(--green, var(--acento)); transform: scale(1.25); }
 
 .c22-tour-nav { display: flex; align-items: center; gap: 8px; }
 .c22-tour-btn2 {
@@ -143,12 +143,12 @@
   font-family: 'Montserrat', sans-serif; font-size: 12.5px; line-height: 1.5;
   color: var(--text-2, #657D81);
   background: var(--border-light, rgba(101,125,129,0.06));
-  border-left: 2px solid var(--green, #4CCAA5);
+  border-left: 2px solid var(--green, var(--acento));
   border-radius: 0 8px 8px 0; padding: 9px 13px; margin: 12px 0 0;
 }
 .c22-howto b { color: var(--text, #303030); font-weight: 600; }
 .c22-howto .c22-howto-ico {
-  color: var(--green, #4CCAA5); font-weight: 700; flex-shrink: 0;
+  color: var(--green, var(--acento)); font-weight: 700; flex-shrink: 0;
 }
 
 @media (max-width: 600px) {
