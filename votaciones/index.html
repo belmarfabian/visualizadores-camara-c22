@@ -379,6 +379,7 @@ svg text { user-select: none; }
 </footer>
 
 <script src="../assets/paleta-partidos.js"></script>
+<script src="../assets/notas-camara.js"></script>
 <script src="../assets/nav-temporal.js"></script>
 <script>
 
@@ -449,7 +450,15 @@ const _GEN_VOT = [
   [/^\d*-?\s*Creaci[oó]n Comisi[oó]n Investigadora$/i, 'Creación de una comisión investigadora'],
   [/^\d*-?\s*Informe Comisi[oó]n Investigadora$/i, 'Informe de una comisión investigadora']
 ];
+// Nota de prensa de la Cámara sobre esa votación (boletín y fecha), si la hay.
+function notaVot(id) {
+  const bf = window.__bolVot && window.__bolVot[String(id)];
+  const nota = bf && window.NOTAS_CAMARA ? window.NOTAS_CAMARA[bf[0] + '|' + bf[1]] : null;
+  return { bol: bf ? bf[0] : '', nota: nota || null };
+}
 function legibleVot(v) {
+  const nc = chamberMode === 'camara' ? notaVot(v.id).nota : null;
+  if (nc) return nc.t;
   const n = chamberMode === 'camara' && window.__nombresVot && window.__nombresVot[String(v.id)];
   if (n) return n;
   const d = String(v.descripcion || '').trim();
@@ -468,6 +477,7 @@ function escV(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({
 if (chamberMode === 'camara' && !window.__nombresVot) {
   fetch('../assets/indice-votaciones.json').then(r => r.json()).then(ix => {
     window.__nombresVot = Object.fromEntries(ix.map(e => [String(e.id), e.t]));
+    window.__bolVot = Object.fromEntries(ix.filter(e => e.b).map(e => [String(e.id), [e.b, e.f]]));
     try { render(); } catch (e) {}
   }).catch(() => {});
 }
@@ -1278,16 +1288,16 @@ ${escV(legibleVot(v))}</title></circle>`;
     const [y,m,d] = iso.split('-');
     return `${parseInt(d,10)}-${meses[parseInt(m,10)-1]}`;
   };
-  const rowVot = v => `<tr style="border-bottom:1px solid var(--border-light)">
+  const rowVot = v => { const nv = chamberMode === 'camara' ? notaVot(v.id) : { bol: '', nota: null }; return `<tr style="border-bottom:1px solid var(--border-light)">
     <td style="padding:8px;color:var(--text-2);font-family:var(--mono);font-size:11px;white-space:nowrap">${fechaCorta(v.fecha)}</td>
     <td style="padding:8px">
-      <div style="font-size:12px;color:var(--dark)">${escV(legibleVot(v))}</div>
-      <div style="font-size:11px;color:var(--text-m);margin-top:1px">${v.tipo} · ${v.resultado}</div>
+      <div style="font-size:12px;color:var(--dark)">${nv.nota ? `<a href="${nv.nota.u}" target="_blank" rel="noopener" style="color:var(--dark);text-decoration:none;font-weight:600">${escV(nv.nota.t)} <span style="color:var(--acento-txt,#0A5CAB)">↗</span></a>` : escV(legibleVot(v))}</div>
+      <div style="font-size:11px;color:var(--text-m);margin-top:1px">${v.tipo} · ${v.resultado}${nv.bol ? ` · Boletín ${nv.bol}` : ''}</div>
     </td>
     <td style="padding:8px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--text-2)">${(v.pct_si_izq*100).toFixed(0)}%</td>
     <td style="padding:8px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--text-2)">${(v.pct_si_der*100).toFixed(0)}%</td>
     <td style="padding:8px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:700;color:${v.pol>=0.7?'var(--red)':v.pol>=0.3?'var(--yellow)':'var(--green)'}">${(v.pol*100).toFixed(0)}%</td>
-  </tr>`;
+  </tr>` };
   const tableHead = `<thead><tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-m);text-transform:uppercase;font-size:10px;letter-spacing:1.4px">
     <th style="padding:8px;width:80px">Fecha</th>
     <th style="padding:8px">Votación</th>
@@ -2004,11 +2014,12 @@ function renderComparar(el) {
   if (!window.__titulos && !window.__titulosPidiendo) {
     window.__titulosPidiendo = true;
     fetch('../assets/indice-votaciones.json').then(r => r.json()).then(ix => {
-      window.__titulos = Object.fromEntries(ix.map(e => [String(e.id), e.d || e.t]));
+      window.__titulos = Object.fromEntries(ix.map(e => [String(e.id), e.t]));
+      window.__bolVot = window.__bolVot || Object.fromEntries(ix.filter(e => e.b).map(e => [String(e.id), [e.b, e.f]]));
       if (state.tab === 'comparar') renderComparar(document.getElementById('mainContent'));
     }).catch(() => {});
   }
-  const titulo = v => (window.__titulos && window.__titulos[String(v.id)]) || v.descripcion;
+  const titulo = v => (chamberMode === 'camara' && notaVot(v.id).nota ? notaVot(v.id).nota.t : null) || (window.__titulos && window.__titulos[String(v.id)]) || v.descripcion;
   const voto = z => z === 1 ? '<b style="color:#0E7A5F">Sí</b>' : '<b style="color:#B0022A">No</b>';
   const recientes = difs.sort((a, b) => (V[b].fecha || '').localeCompare(V[a].fecha || '')).slice(0, 15);
   const filas = recientes.map(j => `<li style="display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border-light);font-family:var(--mont);font-size:13px">
