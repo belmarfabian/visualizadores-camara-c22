@@ -525,7 +525,7 @@ function buildAsistencia() {
     'Partido Nacional Libertario': 'PNL', 'Partido de la Gente': 'PdG',
     'Independientes': 'IND', 'Evolución Política': 'Evópoli',
     'Partido Demócratas Chile': 'Dem', 'Partido Demócrata Cristiano': 'DC',
-    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PRCh',
+    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PR',
     'Partido Por la Democracia': 'PPD', 'Partido Socialista': 'PS',
     'Federación Regionalista Verde Social': 'FRVS',
     'Partido Acción Humanista': 'AH', 'Frente Amplio': 'FA',
@@ -608,7 +608,7 @@ function buildRanking() {
     'Partido Nacional Libertario': 'PNL', 'Partido de la Gente': 'PdG',
     'Independientes': 'IND', 'Evolución Política': 'Evópoli',
     'Partido Demócratas Chile': 'Dem', 'Partido Demócrata Cristiano': 'DC',
-    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PRCh',
+    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PR',
     'Partido Por la Democracia': 'PPD', 'Partido Socialista': 'PS',
     'Federación Regionalista Verde Social': 'FRVS',
     'Partido Acción Humanista': 'AH', 'Frente Amplio': 'FA',
@@ -1174,13 +1174,19 @@ function updateSummary() {
     'Renovación Nacional', 'Unión Demócrata Independiente',
     'Partido Social Cristiano', 'Partido Republicano',
   ];
+  // De izquierda a derecha, como en el dibujo: cada partido según el promedio
+  // de la posición (dim1) de sus escaños.
+  const posEscanos = {};
+  H.seats.forEach(s => { if (typeof s.dim1 === 'number') (posEscanos[s.partido] = posEscanos[s.partido] || []).push(s.dim1); });
+  const posPartido = nom => { const a = posEscanos[nom]; return a && a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0; };
+  partyOrder.sort((a, b) => posPartido(a) - posPartido(b));
   const partyAlias = {
     'Partido Republicano': 'Republicano', 'Partido Social Cristiano': 'PSC',
     'Unión Demócrata Independiente': 'UDI', 'Renovación Nacional': 'RN',
     'Partido Nacional Libertario': 'PNL', 'Partido de la Gente': 'PdG',
     'Independientes': 'IND', 'Evolución Política': 'Evópoli',
     'Partido Demócratas Chile': 'Dem', 'Partido Demócrata Cristiano': 'DC',
-    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PRCh',
+    'Partido Liberal de Chile': 'PL', 'Partido Radical de Chile': 'PR',
     'Partido Por la Democracia': 'PPD', 'Partido Socialista': 'PS',
     'Federación Regionalista Verde Social': 'FRVS',
     'Partido Acción Humanista': 'AH', 'Frente Amplio': 'FA',
