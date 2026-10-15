@@ -1763,6 +1763,17 @@
     </div>
   </footer>
 
+  <script src="assets/notas-camara.js"></script>
+  <script>
+  // Titular de la nota de prensa de la Cámara sobre una votación (boletín y fecha);
+  // si no hay nota, el título oficial. Nunca descripciones hechas por IA.
+  function notaCamara(d) {
+    var m = String(d.b || d.descripcion || '').match(/(\d{4,5}-\d{2})/);
+    var f = String(d.f || d.fecha || '').slice(0, 10);
+    return (m && window.NOTAS_CAMARA && window.NOTAS_CAMARA[m[1] + '|' + f]) || null;
+  }
+  function tituloVot(d, resto) { var n = notaCamara(d); return n ? n.t : (d.proyecto || d.descripcion || resto); }
+  </script>
   <script src="assets/c22-tour.js"></script>
   <script>
     C22Tour.define('landing', [
@@ -1923,14 +1934,14 @@
       var esUltima = (i === 0) && (!v || d.fecha === v.fecha);
       var rotulo = esUltima ? '<span class="p-live"></span> Última votación'
         : (i === 0 ? 'Votación más reciente' : 'Votación anterior');
-      var titular = (TITULO_CORTO && d.corto) || d.proyecto || d.corto || d.descripcion || 'Votación de la Cámara';
+      var titular = tituloVot(d, 'Votación de la Cámara');
 
       function cuerpo(x, rot, chico) {
         var t2 = Math.max(1, x.si + x.no + x.abstencion);
         var sg = function (val, c) { return val > 0 ? '<span style="width:' + (100*val/t2) +
           '%;background:' + c + '">' + (100*val/t2 > 8 ? val : '') + '</span>' : ''; };
         var ap = /aprob/i.test(x.resultado || '');
-        var tit = (TITULO_CORTO && x.corto) || x.proyecto || x.corto || x.descripcion || 'Votación';
+        var tit = tituloVot(x, 'Votación');
         return '<div class="vivo-rot">' + rot + '</div>' +
           '<div class="vivo-proj">' + tit + '</div>' +
           '<div class="vivo-fecha">' + fmtFecha(x.fecha) + (x.tipo ? ' · ' + x.tipo : '') + '</div>' +
@@ -1997,7 +2008,7 @@
         '<button type="button" class="car-flecha" data-d="-1" aria-label="Votación más reciente">‹</button>' +
         '<div class="car-track">' + lista.map(function (d, k) {
         return '<button class="car-tick" type="button" data-i="' + k + '" title="' +
-          esc(d.corto || d.proyecto || d.descripcion) + '">' + fmtCorta(d.fecha) + '</button>';
+          esc(tituloVot(d, '')) + '">' + fmtCorta(d.fecha) + '</button>';
       }).join('') + '</div>' +
         '<button type="button" class="car-flecha" data-d="1" aria-label="Votación anterior">›</button>';
       track = rail.querySelector('.car-track');
@@ -2065,7 +2076,7 @@
       var seg = function (v, c) { return v > 0 ? '<span style="width:' + (100 * v / tot) +
         '%;background:' + c + '">' + (100 * v / tot > 12 ? v : '') + '</span>' : ''; };
       var aprob = /aprob/i.test(d.resultado || '');
-      var tit = d.corto || d.proyecto || d.descripcion || 'Votación de la Cámara';
+      var tit = tituloVot(d, 'Votación de la Cámara');
       var rot = i === 0 ? '<span class="latido" style="--tono:var(--green)"></span> Última votación'
                         : 'Votación anterior';
       return '<a class="vot-carta" href="hemiciclo/" title="' + esc(d.proyecto || d.descripcion || '') + '">' +
@@ -2592,10 +2603,11 @@
     var terminos = normal(q).split(/\s+/).filter(Boolean);
     if (!terminos.length) { lista.hidden = true; lista.innerHTML = ''; return; }
     var hits = indice.filter(function (v) {
-      var heno = normal(v.t + ' ' + (v.d || '') + ' ' + (v.b || ''));
+      var nc = notaCamara(v);
+      var heno = normal(v.t + ' ' + (nc ? nc.t + ' ' + nc.b : '') + ' ' + (v.b || ''));
       return terminos.every(function (t) { return heno.indexOf(t) >= 0; });
     });
-    info.textContent = hits.length + (hits.length === 1 ? ' votación' : ' votaciones') + ' de 580';
+    info.textContent = hits.length + (hits.length === 1 ? ' votación' : ' votaciones') + ' de ' + indice.length;
     lista.hidden = false;
     if (!hits.length) {
       lista.innerHTML = '<p class="busca-nada">Sin resultados. Prueba con una palabra de la materia, ' +
@@ -2604,9 +2616,10 @@
     }
     lista.innerHTML = hits.slice(0, 8).map(function (v) {
       var ok = v.r === 'Aprobado';
+      var nc = notaCamara(v);
       return '<article class="busca-uno">' +
-        '<h4>' + resaltar(v.t, terminos) + '</h4>' +
-        (v.d ? '<p class="busca-res">' + resaltar(v.d, terminos) + '</p>' : '') +
+        '<h4>' + resaltar(nc ? nc.t : v.t, terminos) + '</h4>' +
+        (nc ? '<p class="busca-res">' + resaltar(v.t, terminos) + '</p>' : '') +
         '<p class="busca-meta">' + fecha(v.f) + (v.b ? ' · Boletín N° ' + v.b : '') +
           ' · <b class="' + (ok ? 'si' : 'no') + '">' + (v.r || '') + '</b>' +
           ' <span>' + v.s + ' a favor · ' + v.n + ' en contra · ' + v.a + ' abst.</span></p>' +
