@@ -1995,13 +1995,13 @@
 
     if (rail && lista.length > 1) {
       rail.hidden = false;
-      rail.innerHTML = '<div class="car-track">' + lista.map(function (d, k) {
+      rail.innerHTML =
+        '<button type="button" class="car-flecha" data-d="-1" aria-label="Votación más reciente">‹</button>' +
+        '<div class="car-track">' + lista.map(function (d, k) {
         return '<button class="car-tick" type="button" data-i="' + k + '" title="' +
           esc(d.corto || d.proyecto || d.descripcion) + '">' + fmtCorta(d.fecha) + '</button>';
       }).join('') + '</div>' +
-        '<div class="car-nav">' +
-        '<button type="button" data-d="-1" aria-label="Votación más reciente">‹</button>' +
-        '<button type="button" data-d="1" aria-label="Votación anterior">›</button></div>';
+        '<button type="button" class="car-flecha" data-d="1" aria-label="Votación anterior">›</button>';
       track = rail.querySelector('.car-track');
       rail.addEventListener('click', function (e) {
         var b = e.target && e.target.closest ? e.target.closest('button') : null;

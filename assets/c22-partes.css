@@ -247,3 +247,14 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 #tourCards .card { border: 0 !important; }
 #tourCards h3 { min-height: 0 !important; }
 @media (min-width: 761px) { #tourCards { -webkit-mask-image: none !important; mask-image: none !important; } }
+
+/* Carril de fechas del mazo: una flecha a cada lado de las fechas, para que
+   ninguna fecha quede tapada. */
+.car-rail { gap: 8px !important; }
+.car-rail .car-flecha { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; padding: 0;
+  border: 1px solid var(--border); background: var(--bg-white); color: var(--text-2);
+  font-family: var(--mont); font-size: 16px; line-height: 1; cursor: pointer; }
+.hero .car-rail .car-flecha { background: rgba(27, 28, 30, .78); border-color: rgba(255, 255, 255, .35); color: #fff; }
+.hero .car-rail .car-flecha:hover { background: #1B1C1E; border-color: var(--acento); color: #fff; }
+.hero .car-track { padding-right: 18px !important; }
+@media (max-width: 760px) { .car-rail .car-flecha { width: 34px; height: 34px; } }
