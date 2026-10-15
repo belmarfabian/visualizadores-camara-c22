@@ -1589,10 +1589,12 @@
       var y = H - 26 - (o.k - 0.5) * (R * 2 + 1.4);
       svg += '<circle cx="' + cx(o.d).toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="' + col(o.d.pacto) + '" fill-opacity="0.92"><title>' + o.d.nombre + ' (' + o.d.partido + ')</title></circle>';
     });
-    var iz = F.facts.mas_izquierda, de = F.facts.mas_derecha;
+    // Extremos por partido: dentro del borde del círculo de W-NOMINATE el orden es del modelo.
+    var pE = (F.ranking_partidos || []).filter(function (p) { return p.n >= 3; }).sort(function (a, b) { return a.pos - b.pos; });
+    var iz = pE[0], de = pE[pE.length - 1];
     var ext = '';
-    if (iz) ext += '<span style="color:' + col('Unidad por Chile') + '">' + (iz.corto || nombreCorto(iz.nombre)) + ' (' + iz.partido + ')</span>';
-    if (de) ext += '<span style="color:' + col('Cambio por Chile') + '">' + (de.corto || nombreCorto(de.nombre)) + ' (' + de.partido + ')</span>';
+    if (iz) ext += '<span style="color:' + col(iz.pacto) + '">← ' + iz.partido + ', el partido más a la izquierda</span>';
+    if (de) ext += '<span style="color:' + col(de.pacto) + '">' + de.partido + ', el más a la derecha →</span>';
     if (false) svg += '<text x="30" y="' + (H-8) + '" font-family="var(--mont)" font-size="12" fill="' + col('Unidad por Chile') + '" font-weight="600">' + (iz.corto || nombreCorto(iz.nombre)) + ' (' + iz.partido + ')</text>';
     if (false) svg += '<text x="' + (W-30) + '" y="' + (H-8) + '" text-anchor="end" font-family="var(--mont)" font-size="12" fill="' + col('Cambio por Chile') + '" font-weight="600">' + (de.corto || nombreCorto(de.nombre)) + ' (' + de.partido + ')</text>';
     svg += '</svg>';
