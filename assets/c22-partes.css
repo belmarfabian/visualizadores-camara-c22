@@ -206,3 +206,11 @@ a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$=
 /* Rankings: un solo título (el de la página); el selector va bajo la bajada */
 section.rankings-sec { padding-top: 8px !important; }
 section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-title { display: none !important; }
+
+/* Móvil: el selector de votación con sus dos flechas en una sola línea; la ruta sin partirse */
+.nav-temp__row { flex-wrap: nowrap !important; }
+.nav-temp__row .nav-temp__select { flex: 1 1 auto; min-width: 0 !important; width: auto !important; }
+@media (max-width: 560px) {
+  .c22-ceja { flex-wrap: wrap; gap: 6px 8px !important; letter-spacing: 1.2px !important; font-size: 10px !important; }
+  .c22-ceja::before { flex-basis: 18px !important; }
+}
