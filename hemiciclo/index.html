@@ -1461,7 +1461,7 @@ function showTip(e, seat) {
     </div>
     <div style="margin-top:6px;font-size:11px;color:var(--text-m);line-height:1.5">
       <strong style="color:#4CCAA5">${siCount}</strong> a favor · <strong style="color:#F20231">${noCount}</strong> en contra · <strong style="color:#FFB923">${absCount}</strong> abs · ${ausCount} aus<br>
-      Asistencia: <strong>${asistencia}%</strong> en ${totalVot} votaciones
+      Votó en el <strong>${asistencia}%</strong> de ${totalVot} votaciones
     </div>
   `;
   tip.style.display = "block";
@@ -1542,7 +1542,7 @@ function renderDetailCards() {
       <div style="margin-top:14px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
           <span class="label-sm" style="font-size:11px">Historial</span>
-          <span style="font-size:11px;color:var(--text-m);font-family:var(--mont)">Asistencia <strong style="color:var(--dark)">${asistencia}%</strong></span>
+          <span style="font-size:11px;color:var(--text-m);font-family:var(--mont)" title="Votó a favor, en contra o se abstuvo. La asistencia oficial a la Sala está en Legisladores.">Votó en el <strong style="color:var(--dark)">${asistencia}%</strong></span>
         </div>
         <div style="display:flex;gap:2px;height:18px;border-radius:5px;overflow:hidden">
           ${si?`<div style="flex:${si};background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700" title="${si} a favor">${si}</div>`:''}
