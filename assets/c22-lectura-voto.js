@@ -3,7 +3,34 @@
    (seats con dim1 y coalition, heatmap persona x votación, votes).
    Códigos del heatmap: 1 a favor, 0 en contra, 2 abstención, -1 no votó. */
 (function () {
-  var BLOQUES = ['Oposición', 'Otros', 'Oficialismo'];
+  /* Grupos para «Quién ganó y quién perdió».
+     Cámara: el pacto inscrito para las parlamentarias de 2025, por partido
+     (mismo mapa que pipeline/pactos.py; fuentes: Cooperativa 16-ago-2025,
+     El Dínamo 17-nov-2025). Quien no tiene partido no entra.
+     Senado: oposición y oficialismo; «Otros» (dos independientes) no es un
+     grupo que vote junto y no se muestra. */
+  var PACTO_2025 = {
+    'Frente Amplio': 'Unidad por Chile', 'Partido Comunista': 'Unidad por Chile',
+    'Partido Socialista': 'Unidad por Chile', 'Partido Por la Democracia': 'Unidad por Chile',
+    'Partido Radical de Chile': 'Unidad por Chile', 'Partido Liberal de Chile': 'Unidad por Chile',
+    'Partido Demócrata Cristiano': 'Unidad por Chile',
+    'Federación Regionalista Verde Social': 'Verdes, Regionalistas y Humanistas',
+    'Partido Acción Humanista': 'Verdes, Regionalistas y Humanistas',
+    'Partido de la Gente': 'Partido de la Gente',
+    'Unión Demócrata Independiente': 'Chile Grande y Unido', 'Renovación Nacional': 'Chile Grande y Unido',
+    'Evolución Política': 'Chile Grande y Unido', 'Partido Demócratas Chile': 'Chile Grande y Unido',
+    'Partido Republicano': 'Cambio por Chile', 'Partido Nacional Libertario': 'Cambio por Chile',
+    'Partido Social Cristiano': 'Cambio por Chile'
+  };
+  var PACTOS = ['Unidad por Chile', 'Verdes, Regionalistas y Humanistas', 'Partido de la Gente', 'Chile Grande y Unido', 'Cambio por Chile'];
+  var BLOQUES_SEN = ['Oposición', 'Oficialismo'];
+
+  function esSenado(H) { return H.seats.some(function (s) { return 'region' in s; }); }
+  function grupos(H) { return esSenado(H) ? BLOQUES_SEN : PACTOS; }
+  function grupoDe(H, s) {
+    if (esSenado(H)) return BLOQUES_SEN.indexOf(s.coalition) >= 0 ? s.coalition : null;
+    return PACTO_2025[s.partido] || null;
+  }
 
   function votoDe(H, s, j) {
     var k = H.deputyIdx[s.id];
@@ -23,17 +50,17 @@
     return null;
   }
 
-  /* Posición de cada bloque: mayoría entre sí y no. */
+  /* Posición de cada grupo: mayoría entre sí y no. */
   function bloques(H, j) {
-    var out = {};
-    BLOQUES.forEach(function (b) { out[b] = { si: 0, no: 0, ab: 0, au: 0, n: 0 }; });
+    var out = {}, gs = grupos(H);
+    gs.forEach(function (b) { out[b] = { si: 0, no: 0, ab: 0, au: 0, n: 0 }; });
     H.seats.forEach(function (s) {
-      var b = out[s.coalition]; if (!b) return;
+      var b = out[grupoDe(H, s)]; if (!b) return;
       var x = votoDe(H, s, j); b.n++;
       if (x === 1) b.si++; else if (x === 0) b.no++; else if (x === 2) b.ab++; else b.au++;
     });
     var gana = opcionGanadora(H.votes[j]);
-    BLOQUES.forEach(function (k) {
+    gs.forEach(function (k) {
       var b = out[k];
       b.pos = b.si > b.no ? 1 : b.no > b.si ? 0 : null;
       b.perdio = gana !== null && b.pos !== null && b.pos !== gana;
@@ -41,15 +68,15 @@
     return out;
   }
 
-  /* Derrotas acumuladas por bloque en todo el período (se calcula una vez). */
+  /* Derrotas acumuladas por grupo en todo el período (se calcula una vez). */
   var cache = new WeakMap();
   function derrotas(H) {
     if (cache.has(H)) return cache.get(H);
-    var r = {};
-    BLOQUES.forEach(function (b) { r[b] = { perdio: 0, tomo: 0 }; });
+    var r = {}, gs = grupos(H);
+    gs.forEach(function (b) { r[b] = { perdio: 0, tomo: 0 }; });
     for (var j = 0; j < H.votes.length; j++) {
       var bl = bloques(H, j);
-      BLOQUES.forEach(function (b) {
+      gs.forEach(function (b) {
         if (bl[b].pos !== null && opcionGanadora(H.votes[j]) !== null) {
           r[b].tomo++; if (bl[b].perdio) r[b].perdio++;
         }
@@ -101,7 +128,7 @@
   }
 
   window.C22LecturaVoto = {
-    BLOQUES: BLOQUES, bloques: bloques, derrotas: derrotas,
+    grupos: grupos, esSenado: esSenado, bloques: bloques, derrotas: derrotas,
     inesperados: inesperados, mismoBoletin: mismoBoletin, boletinDe: boletinDe
   };
 })();
