@@ -298,3 +298,8 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
   .c22-pbloque .c22-chips-g::-webkit-scrollbar { display: none; }
   .c22-chips-g .coal-chip { flex: 0 0 auto; width: auto !important; min-width: 62px !important; }
 }
+
+/* Votaciones, mapa: etiquetas de partido en los mismos tres bloques del hemiciclo. */
+.c22-vchips { margin-bottom: 16px; }
+.c22-vchips-coal { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.c22-vchips-coal .coal-chip { width: auto !important; min-width: 120px !important; }

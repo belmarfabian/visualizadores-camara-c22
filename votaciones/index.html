@@ -647,7 +647,7 @@ function renderMap(el) {
   const partyAlias = {
     'Partido Comunista':'PC','Frente Amplio':'FA','Partido Acción Humanista':'AH',
     'Federación Regionalista Verde Social':'FRVS','Partido Socialista':'PS',
-    'Partido Por la Democracia':'PPD','Partido Radical de Chile':'PRCh',
+    'Partido Por la Democracia':'PPD','Partido Radical de Chile':'PR',
     'Partido Liberal de Chile':'PL','Partido Demócrata Cristiano':'DC',
     'Independientes':'IND','Partido de la Gente':'PdG','Partido Nacional Libertario':'PNL',
     'Partido Demócratas Chile':'Dem','Evolución Política':'Evópoli',
@@ -682,7 +682,7 @@ function renderMap(el) {
       const n = DATA.deputies.filter(d => d.coalition===k).length;
       if (!n) continue;
       const act = state.filterCoal===k;
-      const chip = chipHtml(k, s.c, n, act, '', k.slice(0,7), k);
+      const chip = chipHtml(k, s.c, n, act, '', k, k);
       if (k === 'Oposición') chipsOpos += chip;
       else if (k === 'Oficialismo') chipsOfi += chip;
       else chipsOtros += chip;
@@ -711,14 +711,16 @@ function renderMap(el) {
   const todosActive = state.filterCoal === 'all';
   const todosChip = `<span class="coal-chip" style="background:${todosActive?'var(--dark)':'var(--bg-alt)'};border-color:${todosActive?'var(--dark)':'var(--border)'};color:${todosActive?'#fff':'var(--text)'};font-weight:700" onclick="state.filterCoal='all';renderMap(document.getElementById('mainContent'))">Todos<span class="chip-count" style="${todosActive?'opacity:.85':''}">${totalCount}</span></span>`;
 
-  let pills = `<div style="margin-bottom:16px">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:6px">${todosChip}</div>
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch">
-      <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-start;align-content:flex-start">${chipsOpos}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-content:flex-start;border-left:1px dashed var(--border);border-right:1px dashed var(--border);padding:0 8px;min-width:30px">${chipsOtros}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;align-content:flex-start">${chipsOfi}</div>
-    </div>
-  </div>`;
+  // Tres bloques con su nombre, como en el hemiciclo (oposición, otros, oficialismo).
+  // «Todos» va en la línea de «Filtrar».
+  const nChips = s => (s.match(/class="coal-chip"/g) || []).length;
+  const bloqueV = (lab, chips) => chips
+    ? `<div class="c22-pbloque"><div class="c22-pbloque-lab">${lab}</div><div class="c22-chips-g" style="--cols:${Math.max(1, Math.ceil(nChips(chips) / 2))}">${chips}</div></div>`
+    : '';
+  modeToggle = modeToggle.replace(/<\/div>\s*$/, `<span style="margin-left:auto">${todosChip}</span></div>`);
+  let pills = state.colorBy === 'coalition'
+    ? `<div class="c22-vchips c22-vchips-coal">${chipsOpos}${chipsOtros}${chipsOfi}</div>`
+    : `<div class="c22-vchips"><div class="c22-pbloques">${bloqueV('Oposición', chipsOpos)}${bloqueV('Otros', chipsOtros)}${bloqueV('Oficialismo', chipsOfi)}</div></div>`;
 
   const filterField = state.colorBy === 'coalition' ? 'coalition' : 'partido';
   const faded = state.filterCoal !== "all" ? DATA.deputies.filter(d => d[filterField] !== state.filterCoal) : [];
@@ -860,7 +862,7 @@ function renderMap(el) {
       'Partido Demócratas Chile':'Dem','Partido Socialista':'PS',
       'Partido Por la Democracia':'PPD','Partido Comunista':'PC',
       'Partido Liberal de Chile':'PL','Frente Amplio':'FA',
-      'Federación Regionalista Verde Social':'FRVS','Partido Radical de Chile':'PRCh',
+      'Federación Regionalista Verde Social':'FRVS','Partido Radical de Chile':'PR',
       'Partido Acción Humanista':'AH','Independientes':'IND',
     };
 
