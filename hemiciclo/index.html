@@ -302,6 +302,14 @@ select:focus { outline: 2px solid var(--acento); outline-offset: -1px; }
 
 <div id="viewHemi">
 
+<div class="c22-busca-vot">
+  <label for="buscaVotInput" class="c22-busca-vot-rot">Busca una votación</label>
+  <div class="c22-busca-vot-caja">
+    <input type="search" id="buscaVotInput" autocomplete="off" placeholder="Por tema o número de boletín: pensiones, licencias médicas, 18684…">
+    <div class="c22-busca-vot-res" id="buscaVotRes" hidden></div>
+  </div>
+</div>
+
 <div id="metricsBand" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:18px"></div>
 
 <div id="navTemporalSlot"></div>
@@ -697,14 +705,26 @@ function buildRanking() {
   if (intro) intro.innerHTML = `Las <strong>${H.votes.length}</strong> votaciones contestadas del periodo 2026-2030 ordenadas por margen de cierre: <strong>|Sí − No| / (Sí + No)</strong>. Las primeras son las más reñidas (resultado decidido por pocos votos). Click en cualquiera para verla en el hemiciclo.`;
 }
 
+// Título legible de una votación: titular de la nota de la Cámara, o el nombre
+// oficial del proyecto, o la etiqueta del trámite. Lo usan el selector y el buscador.
+function tituloLegible(v) {
+  const dec = decodificarDescripcion(v.descripcion || '');
+  if (dec.num) {
+    const n = (window.NOTAS_CAMARA || {})[dec.num + '|' + v.fecha];
+    if (n) return n.t;
+    if (dec.nombre) return dec.nombre;
+  }
+  return dec.titulo || v.descripcion || 'Votación';
+}
+
 function init() {
   
   if (window.aplicarPaletaOficial) window.aplicarPaletaOficial(H.seats, 'partido');
 
   const items = H.votes.map((v, i) => ({
-    id: String(i),       
+    id: String(i),
     fecha: v.fecha,
-    label: v.descripcion,
+    label: tituloLegible(v),
   }));
   window.__navTemp = window.mountNavTemporal({
     container: document.getElementById('navTemporalSlot'),
@@ -1665,7 +1685,7 @@ function setChamber(mode) {
   createSeatsCircles();
   
   if (window.__navTemp) {
-    const items = H.votes.map((v, i) => ({ id: String(i), fecha: v.fecha, label: v.descripcion }));
+    const items = H.votes.map((v, i) => ({ id: String(i), fecha: v.fecha, label: tituloLegible(v) }));
     window.__navTemp.update({ items });
     window.__navTemp.setCurrent('0');
   }
@@ -1715,6 +1735,59 @@ function createSeatsCircles() {
 }
 
 init();
+
+/* Buscador de votaciones: por tema (titular de la Cámara, nombre del proyecto,
+   bajada) o por número de boletín. Al elegir una, el hemiciclo salta a ella. */
+(function () {
+  const inp = document.getElementById('buscaVotInput'), res = document.getElementById('buscaVotRes');
+  if (!inp || !res) return;
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const escB = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const fCorta = s => { const p = String(s || '').split('-'); return p.length === 3 ? `${+p[2]} ${MES[+p[1] - 1]} ${p[0]}` : s; };
+  let t, FB = null;
+  // Etapa y materias de cada votación (para distinguir general/particular y buscar por tema).
+  fetch('../assets/fichas-votacion.json').then(r => r.ok ? r.json() : {}).then(d => { FB = d || {}; if (inp.value.trim().length >= 2) pintar(); }).catch(() => { FB = {}; });
+  function pintar() {
+    const q = norm(inp.value.trim());
+    if (q.length < 2) { res.hidden = true; res.innerHTML = ''; return; }
+    const terms = q.split(/\s+/).filter(Boolean);
+    const orden = window.__voteOrder || H.votes.map((_, i) => i);
+    const hits = [];
+    for (const i of orden) {
+      const v = H.votes[i]; if (!v) continue;
+      const dec = decodificarDescripcion(v.descripcion || '');
+      const nota = dec.num ? (window.NOTAS_CAMARA || {})[dec.num + '|' + v.fecha] : null;
+      const fb = (chamberMode === 'camara' && FB && FB[String(v.id)]) || {};
+      const heno = norm([tituloLegible(v), dec.nombre, nota && nota.b, v.descripcion, dec.num, (fb.materias || []).join(' '), fb.materia].join(' '));
+      if (terms.every(x => heno.indexOf(x) >= 0)) hits.push(i);
+    }
+    res.hidden = false;
+    if (!hits.length) { res.innerHTML = '<p class="c22-busca-vot-nada">Sin resultados. Prueba con otra palabra o con el número de boletín.</p>'; return; }
+    res.innerHTML = '<p class="c22-busca-vot-nada">' + hits.length + (hits.length === 1 ? ' votación' : ' votaciones') + (hits.length > 8 ? '; se ven las 8 más recientes' : '') + '</p>' +
+      hits.slice(0, 8).map(i => {
+        const v = H.votes[i]; const ok = /aprob/i.test(v.resultado || '');
+        const fb = (chamberMode === 'camara' && FB && FB[String(v.id)]) || {};
+        const dv = decodificarDescripcion(v.descripcion || '');
+        // Proyectos con boletín: la etapa (general, particular…). Resoluciones y
+        // acuerdos: su materia oficial, que dice de qué trataban.
+        let sub = dv.num ? fb.etapa : (fb.materia || fb.etapa);
+        if (sub && sub.length > 170) sub = sub.slice(0, 167).replace(/\s+\S*$/, '') + '…';
+        return `<button type="button" data-i="${i}"><span class="bv-f">${fCorta(v.fecha)}</span><span class="bv-t">${escB(tituloLegible(v))}${sub ? `<small>${escB(sub)}</small>` : ''}</span><span class="bv-r ${ok ? 'si' : 'no'}">${escB(v.resultado || '')} · ${v.totalSi}-${v.totalNo}</span></button>`;
+      }).join('');
+  }
+  inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(pintar, 140); });
+  inp.addEventListener('keydown', e => { if (e.key === 'Escape') { inp.value = ''; pintar(); } });
+  res.addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    setVote(+b.dataset.i);
+    res.hidden = true;
+    const mb = document.getElementById('metricsBand');
+    if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.c22-busca-vot')) res.hidden = true; });
+  inp.addEventListener('focus', () => { if (inp.value.trim().length >= 2) pintar(); });
+})();
 buildRanking();
 renderHemiTextos();
 
