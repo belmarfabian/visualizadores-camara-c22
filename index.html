@@ -1764,6 +1764,7 @@
   </footer>
 
   <script src="assets/notas-camara.js"></script>
+  <script src="assets/sinonimos-busqueda.js"></script>
   <script>
   // Titular de la nota de prensa de la Cámara sobre una votación (boletín y fecha);
   // si no hay nota, el título oficial. Nunca descripciones hechas por IA.
@@ -2604,7 +2605,9 @@
     if (!terminos.length) { lista.hidden = true; lista.innerHTML = ''; return; }
     var hits = indice.filter(function (v) {
       var nc = notaCamara(v);
-      var heno = normal(v.t + ' ' + (nc ? nc.t + ' ' + nc.b : '') + ' ' + (v.b || ''));
+      var mb = String(v.b || '').match(/(\d{4,5}-\d{2})/);
+      var sin = (mb && window.SINONIMOS_BUSQUEDA && window.SINONIMOS_BUSQUEDA[mb[1]]) || '';
+      var heno = normal(v.t + ' ' + (nc ? nc.t + ' ' + nc.b : '') + ' ' + (v.b || '') + ' ' + sin);
       return terminos.every(function (t) { return heno.indexOf(t) >= 0; });
     });
     info.textContent = hits.length + (hits.length === 1 ? ' votación' : ' votaciones') + ' de ' + indice.length;

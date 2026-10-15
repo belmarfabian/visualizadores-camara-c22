@@ -455,6 +455,7 @@ select:focus { outline: 2px solid var(--acento); outline-offset: -1px; }
 
 <script src="../assets/paleta-partidos.js"></script>
 <script src="../assets/notas-camara.js"></script>
+<script src="../assets/sinonimos-busqueda.js"></script>
 <script src="../assets/nav-temporal.js"></script>
 <script>
 function fechaLarga(iso){ const f=(iso||'').split('-'); return f.length===3 ? `${+f[2]} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][+f[1]-1]} ${f[0]}` : (iso||''); }
@@ -1775,7 +1776,7 @@ init();
       const fb = ficha(v);
       // Puntaje: el título o el nombre del proyecto pesan más que la bajada o las materias.
       let pts = 0;
-      if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num].join(' '))) pts = 3;
+      if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num, dec.num && (window.SINONIMOS_BUSQUEDA || {})[dec.num]].join(' '))) pts = 3;
       else if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num, nota && nota.b].join(' '))) pts = 2;
       else if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num, nota && nota.b, (fb.materias || []).join(' '), fb.materia].join(' '))) pts = 1;
       if (!pts) continue;
