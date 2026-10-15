@@ -338,3 +338,16 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
   .c22-busca-vot-res button { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
 .bv-t small { display: block; font-family: var(--mont); font-size: 12px; font-weight: 500; color: var(--text-m); margin-top: 2px; }
+.c22-busca-vot-res .bv-grupo { background: var(--bg); margin-bottom: 4px; }
+.c22-busca-vot-res .bv-grupo:hover { background: var(--border-light); }
+.bv-r.bv-ver { color: var(--acento-txt, #0A5CAB); }
+.c22-busca-vot-res .bv-volver { display: block; width: auto; font-size: 12px; font-weight: 700; color: var(--acento-txt, #0A5CAB); padding: 6px 10px; }
+.c22-busca-vot-proy { font-family: var(--dm); font-size: 15px; font-weight: 700; color: var(--dark); margin: 4px 10px 8px; line-height: 1.3; }
+.c22-busca-vot-proy span { display: block; font-family: var(--mont); font-size: 12px; font-weight: 500; color: var(--text-m); margin-top: 2px; }
+.c22-busca-vot-res { max-height: min(560px, 70vh); }
+.bv-sec { font-family: var(--mont); font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-m);
+  margin: 14px 10px 4px; padding-top: 10px; border-top: 1px solid var(--border-light); }
+.c22-busca-vot-res .bv-clave { background: var(--acento-suave, rgba(13,115,214,.10)); }
+.c22-busca-vot-res .bv-clave .bv-t { font-weight: 700; }
+.c22-busca-vot-res.en-grupo .bv-t { font-weight: 500; }
+.c22-busca-vot-res.en-grupo .bv-clave .bv-t { font-weight: 700; }

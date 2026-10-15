@@ -1737,55 +1737,118 @@ function createSeatsCircles() {
 init();
 
 /* Buscador de votaciones: por tema (titular de la Cámara, nombre del proyecto,
-   bajada) o por número de boletín. Al elegir una, el hemiciclo salta a ella. */
+   bajada, materias) o por número de boletín. Agrupa por proyecto: un proyecto
+   con muchas votaciones (p. ej. la reconstrucción nacional, 120) aparece una vez;
+   al elegirlo se listan sus votaciones con su etapa y artículo. */
 (function () {
   const inp = document.getElementById('buscaVotInput'), res = document.getElementById('buscaVotRes');
   if (!inp || !res) return;
-  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   const escB = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   const fCorta = s => { const p = String(s || '').split('-'); return p.length === 3 ? `${+p[2]} ${MES[+p[1] - 1]} ${p[0]}` : s; };
-  let t, FB = null;
-  // Etapa y materias de cada votación (para distinguir general/particular y buscar por tema).
+  const corta = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 3).replace(/\s+\S*$/, '') + '…' : s; };
+  let t, FB = null, grupos = [];
   fetch('../assets/fichas-votacion.json').then(r => r.ok ? r.json() : {}).then(d => { FB = d || {}; if (inp.value.trim().length >= 2) pintar(); }).catch(() => { FB = {}; });
+  const ficha = v => (chamberMode === 'camara' && FB && FB[String(v.id)]) || {};
+
+  function resultado(v) {
+    const ok = /aprob/i.test(v.resultado || '');
+    return `<span class="bv-r ${ok ? 'si' : 'no'}">${escB(v.resultado || '')} · ${v.totalSi}-${v.totalNo}</span>`;
+  }
+  function filaVot(i, titulo, sub) {
+    const v = H.votes[i];
+    return `<button type="button" data-i="${i}"><span class="bv-f">${fCorta(v.fecha)}</span><span class="bv-t">${escB(titulo)}${sub ? `<small>${escB(sub)}</small>` : ''}</span>${resultado(v)}</button>`;
+  }
+
   function pintar() {
     const q = norm(inp.value.trim());
     if (q.length < 2) { res.hidden = true; res.innerHTML = ''; return; }
     const terms = q.split(/\s+/).filter(Boolean);
+    const tiene = s => { const n = norm(s); return terms.every(x => n.indexOf(x) >= 0); };
+    const porClave = new Map();
     const orden = window.__voteOrder || H.votes.map((_, i) => i);
-    const hits = [];
     for (const i of orden) {
       const v = H.votes[i]; if (!v) continue;
       const dec = decodificarDescripcion(v.descripcion || '');
       const nota = dec.num ? (window.NOTAS_CAMARA || {})[dec.num + '|' + v.fecha] : null;
-      const fb = (chamberMode === 'camara' && FB && FB[String(v.id)]) || {};
-      const heno = norm([tituloLegible(v), dec.nombre, nota && nota.b, v.descripcion, dec.num, (fb.materias || []).join(' '), fb.materia].join(' '));
-      if (terms.every(x => heno.indexOf(x) >= 0)) hits.push(i);
+      const fb = ficha(v);
+      // Puntaje: el título o el nombre del proyecto pesan más que la bajada o las materias.
+      let pts = 0;
+      if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num].join(' '))) pts = 3;
+      else if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num, nota && nota.b].join(' '))) pts = 2;
+      else if (tiene([tituloLegible(v), dec.nombre, v.descripcion, dec.num, nota && nota.b, (fb.materias || []).join(' '), fb.materia].join(' '))) pts = 1;
+      if (!pts) continue;
+      const clave = dec.num ? 'b' + dec.num : 'v' + i;
+      let g = porClave.get(clave);
+      if (!g) { g = { clave, num: dec.num, nombre: dec.nombre, idx: [], pts: 0, ultima: v.fecha, primera: v.fecha }; porClave.set(clave, g); }
+      g.idx.push(i); g.pts = Math.max(g.pts, pts);
+      if (v.fecha > g.ultima) g.ultima = v.fecha;
+      if (v.fecha < g.primera) g.primera = v.fecha;
     }
+    res.classList.remove('en-grupo');
+    grupos = [...porClave.values()].sort((a, b) => (b.pts - a.pts) || b.ultima.localeCompare(a.ultima));
     res.hidden = false;
-    if (!hits.length) { res.innerHTML = '<p class="c22-busca-vot-nada">Sin resultados. Prueba con otra palabra o con el número de boletín.</p>'; return; }
-    res.innerHTML = '<p class="c22-busca-vot-nada">' + hits.length + (hits.length === 1 ? ' votación' : ' votaciones') + (hits.length > 8 ? '; se ven las 8 más recientes' : '') + '</p>' +
-      hits.slice(0, 8).map(i => {
-        const v = H.votes[i]; const ok = /aprob/i.test(v.resultado || '');
-        const fb = (chamberMode === 'camara' && FB && FB[String(v.id)]) || {};
-        const dv = decodificarDescripcion(v.descripcion || '');
-        // Proyectos con boletín: la etapa (general, particular…). Resoluciones y
-        // acuerdos: su materia oficial, que dice de qué trataban.
-        let sub = dv.num ? fb.etapa : (fb.materia || fb.etapa);
-        if (sub && sub.length > 170) sub = sub.slice(0, 167).replace(/\s+\S*$/, '') + '…';
-        return `<button type="button" data-i="${i}"><span class="bv-f">${fCorta(v.fecha)}</span><span class="bv-t">${escB(tituloLegible(v))}${sub ? `<small>${escB(sub)}</small>` : ''}</span><span class="bv-r ${ok ? 'si' : 'no'}">${escB(v.resultado || '')} · ${v.totalSi}-${v.totalNo}</span></button>`;
+    if (!grupos.length) { res.innerHTML = '<p class="c22-busca-vot-nada">Sin resultados. Prueba con otra palabra o con el número de boletín.</p>'; return; }
+    const nVot = grupos.reduce((s, g) => s + g.idx.length, 0);
+    res.innerHTML = `<p class="c22-busca-vot-nada">${grupos.length === nVot ? nVot + (nVot === 1 ? ' votación' : ' votaciones') : grupos.length + (grupos.length === 1 ? ' proyecto' : ' proyectos o votaciones') + ' · ' + nVot + ' votaciones'}${grupos.length > 10 ? '; se ven los 10 primeros' : ''}</p>` +
+      grupos.slice(0, 10).map((g, k) => {
+        if (g.idx.length === 1) {
+          const v = H.votes[g.idx[0]]; const fb = ficha(v); const dv = decodificarDescripcion(v.descripcion || '');
+          return filaVot(g.idx[0], tituloLegible(v), dv.num ? fb.etapa : corta(fb.materia || fb.etapa, 170));
+        }
+        const rango = g.primera === g.ultima ? fCorta(g.ultima) : `${fCorta(g.primera)} – ${fCorta(g.ultima)}`;
+        return `<button type="button" data-g="${k}" class="bv-grupo"><span class="bv-f">${g.idx.length} votaciones</span><span class="bv-t">${escB(g.nombre || tituloLegible(H.votes[g.idx[0]]))}<small>${rango}${g.num ? ' · Boletín ' + g.num : ''}</small></span><span class="bv-r bv-ver">Ver →</span></button>`;
       }).join('');
   }
+
+  // Qué se votó en cada votación del proyecto, con las palabras de la ficha de la Cámara.
+  function queSeVoto(v) {
+    const fb = ficha(v), art = corta(fb.articulo, 150);
+    if (fb.tipo === 'General') return art ? 'En general: ' + art : 'Votación en general';
+    if (fb.tipo === 'Particular') return art ? 'En particular: ' + art : 'En particular';
+    return art || fb.etapa || tituloLegible(v);
+  }
+  const TRAMITE = { 'Observaciones P. De La R.': 'Observaciones del Presidente de la República' };
+
+  function pintarGrupo(k) {
+    const g = grupos[k]; if (!g) return;
+    // Orden de la tramitación: por fecha y, dentro del día, por orden de la sesión.
+    const idx = g.idx.slice().sort((a, b) => H.votes[a].fecha.localeCompare(H.votes[b].fecha) || (+H.votes[a].id || a) - (+H.votes[b].id || b));
+    const secs = [];
+    for (const i of idx) {
+      const tr = ficha(H.votes[i]).tramite || '';
+      const ult = secs[secs.length - 1];
+      if (ult && ult.tr === tr) ult.idx.push(i); else secs.push({ tr, idx: [i] });
+    }
+    res.classList.add('en-grupo');
+    res.innerHTML = `<button type="button" class="bv-volver">← Volver a los resultados</button>` +
+      `<p class="c22-busca-vot-proy">${escB(g.nombre || '')}${g.num ? ` <span>Boletín ${g.num} · ${g.idx.length} votaciones, en orden de tramitación</span>` : ''}</p>` +
+      secs.map(s => {
+        const f1 = H.votes[s.idx[0]].fecha, f2 = H.votes[s.idx[s.idx.length - 1]].fecha;
+        const cab = s.tr ? `<p class="bv-sec">${escB(TRAMITE[s.tr] || s.tr)} · ${f1 === f2 ? fCorta(f1) : fCorta(f1) + ' – ' + fCorta(f2)} · ${s.idx.length} ${s.idx.length === 1 ? 'votación' : 'votaciones'}</p>` : '';
+        return cab + s.idx.map(i => {
+          const fb = ficha(H.votes[i]);
+          const clave = fb.tipo === 'General' && !fb.articulo;
+          return filaVot(i, queSeVoto(H.votes[i]), '').replace('<button type="button"', `<button type="button"${clave ? ' class="bv-clave"' : ''}`);
+        }).join('');
+      }).join('');
+    res.scrollTop = 0;
+  }
+
   inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(pintar, 140); });
   inp.addEventListener('keydown', e => { if (e.key === 'Escape') { inp.value = ''; pintar(); } });
   res.addEventListener('click', e => {
+    if (e.target.closest('.bv-volver')) { pintar(); return; }
+    const gb = e.target.closest('button[data-g]'); if (gb) { pintarGrupo(+gb.dataset.g); return; }
     const b = e.target.closest('button[data-i]'); if (!b) return;
     setVote(+b.dataset.i);
     res.hidden = true;
     const mb = document.getElementById('metricsBand');
     if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
-  document.addEventListener('click', e => { if (!e.target.closest('.c22-busca-vot')) res.hidden = true; });
+  // composedPath: el botón pulsado ya no está en el DOM cuando se repinta la lista.
+  document.addEventListener('click', e => { if (!e.composedPath().some(n => n.classList && n.classList.contains('c22-busca-vot'))) res.hidden = true; });
   inp.addEventListener('focus', () => { if (inp.value.trim().length >= 2) pintar(); });
 })();
 buildRanking();
