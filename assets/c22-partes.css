@@ -267,3 +267,15 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
   .c22-nota-titular { -webkit-line-clamp: 3 !important; }
   .c22-nota-bajada { -webkit-line-clamp: 3 !important; }
 }
+
+/* Hemiciclo en el celular: las etiquetas de partido en una sola fila que se
+   desliza, para que el hemiciclo quede arriba. */
+@media (max-width: 700px) {
+  .c22-chips { flex-wrap: nowrap !important; justify-content: flex-start !important; overflow-x: auto;
+    scrollbar-width: none; padding-bottom: 4px;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+            mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+  .c22-chips::-webkit-scrollbar { display: none; }
+  .c22-chips-g { flex-wrap: nowrap !important; max-width: none !important; flex: 0 0 auto; }
+  .c22-chips-mix:empty { display: none !important; }
+}
