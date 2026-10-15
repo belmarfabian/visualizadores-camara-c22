@@ -1243,11 +1243,11 @@ function updateSummary() {
     <button onclick="selectedParties.clear();paintSeats();buildBancadas()" style="padding:3px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:50px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-2);cursor:pointer">Limpiar ×</button>
   </div>` : '';
 
-  el.innerHTML = `${selBar}<div class="c22-chips" style="display:flex;justify-content:center;gap:10px;align-items:stretch;flex-wrap:wrap">
-    <div class="c22-chips-g" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-content:flex-start;max-width:46%">${chipsSi}</div>
-    <div class="c22-chips-g c22-chips-mix" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-content:flex-start;border-left:1px dashed var(--border);border-right:1px dashed var(--border);padding:0 10px;min-width:30px;max-width:30%">${chipsMix}</div>
-    <div class="c22-chips-g" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-content:flex-start;max-width:34%">${chipsNo}</div>
-  </div>`;
+  // Una línea por grupo, con su rótulo; las etiquetas alineadas en columnas.
+  const filaChips = (lab, chips) => chips
+    ? `<div class="c22-chips-fila"><span class="c22-chips-lab">${lab}</span><div class="c22-chips-g">${chips}</div></div>`
+    : '';
+  el.innerHTML = `${selBar}<div class="c22-chips">${filaChips('Mayoría a favor', chipsSi)}${filaChips('Empatados', chipsMix)}${filaChips('Mayoría en contra', chipsNo)}</div>`;
 
   const pdOld = document.getElementById("proyectoDetail");
   if (pdOld) pdOld.innerHTML = "";
