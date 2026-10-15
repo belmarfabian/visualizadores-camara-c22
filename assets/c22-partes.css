@@ -214,3 +214,21 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
   .c22-ceja { flex-wrap: wrap; gap: 6px 8px !important; letter-spacing: 1.2px !important; font-size: 10px !important; }
   .c22-ceja::before { flex-basis: 18px !important; }
 }
+
+/* 6b · Votos que llaman la atención: titular y bajada de la nota de prensa de la
+        Cámara arriba, quién se salió de la fila al medio, enlaces al pie. */
+.rar-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; gap: 16px !important; }
+.rar > .marcador { margin: 0 0 12px !important; padding: 0 !important; border: 0 !important; }
+.rar-tit { font-family: var(--dm); font-size: 19px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -.2px; color: var(--dark); margin: 0 0 8px; }
+.rar-baj { font-family: var(--mont); font-size: 14px; line-height: 1.5; color: var(--text-2);
+  margin: 0 0 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.rar-quienes { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-light); }
+.rar-quienes .quien:last-child { margin-bottom: 0; }
+.rar-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--border-light); font-family: var(--mont); font-size: 12px; font-weight: 700; }
+.rar-links a { color: var(--acento-txt, #0A5CAB); text-decoration: none; }
+.rar-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.rar .rar-quienes .quien { border: 0 !important; background: none !important; border-radius: 0 !important;
+  padding: 0 !important; margin-bottom: 14px; }
+@media (max-width: 700px) { .rar-grid { grid-template-columns: 1fr !important; grid-auto-rows: auto !important; } }
