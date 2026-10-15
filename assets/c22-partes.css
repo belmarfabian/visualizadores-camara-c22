@@ -258,3 +258,4 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 .hero .car-rail .car-flecha:hover { background: #1B1C1E; border-color: var(--acento); color: #fff; }
 .hero .car-track { padding-right: 18px !important; }
 @media (max-width: 760px) { .car-rail .car-flecha { width: 34px; height: 34px; } }
+.hero .car-rail { position: relative; z-index: 5; }
