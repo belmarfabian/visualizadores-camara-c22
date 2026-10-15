@@ -1819,8 +1819,13 @@
           var col = pcol(d[1]), bar;
           if (esPos) { var half = Math.abs(d[2]) / maxAbs * 50; bar = '<span class="rank-bar" style="' + (d[2] < 0 ? 'right:50%' : 'left:50%') + ';width:' + half + '%;background:' + col + '"></span>'; }
           else { var w = Math.max(2, (max ? d[2] / max : 0) * 100); bar = '<span class="rank-bar" style="left:0;width:' + w + '%;background:' + col + '"></span>'; }
+          // Logo, sigla y nombre del partido, como en las demás pestañas.
+          var SIGLA_OK = { PDG: 'PdG', DEM: 'Dem', Demócratas: 'Dem', Democratas: 'Dem', EVOP: 'Evópoli', Evopoli: 'Evópoli', PAH: 'AH' };
+          var sig = SIGLA_OK[d[0]] || d[0];
+          var se = (window.SELLOS_PARTIDOS || {})[d[0]] || (window.SELLOS_PARTIDOS || {})[sig];
+          var logo = se ? '<span class="rank-logo"><img src="../assets/partidos-sello/' + se.a + '" alt="" loading="lazy"></span>' : '<span class="rank-logo"></span>';
           return '<div class="rank-fila"><span class="rank-pos">' + (i + 1) + '</span>' +
-            '<span class="rank-nom">' + d[0] + '</span>' +
+            '<span class="rank-nom">' + logo + '<b>' + sig + '</b>' + (se ? '<span class="rank-nom-l">' + se.n + '</span>' : '') + '</span>' +
             '<span class="rank-bar-wrap' + (esPos ? ' pos' : '') + '">' + bar + '</span>' +
             '<span class="rank-val">' + fmtVal(d[2], esPos) + '</span></div>';
         }).join('') + '</div>' + (v.key === 'cohesion' ? cohesionMes(datos) : '');
@@ -1917,7 +1922,8 @@
           pts.map(function (p, i) { return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.4" fill="' + col + '"><title>' + Math.round(p[2] * 100) + '%</title></circle>'; }).join('') +
           '<text x="6" y="' + (Hh - 3) + '" font-size="10" fill="var(--text-m)" font-family="var(--mont)">' + N[+PM.meses[0].slice(5) - 1] + '</text>' +
           '<text x="' + (W - 6) + '" y="' + (Hh - 3) + '" font-size="10" fill="var(--text-m)" font-family="var(--mont)" text-anchor="end">' + N[+PM.meses[PM.meses.length - 1].slice(5) - 1] + '</text></svg>';
-        return '<div class="cm-celda"><div class="cm-nom">' + d[0] + '</div>' + svg + '</div>';
+        var SIG = { PDG: 'PdG', DEM: 'Dem', EVOP: 'Evópoli', PAH: 'AH' };
+        return '<div class="cm-celda"><div class="cm-nom">' + (SIG[d[0]] || d[0]) + '</div>' + svg + '</div>';
       }).join('');
       return '<h3 class="cm-titulo">Cohesión mes a mes</h3><p class="c22-nota" style="margin:0 0 12px">Índice de Rice promedio de cada mes; la escala va de 60% a 100% y la línea punteada marca 75%. Los meses con menos de tres votaciones del partido quedan en blanco.</p><div class="cm-grilla">' + celdas + '</div>';
     }

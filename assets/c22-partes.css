@@ -303,3 +303,13 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 .c22-vchips { margin-bottom: 16px; }
 .c22-vchips-coal { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
 .c22-vchips-coal .coal-chip { width: auto !important; min-width: 120px !important; }
+
+/* Rankings, vista Partidos: logo, sigla y nombre del partido en cada fila. */
+.rank-barras .rank-fila { padding: 6px 12px; }
+.rank-barras .rank-nom { width: 300px; display: flex; align-items: center; gap: 9px; }
+.rank-barras .rank-nom b { font-weight: 700; color: var(--dark); flex: 0 0 auto; }
+.rank-barras .rank-nom-l { color: var(--text-m); font-family: var(--mont); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
+.rank-logo { width: 26px; height: 26px; border-radius: 50%; background: #fff; flex: 0 0 26px;
+  display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 0 1px var(--border-light); }
+.rank-logo img { width: 78%; height: 78%; object-fit: contain; }
+@media (max-width: 700px) { .rank-barras .rank-nom { width: 120px; } .rank-barras .rank-nom-l { display: none; } }
