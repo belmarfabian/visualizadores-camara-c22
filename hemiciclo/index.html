@@ -312,7 +312,7 @@ select:focus { outline: 2px solid var(--acento); outline-offset: -1px; }
   <button id="modeCoal" class="mode-btn" onclick="setMode('coalition')" aria-label="Colorear puntos según coalición">Por coalición</button>
   <button id="modeOrder" class="mode-btn" onclick="setMode('order')" aria-label="Reordenar puntos en bloques según el voto">Por bloques</button>
   <button id="modeInesp" class="mode-btn" onclick="toggleInesperados()" aria-pressed="false" title="Marca a quienes votaron distinto de lo que predice su posición en el eje">Votos inesperados</button>
-  <button id="cbBtn" class="mode-btn" onclick="toggleColorblind()" aria-pressed="false" aria-label="Versión colorblind: colores de voto aptos para daltonismo" title="Versión colorblind (colores de voto aptos para daltonismo)" style="margin-left:auto;padding:5px 11px;font-size:15px;line-height:1">◐</button>
+  <button id="cbBtn" class="mode-btn" onclick="toggleColorblind()" aria-pressed="false" title="Cambia los colores del voto por otros que se distinguen con daltonismo" style="margin-left:auto"><span aria-hidden="true" style="display:inline-block;width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%);vertical-align:-1px;margin-right:6px"></span>Colores para daltonismo</button>
 </div>
 
 <div id="depDetail" style="margin-bottom:18px"></div>
