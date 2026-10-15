@@ -1174,12 +1174,19 @@ function updateSummary() {
     'Renovación Nacional', 'Unión Demócrata Independiente',
     'Partido Social Cristiano', 'Partido Republicano',
   ];
-  // De izquierda a derecha, como en el dibujo: cada partido según el promedio
-  // de la posición (dim1) de sus escaños.
-  const posEscanos = {};
-  H.seats.forEach(s => { if (typeof s.dim1 === 'number') (posEscanos[s.partido] = posEscanos[s.partido] || []).push(s.dim1); });
-  const posPartido = nom => { const a = posEscanos[nom]; return a && a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0; };
-  partyOrder.sort((a, b) => posPartido(a) - posPartido(b));
+  // De izquierda a derecha según W-NOMINATE: la posición promedio de cada partido
+  // en el eje 1, la misma escala del gráfico «Partidos, de izquierda a derecha»
+  // de la portada (LANDING_FACTS.ranking_partidos, período 2026-2030).
+  const POS_WNOMINATE = {
+    'Partido Comunista': -0.967, 'Partido Acción Humanista': -0.951, 'Frente Amplio': -0.822,
+    'Partido Socialista': -0.709, 'Partido Radical de Chile': -0.658, 'Partido Por la Democracia': -0.535,
+    'Independientes': -0.483, 'Partido Liberal de Chile': -0.443, 'Partido Demócrata Cristiano': -0.430,
+    'Federación Regionalista Verde Social': -0.417, 'Partido de la Gente': -0.092,
+    'Partido Demócratas Chile': 0.525, 'Partido Social Cristiano': 0.584, 'Evolución Política': 0.621,
+    'Renovación Nacional': 0.636, 'Unión Demócrata Independiente': 0.674,
+    'Partido Republicano': 0.864, 'Partido Nacional Libertario': 0.871,
+  };
+  partyOrder.sort((a, b) => (POS_WNOMINATE[a] ?? 0) - (POS_WNOMINATE[b] ?? 0));
   const partyAlias = {
     'Partido Republicano': 'Republicano', 'Partido Social Cristiano': 'PSC',
     'Unión Demócrata Independiente': 'UDI', 'Renovación Nacional': 'RN',
