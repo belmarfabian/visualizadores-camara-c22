@@ -1255,29 +1255,27 @@ function renderPolarizacion(el) {
   for (const v of vots) {
     const t = new Date(v.fecha).getTime();
     const cx = xOf(t), cy = yOf(v.pol);
-    pts += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="${colorPol(v.pol)}" opacity=".75" stroke="#fff" stroke-width=".5">`
+    pts += `<circle cx="${cx}" cy="${cy}" r="3.2" fill="${colorPol(v.pol)}" opacity=".45" stroke="#fff" stroke-width=".5">`
         + `<title>${v.fecha} · pol ${(v.pol*100).toFixed(0)}% · Izq Sí ${(v.pct_si_izq*100).toFixed(0)}% · Der Sí ${(v.pct_si_der*100).toFixed(0)}%
 ${escV(legibleVot(v))}</title></circle>`;
   }
   
-  const win = 12;
+  // Promedio de cada mes: una línea suave sobre los puntos, con su valor.
+  const porMes = {};
+  for (const v of vots) { const k = String(v.fecha).slice(0, 7); (porMes[k] = porMes[k] || []).push(v); }
+  const mesesProm = Object.keys(porMes).sort().map(k => {
+    const a = porMes[k];
+    const t = a.reduce((s, x) => s + new Date(x.fecha).getTime(), 0) / a.length;
+    return { x: xOf(t), y: yOf(a.reduce((s, x) => s + x.pol, 0) / a.length), p: a.reduce((s, x) => s + x.pol, 0) / a.length, n: a.length, k };
+  });
   let trend = '';
-  if (vots.length >= win) {
-    const sorted = [...vots].sort((a,b)=> new Date(a.fecha)-new Date(b.fecha));
-    let path = '';
-    for (let i = 0; i < sorted.length; i++) {
-      const lo = Math.max(0, i - Math.floor(win/2));
-      const hi = Math.min(sorted.length, i + Math.ceil(win/2));
-      const slice = sorted.slice(lo, hi);
-      const avg = slice.reduce((s,x)=> s + x.pol, 0) / slice.length;
-      const x_ = xOf(new Date(sorted[i].fecha).getTime());
-      const y_ = yOf(avg);
-      path += (i===0?'M':' L') + ` ${x_} ${y_}`;
-    }
-    trend = `<path d="${path}" fill="none" stroke="#A10856" stroke-width="1.6" opacity=".75"/>`;
+  if (mesesProm.length > 1) {
+    trend = `<polyline fill="none" stroke="var(--dark)" stroke-width="2.6" stroke-linejoin="round" points="${mesesProm.map(m => m.x.toFixed(1) + ',' + m.y.toFixed(1)).join(' ')}"/>` +
+      mesesProm.map(m => `<circle cx="${m.x.toFixed(1)}" cy="${m.y.toFixed(1)}" r="5" fill="var(--dark)" stroke="#fff" stroke-width="2"><title>${m.k} · promedio ${(m.p * 100).toFixed(0)}% en ${m.n} votaciones</title></circle>` +
+        `<text x="${m.x.toFixed(1)}" y="${(m.y - 11).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--dark)" font-family="var(--mont)" paint-order="stroke" stroke="#fff" stroke-width="4">${(m.p * 100).toFixed(0)}%</text>`).join('');
   }
   const svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:var(--bg);border-radius:10px;border:1px solid var(--border-light)" preserveAspectRatio="xMidYMid meet">
-    ${bands}${grid}${xticks}${trend}${pts}
+    ${bands}${grid}${xticks}${pts}${trend}
     <text x="${M.l}" y="${M.t-6}" fill="var(--text-m)" font-size="10" font-family="var(--sans)">1.00 = perfecta polarización (un bloque vota 100% Sí, el otro 100% No)</text>
   </svg>`;
 
@@ -1331,7 +1329,7 @@ ${escV(legibleVot(v))}</title></circle>`;
           <div style="font-family:var(--dm);font-size:30px;font-weight:700;color:var(--dark);margin-top:6px;line-height:1;letter-spacing:-.5px">${nCon}<span style="font-size:14px;font-weight:500;color:var(--text-m);margin-left:6px">${(nCon/n*100).toFixed(0)}%</span></div>
         </div>
       </div>
-      <h3 style="font-family:var(--dm);font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-m);font-weight:700;margin:14px 0 8px">Serie temporal · linea = media móvil</h3>
+      <h3 style="font-family:var(--dm);font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-m);font-weight:700;margin:14px 0 8px">Cada punto es una votación · la línea es el promedio de cada mes</h3>
       ${svg}
     </div>
 
