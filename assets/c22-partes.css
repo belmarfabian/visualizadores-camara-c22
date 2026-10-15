@@ -259,3 +259,11 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 .hero .car-track { padding-right: 18px !important; }
 @media (max-width: 760px) { .car-rail .car-flecha { width: 34px; height: 34px; } }
 .hero .car-rail { position: relative; z-index: 5; }
+
+/* Hemiciclo: cabecera con titular y bajada de la nota de la Cámara. En pantallas
+   angostas la caja crece para que el titular no quede en una sola línea. */
+@media (max-width: 700px) {
+  .c22-proyecto-cab { height: auto !important; }
+  .c22-nota-titular { -webkit-line-clamp: 3 !important; }
+  .c22-nota-bajada { -webkit-line-clamp: 3 !important; }
+}
