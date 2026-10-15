@@ -1,3 +1,4 @@
+/*! Monitor Legislativo · © 2026 Fabián Belmar — C22, Centro de Estudios Públicos. Todos los derechos reservados (ver LICENSE). Huella: c22mon-4f8a2c71 */
 /* Nombres populares de algunos proyectos, solo para el buscador (no se muestran).
    Cada uno tiene una fuente de prensa que usa ese nombre para ese boletín.
    Clave: número de boletín. */

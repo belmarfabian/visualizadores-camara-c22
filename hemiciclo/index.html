@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="../assets/c22-guardia.js"></script>
+  <meta name="author" content="Fabián Belmar — C22, Centro de Estudios Públicos">
+  <meta name="copyright" content="© 2026 C22, Centro de Estudios Públicos. Todos los derechos reservados.">
+  <meta name="robots" content="noai, noimageai">
+  <meta name="c22-huella" content="c22mon-4f8a2c71">
   
   <script>
    
@@ -2092,6 +2097,34 @@ C22Tour.define('hemiciclo', [
     } catch (e) {}
     if (intentos > 24) clearInterval(t);
   }, 250);
+})();
+</script>
+<script>
+/* Marca del Monitor dentro del dibujo: si alguien recorta o captura el hemiciclo,
+   la autoría viaja con la imagen. Se reubica cuando cambia el viewBox (Cámara/Senado). */
+(function () {
+  var svg = document.getElementById('hemicycle'); if (!svg) return;
+  function marca() {
+    var vb = svg.viewBox && svg.viewBox.baseVal; if (!vb || !vb.width) return;
+    var t = document.getElementById('c22-marca');
+    if (!t) {
+      t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.id = 'c22-marca';
+      t.setAttribute('text-anchor', 'end');
+      t.setAttribute('fill', '#7D8F92');
+      t.setAttribute('font-family', 'Montserrat, system-ui, sans-serif');
+      t.setAttribute('font-weight', '600');
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = 'Monitor Legislativo · C22-CEP · c22cepchile.cl';
+      svg.appendChild(t);
+    }
+    t.setAttribute('x', (vb.x + vb.width - 6).toFixed(1));
+    t.setAttribute('y', (vb.y + vb.height - 6).toFixed(1));
+    t.setAttribute('font-size', (vb.width * 0.0115).toFixed(1));
+    if (t.nextSibling) svg.appendChild(t);   // siempre encima de los asientos
+  }
+  marca();
+  new MutationObserver(marca).observe(svg, { attributes: true, attributeFilter: ['viewBox'], childList: true });
 })();
 </script>
 <script>

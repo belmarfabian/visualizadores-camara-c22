@@ -1,3 +1,4 @@
+/*! Monitor Legislativo · © 2026 Fabián Belmar — C22, Centro de Estudios Públicos. Todos los derechos reservados (ver LICENSE). Huella: c22mon-4f8a2c71 */
 /* Lectura de una votación: quién perdió, votos inesperados y el proyecto completo.
    Todo se calcula en el navegador con los datos que la página ya carga
    (seats con dim1 y coalition, heatmap persona x votación, votes).
