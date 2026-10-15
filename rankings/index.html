@@ -1799,7 +1799,7 @@
       varsEl = document.getElementById('rankVars'), lista = document.getElementById('rankLista');
     if (!R || !toggle || !varsEl || !lista) return;
     var state = { tipo: 'diputados', vi: 0 };
-    function fmtVal(x, esPos) { return esPos ? ((x >= 0 ? '+' : '') + x.toFixed(2).replace('.', ',')) : Math.round(x * 100) + '%'; }
+    function fmtVal(x, esPos, dec) { return esPos ? ((x >= 0 ? '+' : '') + x.toFixed(2).replace('.', ',')) : (dec ? (x * 100).toFixed(dec).replace('.', ',') : Math.round(x * 100)) + '%'; }
     function pintaLista() {
       var v = R[state.tipo][state.vi], datos = v.datos, esPos = v.fmt === 'pos';
       var DESC = {
@@ -1868,12 +1868,15 @@
           '<span class="retrato">' + cara + chapa + '</span>' +
           '<div class="rank-top-info"><span class="rank-top-nom">' + d[0] + '</span>' +
           '<span class="rk-meta"><span class="pbadge" style="color:' + (sello ? sello.c : '#566C70') + '">' + d[1] + '</span>' + aviso(d) + '</span>' + barra + '</div>' +
-          '<span class="rank-top-val"' + baseTxt(d) + '>' + fmtVal(d[2], esPos) + '</span></div>';
+          '<span class="rank-top-val"' + baseTxt(d) + '>' + fmtVal(d[2], esPos, v.key === 'lealtad' ? 1 : 0) + '</span></div>';
       }
       var arriba = datos.slice(0, 10).map(function (d, k) { return fila(d, k + 1); }).join('');
+      // Si más de diez empatan en el primer lugar, se dice cuántos son.
+      var nEmp = datos.filter(function (d) { return d[2] === datos[0][2]; }).length;
+      var empate = nEmp > 10 ? '<p class="rk-empate">' + nEmp + ' diputados empatan con ' + fmtVal(datos[0][2], esPos, v.key === 'lealtad' ? 1 : 0) + '; aquí se ven 10.</p>' : '';
       var abajo = datos.slice(-10).reverse().map(function (d, k) { return fila(d, N - k); }).join('');
       var todos = datos.map(function (d, k) { return fila(d, k + 1).replace('<div class="rank-top-item">', '<div class="rank-top-item" data-k="' + k + '">'); }).join('');
-      lista.innerHTML =
+      lista.innerHTML = empate +
         '<div class="rk-cols">' +
           '<div class="rk-col"><h3 class="rk-tit">' + TIT[0] + '</h3>' + arriba + '</div>' +
           '<div class="rk-col"><h3 class="rk-tit">' + TIT[1] + '</h3>' + abajo + '</div>' +
