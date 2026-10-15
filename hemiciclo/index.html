@@ -1174,19 +1174,6 @@ function updateSummary() {
     'Renovación Nacional', 'Unión Demócrata Independiente',
     'Partido Social Cristiano', 'Partido Republicano',
   ];
-  // De izquierda a derecha según W-NOMINATE: la posición promedio de cada partido
-  // en el eje 1, la misma escala del gráfico «Partidos, de izquierda a derecha»
-  // de la portada (LANDING_FACTS.ranking_partidos, período 2026-2030).
-  const POS_WNOMINATE = {
-    'Partido Comunista': -0.967, 'Partido Acción Humanista': -0.951, 'Frente Amplio': -0.822,
-    'Partido Socialista': -0.709, 'Partido Radical de Chile': -0.658, 'Partido Por la Democracia': -0.535,
-    'Independientes': -0.483, 'Partido Liberal de Chile': -0.443, 'Partido Demócrata Cristiano': -0.430,
-    'Federación Regionalista Verde Social': -0.417, 'Partido de la Gente': -0.092,
-    'Partido Demócratas Chile': 0.525, 'Partido Social Cristiano': 0.584, 'Evolución Política': 0.621,
-    'Renovación Nacional': 0.636, 'Unión Demócrata Independiente': 0.674,
-    'Partido Republicano': 0.864, 'Partido Nacional Libertario': 0.871,
-  };
-  partyOrder.sort((a, b) => (POS_WNOMINATE[a] ?? 0) - (POS_WNOMINATE[b] ?? 0));
   const partyAlias = {
     'Partido Republicano': 'Republicano', 'Partido Social Cristiano': 'PSC',
     'Unión Demócrata Independiente': 'UDI', 'Renovación Nacional': 'RN',
@@ -1201,6 +1188,7 @@ function updateSummary() {
   };
   
   let chipsSi = "", chipsMix = "", chipsNo = "";
+  const chipsBloque = {};
   const renderChip = (partyName, seats, color, dom, si, no, total) => {
     const safe = partyName.replace(/'/g, "\\'");
     const selected = selectedParties.has(partyName);
@@ -1246,6 +1234,9 @@ function updateSummary() {
     if (dom === 'si') chipsSi += chip;
     else if (dom === 'no') chipsNo += chip;
     else chipsMix += chip;
+    // Por bloque, como el dibujo: oposición, otros y oficialismo, en el orden de los escaños.
+    const bloque = seats[0].coalition || 'Otros';
+    (chipsBloque[bloque] = chipsBloque[bloque] || []).push(chip);
   }
 
   const COL_H = "82px";
@@ -1256,11 +1247,14 @@ function updateSummary() {
     <button onclick="selectedParties.clear();paintSeats();buildBancadas()" style="padding:3px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:50px;font-family:var(--mont);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-2);cursor:pointer">Limpiar ×</button>
   </div>` : '';
 
-  // Una línea por grupo, con su rótulo; las etiquetas alineadas en columnas.
-  const filaChips = (lab, chips) => chips
-    ? `<div class="c22-chips-fila"><span class="c22-chips-lab">${lab}</span><div class="c22-chips-g">${chips}</div></div>`
-    : '';
-  el.innerHTML = `${selBar}<div class="c22-chips">${filaChips('Mayoría a favor', chipsSi)}${filaChips('Empatados', chipsMix)}${filaChips('Mayoría en contra', chipsNo)}</div>`;
+  // Tres bloques, como el dibujo de abajo (oposición, otros, oficialismo). El color
+  // de cada etiqueta dice cómo votó la mayoría del partido; la leyenda va arriba.
+  const leyendaChips = `<div class="c22-chips-ley">Color según el voto de la mayoría de cada partido:
+    <span class="c22-ley c22-ley-si">A favor</span><span class="c22-ley c22-ley-no">En contra</span><span class="c22-ley c22-ley-mix">Empate</span></div>`;
+  const bloquesHtml = ['Oposición', 'Otros', 'Oficialismo'].filter(b => chipsBloque[b] && chipsBloque[b].length).map(b =>
+    `<div class="c22-pbloque"><div class="c22-pbloque-lab">${b}</div><div class="c22-chips-g" style="--cols:${Math.ceil(chipsBloque[b].length / 2)}">${chipsBloque[b].join('')}</div></div>`
+  ).join('');
+  el.innerHTML = `${selBar}${leyendaChips}<div class="c22-pbloques">${bloquesHtml}</div>`;
 
   const pdOld = document.getElementById("proyectoDetail");
   if (pdOld) pdOld.innerHTML = "";

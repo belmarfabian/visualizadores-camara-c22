@@ -268,25 +268,33 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
   .c22-nota-bajada { -webkit-line-clamp: 3 !important; }
 }
 
-/* Hemiciclo: etiquetas de partido en líneas, una por grupo (mayoría a favor,
-   empatados, mayoría en contra), alineadas en columnas. En el celular cada
-   línea se desliza de lado. */
+/* Hemiciclo: etiquetas de partido en tres bloques, como el dibujo (oposición,
+   otros, oficialismo), en dos filas cada uno. El color dice cómo votó la mayoría
+   del partido; la leyenda va arriba. En el celular cada bloque se desliza de lado. */
 #voteSummary { display: block !important; }
-.c22-chips { display: flex; flex-direction: column; gap: 8px; max-width: 1120px; margin: 0 auto; }
-.c22-chips-fila { display: flex; align-items: flex-start; gap: 12px; }
-.c22-chips-fila > .c22-chips-lab { flex: 0 0 150px; }
-.c22-chips-fila > .c22-chips-g { flex: 1 1 0; min-width: 0; }
-.c22-chips-lab { font-family: var(--mont); font-size: 11px; font-weight: 600; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--text-m); padding-top: 5px; }
-.c22-chips-g { display: flex; flex-wrap: wrap; gap: 6px; }
-.c22-chips-g .coal-chip { flex: 0 0 100px; width: 100px !important; min-width: 0 !important; box-sizing: border-box; }
+.c22-chips-ley { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 14px;
+  font-family: var(--mont); font-size: 12px; color: var(--text-m); margin: 0 0 14px; }
+.c22-ley { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-weight: 600; }
+.c22-ley::before { content: ''; width: 18px; height: 11px; border-radius: 6px; border: 1px solid; box-sizing: border-box; }
+.c22-ley-si::before { background: rgba(76, 202, 165, .32); border-color: rgba(76, 202, 165, .7); }
+.c22-ley-no::before { background: rgba(242, 2, 49, .28); border-color: rgba(242, 2, 49, .65); }
+.c22-ley-mix::before { background: rgba(101, 125, 129, .18); border-color: rgba(101, 125, 129, .4); }
+.c22-pbloques { display: flex; justify-content: center; align-items: flex-start; }
+.c22-pbloque { padding: 0 18px; }
+.c22-pbloque + .c22-pbloque { border-left: 1px dashed var(--border); }
+.c22-pbloque-lab { font-family: var(--mont); font-size: 11px; font-weight: 600; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--text-m); text-align: center; margin-bottom: 8px; }
+.c22-pbloque .c22-chips-g { display: grid; grid-template-columns: repeat(var(--cols, 2), 100px); gap: 6px; }
+.c22-chips-g .coal-chip { width: 100px !important; min-width: 0 !important; box-sizing: border-box; }
 @media (max-width: 700px) {
-  .c22-chips-fila { flex-direction: column; align-items: stretch; gap: 4px; }
-  .c22-chips-fila > .c22-chips-lab { flex: none; }
-  .c22-chips-fila > .c22-chips-g { flex: none; }
-  .c22-chips-g { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  .c22-chips-ley { justify-content: flex-start; font-size: 11px; }
+  .c22-pbloques { flex-direction: column; align-items: stretch; gap: 10px; }
+  .c22-pbloque { padding: 0; }
+  .c22-pbloque + .c22-pbloque { border-left: 0; }
+  .c22-pbloque-lab { text-align: left; margin-bottom: 4px; }
+  .c22-pbloque .c22-chips-g { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
             mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
-  .c22-chips-g::-webkit-scrollbar { display: none; }
+  .c22-pbloque .c22-chips-g::-webkit-scrollbar { display: none; }
   .c22-chips-g .coal-chip { flex: 0 0 auto; width: auto !important; min-width: 62px !important; }
 }
