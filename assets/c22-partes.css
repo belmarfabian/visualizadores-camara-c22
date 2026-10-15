@@ -172,7 +172,7 @@ html.c22-embed, html.c22-embed body { background: transparent !important; }
 .c22skin-sub a[href$="discurso/"], .c22skin-nav a[href$="discurso/"],
 a.card[href$="discurso/"], .c22skin-foot a[href$="discurso/"], li:has(> a[href$="discurso/"]) { display: none !important; }
 /* sin Discurso, las tres tarjetas llenan la fila */
-@media (min-width: 761px) { .products .cards, div.cards:has(> a.card[href="votaciones/"]) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (min-width: 761px) { .products .cards { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
 
 /* Hemiciclo simplificado: solo el hemiciclo, por voto o por coalición, con «Qué se votó» y «Quién ganó y quién perdió» */
 #mainTabs, #modeOrder, #modeInesp, #votoLectura .c22-inesp, #votoLectura .c22-proyecto,
@@ -232,3 +232,18 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 .rar .rar-quienes .quien { border: 0 !important; background: none !important; border-radius: 0 !important;
   padding: 0 !important; margin-bottom: 14px; }
 @media (max-width: 700px) { .rar-grid { grid-template-columns: 1fr !important; grid-auto-rows: auto !important; } }
+
+/* 3b · Portada: cuatro tarjetas, una por pestaña del menú. Miniatura 2:1, nombre de
+        la pestaña y la primera frase de esa pestaña; sin espacio vacío. */
+@media (min-width: 1101px) { #tourCards { grid-auto-flow: row !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; overflow: visible !important; } }
+@media (min-width: 761px) and (max-width: 1100px) { #tourCards { grid-auto-flow: row !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; overflow: visible !important; row-gap: 28px !important; } .hero-fila .vot-nav { display: none !important; } }
+#tourCards .card { display: flex !important; flex-direction: column; }
+#tourCards .ct-mini { width: 100% !important; height: auto !important; aspect-ratio: 2 / 1; object-fit: cover; object-position: 50% 0 !important; background: #fff; }
+#tourCards .ct-cuerpo { gap: 6px !important; flex: 1; }
+#tourCards h3 { margin: 0 !important; }
+#tourCards .ct-desc { font-family: var(--mont); font-size: 14px; line-height: 1.5; color: var(--text-2); margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+#tourCards .ct-pie { justify-content: flex-start !important; margin-top: auto; padding-top: 4px !important; }
+#tourCards .card { border: 0 !important; }
+#tourCards h3 { min-height: 0 !important; }
+@media (min-width: 761px) { #tourCards { -webkit-mask-image: none !important; mask-image: none !important; } }
