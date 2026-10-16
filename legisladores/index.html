@@ -430,7 +430,6 @@
         <a href="../" class="" data-rotulo="Portada"><svg class="c22skin-ico" viewBox="0 0 112 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 47 56 10l49 37"/><path d="M17.5 39v54h77V39"/><path d="M43 93V63.5h26V93"/></svg><span>Portada</span></a>
         <a href="../hemiciclo/" class="" data-rotulo="Hemiciclo"><svg class="c22skin-ico" viewBox="0 0 126 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 93.5h117"/><circle cx="18" cy="77" r="7.5"/><circle cx="35.5" cy="54" r="7.5"/><circle cx="63" cy="45" r="7.5"/><circle cx="90.5" cy="54" r="7.5"/><circle cx="108" cy="77" r="7.5"/><path d="M52 93.5v-9h22v9"/></svg><span>Hemiciclo</span></a>
         <a href="../votaciones/" class="" data-rotulo="Votaciones"><svg class="c22skin-ico" viewBox="0 0 106 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 93.5h96"/><rect x="15" y="56" width="22" height="37.5"/><rect x="42" y="22" width="22" height="71.5"/><rect x="69" y="42" width="22" height="51.5"/></svg><span>Votaciones</span></a>
-        <a href="../discurso/" class="" data-rotulo="Discurso"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26a9 9 0 0 1 9-9h86a9 9 0 0 1 9 9v42a9 9 0 0 1-9 9H43L23 93.5V77h-8a9 9 0 0 1-9-9z"/><path d="M25 38h66"/><path d="M25 57h40"/></svg><span>Discurso</span></a>
         <a href="../legisladores/" aria-current="page" class="c22skin-aqui" data-rotulo="Legisladores"><svg class="c22skin-ico" viewBox="0 0 122 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="44" cy="31" r="18"/><path d="M8 90a36 36 0 0 1 72 0"/><circle cx="95" cy="42" r="13"/><path d="M89 76a23 23 0 0 1 26 14"/></svg><span>Legisladores</span></a>
         <a href="../rankings/" class="" data-rotulo="Rankings"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="14" width="100" height="21"/><rect x="8" y="41" width="70" height="21"/><rect x="8" y="68" width="43" height="21"/></svg><span>Rankings</span></a>
       </div>
@@ -727,7 +726,7 @@
         }
         var mets = [
           medidor('Izquierda → derecha', f.dim1, (f.dim1 == null ? '—' : f.dim1.toFixed(2)),
-            'Posición estimada con W-NOMINATE, de -1 (izquierda) a 1 (derecha).', 'pos'),
+            'Posición según cómo vota, de -1 (izquierda) a 1 (derecha).', 'pos'),
           medidor('Lealtad a su partido', m.lealtad_partido, pct(m.lealtad_partido) || '—',
             'Cuántas veces votó igual que la mayoría de su partido.'),
           medidor('Lealtad a su pacto', m.lealtad, pct(m.lealtad) || '—',
@@ -739,7 +738,7 @@
           medidor('Se abstiene', m.abstencion, pct(m.abstencion) || '—',
             'Abstenciones sobre las votaciones en que estuvo presente.'),
           medidor('Predecibilidad', m.gmp, pct(m.gmp) || '—',
-            'Qué tan bien el modelo acierta sus votos a partir de su posición.')
+            'Qué tan previsible es su voto a partir de su posición.')
         ].filter(Boolean).join('');
 
         var rar = f.rarezas && f.rarezas.length
@@ -807,8 +806,7 @@
 
       /* Votaciones en que votó distinto de la mayoría de su propio bloque. */
       function fueraDeBloque(f) {
-        // Contra el resto de su pacto 2025 (Cámara) o de su bloque (Senado); sin contarse
-        // a sí mismo y sin empates. Mismo criterio que «Lealtad a su pacto».
+        // Contra el resto de su pacto 2025 (Cámara) o de su bloque (Senado).
         var fu = f.fuera, sen = f.camara === 'S';
         var cam = sen ? '&c=senado' : '';
         var grupo = sen ? 'bloque' : 'pacto';
@@ -828,7 +826,6 @@
         return '<div class="f-seccion">Fuera de su ' + grupo + ' · ' + esc(fu.bloque) + '</div>' +
           '<p class="c22-nota" style="margin:0 0 10px">Votó distinto de la mayoría del resto de su ' +
           (sen ? 'bloque en el Senado' : 'pacto (inscrito para las parlamentarias de 2025)') + ' en <b>' + fu.n + '</b> de ' + fu.de + ' votaciones (' + pctFu + '%). ' +
-          'No se cuenta su propio voto ni los empates. ' +
           (fu.n ? 'Las ' + fu.ult.length + ' más recientes; cada una abre en el hemiciclo.' : '') + '</p>' +
           filas + comparar;
       }

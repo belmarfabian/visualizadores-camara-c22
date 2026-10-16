@@ -1324,7 +1324,6 @@
         <a href="../" class="" data-rotulo="Portada"><svg class="c22skin-ico" viewBox="0 0 112 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 47 56 10l49 37"/><path d="M17.5 39v54h77V39"/><path d="M43 93V63.5h26V93"/></svg><span>Portada</span></a>
         <a href="../hemiciclo/" class="" data-rotulo="Hemiciclo"><svg class="c22skin-ico" viewBox="0 0 126 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 93.5h117"/><circle cx="18" cy="77" r="7.5"/><circle cx="35.5" cy="54" r="7.5"/><circle cx="63" cy="45" r="7.5"/><circle cx="90.5" cy="54" r="7.5"/><circle cx="108" cy="77" r="7.5"/><path d="M52 93.5v-9h22v9"/></svg><span>Hemiciclo</span></a>
         <a href="../votaciones/" class="" data-rotulo="Votaciones"><svg class="c22skin-ico" viewBox="0 0 106 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 93.5h96"/><rect x="15" y="56" width="22" height="37.5"/><rect x="42" y="22" width="22" height="71.5"/><rect x="69" y="42" width="22" height="51.5"/></svg><span>Votaciones</span></a>
-        <a href="../discurso/" class="" data-rotulo="Discurso"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 26a9 9 0 0 1 9-9h86a9 9 0 0 1 9 9v42a9 9 0 0 1-9 9H43L23 93.5V77h-8a9 9 0 0 1-9-9z"/><path d="M25 38h66"/><path d="M25 57h40"/></svg><span>Discurso</span></a>
         <a href="../legisladores/" class="" data-rotulo="Legisladores"><svg class="c22skin-ico" viewBox="0 0 122 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="44" cy="31" r="18"/><path d="M8 90a36 36 0 0 1 72 0"/><circle cx="95" cy="42" r="13"/><path d="M89 76a23 23 0 0 1 26 14"/></svg><span>Legisladores</span></a>
         <a href="../rankings/" aria-current="page" class="c22skin-aqui" data-rotulo="Rankings"><svg class="c22skin-ico" viewBox="0 0 116 102" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="14" width="100" height="21"/><rect x="8" y="41" width="70" height="21"/><rect x="8" y="68" width="43" height="21"/></svg><span>Rankings</span></a>
       </div>
@@ -1368,7 +1367,7 @@
   function render() {
   var F = window.LANDING_FACTS;
   if (!F) return;
-  // Pactos inscritos para las parlamentarias de 2025 (pipeline/pactos.py).
+  // Pactos inscritos para las parlamentarias de 2025.
   var PACTO_COL = {
     'Unidad por Chile': '#D7263D', 'Verdes, Regionalistas y Humanistas': '#2BA84A',
     'Partido de la Gente': '#B620C9', 'Chile Grande y Unido': '#3D8FE0', 'Cambio por Chile': '#16325C',
@@ -1597,7 +1596,7 @@
       var y = H - 26 - (o.k - 0.5) * (R * 2 + 1.4);
       svg += '<circle cx="' + cx(o.d).toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + R + '" fill="' + col(o.d.pacto) + '" fill-opacity="0.92"><title>' + o.d.nombre + ' (' + o.d.partido + ')</title></circle>';
     });
-    // Extremos por partido: dentro del borde del círculo de W-NOMINATE el orden es del modelo.
+    // Extremos por partido.
     var pE = (F.ranking_partidos || []).filter(function (p) { return p.n >= 3; }).sort(function (a, b) { return a.pos - b.pos; });
     var iz = pE[0], de = pE[pE.length - 1];
     var ext = '';
@@ -1746,7 +1745,7 @@
     var sy = function (y) { return (H - pad) - (y + 1) / 2 * (H - 2 * pad); };
     function dibujar(per) {
       var arr = NP[per] || [];    
-      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Mapa W-NOMINATE ' + per + '">';
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Mapa de votaciones ' + per + '">';
       s += '<line x1="' + sx(0) + '" y1="' + pad + '" x2="' + sx(0) + '" y2="' + (H - pad) + '" stroke="#dfe4e4" stroke-dasharray="3 3"/>';
       s += '<line x1="' + pad + '" y1="' + sy(0) + '" x2="' + (W - pad) + '" y2="' + sy(0) + '" stroke="#dfe4e4" stroke-dasharray="3 3"/>';
       
@@ -1810,7 +1809,6 @@
   })();
 
   function initRankings() {
-    // Simplificación (oct 2026): sin las variables técnicas (predecibilidad del voto y segunda dimensión)
     if (window.RANKINGS && window.RANKINGS.diputados) window.RANKINGS.diputados = window.RANKINGS.diputados.filter(function (v) { return v.key !== 'gmp' && v.key !== 'dim2' && v.key !== 'oficialismo'; });
     var R = window.RANKINGS, toggle = document.getElementById('rankToggle'),
       varsEl = document.getElementById('rankVars'), lista = document.getElementById('rankLista');
@@ -1820,14 +1818,14 @@
     function pintaLista() {
       var v = R[state.tipo][state.vi], datos = v.datos, esPos = v.fmt === 'pos';
       var DESC = {
-        'diputados:izq_der': 'Posición estimada con W-NOMINATE a partir de todas sus votaciones. −1 es el extremo izquierdo y +1 el derecho.',
-        'diputados:lealtad_partido': 'Porcentaje de sus votos a favor o en contra que coinciden con lo que votó la mayoría de su partido (sin contarse a sí mismo). Partidos de tres o más diputados.',
-        'diputados:lealtad': 'Porcentaje de sus votos a favor o en contra que coinciden con lo que votó la mayoría del resto de su pacto electoral de 2025 (Unidad por Chile; Cambio por Chile; Chile Grande y Unido; Verdes, Regionalistas y Humanistas; el PdG fue en lista propia). No se cuenta su propio voto ni los empates.',
+        'diputados:izq_der': 'Posición de cada diputado según cómo vota. −1 es el extremo izquierdo y +1 el derecho.',
+        'diputados:lealtad_partido': 'Porcentaje de sus votos a favor o en contra que coinciden con lo que votó la mayoría de su partido.',
+        'diputados:lealtad': 'Porcentaje de sus votos a favor o en contra que coinciden con lo que votó la mayoría del resto de su pacto electoral de 2025 (Unidad por Chile; Cambio por Chile; Chile Grande y Unido; Verdes, Regionalistas y Humanistas; el PdG fue en lista propia).',
         'diputados:asistencia': 'Asistencia oficial a las sesiones de Sala según camara.cl: sesiones sin ausencias que la rebajen. Por reglamento, las ausencias justificadas por licencia médica, permiso o misión oficial no la rebajan. Datos al 15 de octubre de 2026.',
         'diputados:abstencion': 'Porcentaje de abstenciones entre las votaciones en que votó.',
-        'partidos:cohesion': 'Promedio del índice de Rice en todas las votaciones: |sí − no| / (sí + no). 100 % significa que todos sus diputados votan igual.',
-        'partidos:posicion': 'Promedio de la posición W-NOMINATE de sus diputados. −1 es el extremo izquierdo y +1 el derecho.',
-        'partidos:asistencia': 'Mediana de la asistencia oficial de sus diputados (camara.cl): unos pocos casos extremos no arrastran a todo el partido.'
+        'partidos:cohesion': 'Qué tan unidos votan sus diputados. 100 % significa que todos votan igual.',
+        'partidos:posicion': 'Posición promedio de sus diputados. −1 es el extremo izquierdo y +1 el derecho.',
+        'partidos:asistencia': 'Mediana de la asistencia oficial de sus diputados (camara.cl).'
       };
       var dEl = document.getElementById('rankDesc'); if (dEl) dEl.textContent = DESC[state.tipo + ':' + v.key] || '';
       if (state.tipo !== 'diputados') {                 
@@ -1851,7 +1849,7 @@
         return;
       }
       
-      // Aviso de base chica (GovTrack no publica puntajes con pocos datos).
+      // Aviso de base chica.
       var MIN_BASE = 150;
       function aviso(d) {
         if (v.key === 'asistencia') return (d[4] != null && d[4] < 30) ? '<span class="rank-aviso" title="Calculado sobre ' + d[4] + ' sesiones">pocos datos · ' + d[4] + '</span>' : '';
@@ -1947,7 +1945,7 @@
         var SIG = { PDG: 'PdG', DEM: 'Dem', EVOP: 'Evópoli', PAH: 'AH' };
         return '<div class="cm-celda"><div class="cm-nom">' + (SIG[d[0]] || d[0]) + '</div>' + svg + '</div>';
       }).join('');
-      return '<h3 class="cm-titulo">Cohesión mes a mes</h3><p class="c22-nota" style="margin:0 0 12px">Índice de Rice promedio de cada mes; la escala va de 60% a 100% y la línea punteada marca 75%. Los meses con menos de tres votaciones del partido quedan en blanco.</p><div class="cm-grilla">' + celdas + '</div>';
+      return '<h3 class="cm-titulo">Cohesión mes a mes</h3><p class="c22-nota" style="margin:0 0 12px">Unidad del voto de sus diputados en cada mes; la escala va de 60% a 100% y la línea punteada marca 75%. Los meses con menos de tres votaciones del partido quedan en blanco.</p><div class="cm-grilla">' + celdas + '</div>';
     }
     /* Enlace compartible: tipo y variable en la dirección. */
     function recordar() {
