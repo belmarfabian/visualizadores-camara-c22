@@ -9,6 +9,7 @@
   <meta name="c22-huella" content="c22mon-4f8a2c71">
   <link rel="canonical" href="https://c22cepchile.cl/monitor-legislativo/">
   <script src="../assets/c22-citar.js" defer></script>
+  <script src="../assets/c22-marca.js" defer></script>
   
   <script>
    
@@ -2057,7 +2058,7 @@
       var esc = ancho / vb[2];
       if (esc > 1) esc = 1;
       var apretado = esc < DENSO;
-      svg.querySelectorAll('text').forEach(function (t) {
+      svg.querySelectorAll('text:not(.c22-marca)').forEach(function (t) {
         var b = base(t);
         var clase = t.getAttribute('class') || '';
          
@@ -2080,7 +2081,7 @@
     }
 
     function encajar(svg, vb) {
-      svg.querySelectorAll('text').forEach(function (t) {
+      svg.querySelectorAll('text:not(.c22-marca)').forEach(function (t) {
         if (t.style.display === 'none') return;
         var previa = t.getAttribute('transform') || '';
         if (previa && !/^translate\(-?[\d.]+ 0\)$/.test(previa)) return;
@@ -2097,7 +2098,7 @@
 
     function descontar(svg) {
       var visibles = [];
-      svg.querySelectorAll('text').forEach(function (t) {
+      svg.querySelectorAll('text:not(.c22-marca)').forEach(function (t) {
         if (t.style.display === 'none') return;
         var caja = t.getBoundingClientRect();
         if (!caja.width) return;
