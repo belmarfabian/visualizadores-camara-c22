@@ -356,3 +356,12 @@ section.rankings-sec .inner > .sec-label, section.rankings-sec .inner > h2.sec-t
 .c22-bloques { grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
 @media (max-width: 1000px) { .c22-bloques { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .c22-bloques { grid-template-columns: 1fr; } }
+/* «Cómo citar» (assets/c22-citar.js): al pie de cada pestaña y botón en la portada */
+.c22-citar { max-width: 1248px; margin: 48px auto 32px; padding: 22px 0 0; border-top: 1px solid var(--border-light, #E2E8E8); box-sizing: content-box; }
+@media (max-width: 1300px) { .c22-citar { margin-left: 16px; margin-right: 16px; } }
+.c22-citar-lab { display: block; font-family: var(--mont, 'Montserrat', sans-serif); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-m, #657D81); }
+.c22-citar-txt { font-family: var(--mont, 'Montserrat', sans-serif); font-size: 14px; line-height: 1.5; color: #566C70; margin: 10px 0 12px; padding-left: 14px; border-left: 3px solid var(--acento, #0D73D6); max-width: 860px; }
+.c22-citar-nota { font-family: var(--mont, 'Montserrat', sans-serif); font-size: 12px; line-height: 1.45; color: #7C9095; margin: 12px 0 0; max-width: 860px; }
+.c22-citar-btn { font-family: var(--mont, 'Montserrat', sans-serif); font-size: 12px; font-weight: 700; color: var(--acento-txt, #0A5CAB); background: var(--bg-white, #fff); border: 1px solid var(--border, #CDD6D7); border-radius: 999px; padding: 6px 14px; cursor: pointer; margin: 0 0 4px; }
+.c22-citar-btn:hover { border-color: var(--acento, #0D73D6); }
+.citar-col .c22-citar-btn { margin: 0 0 12px; }
